@@ -1,0 +1,9 @@
+#!/bin/sh
+tools/codnar-version > lib/codnar/version.rb \
+&& git add lib/codnar/version.rb \
+&& rake clobber \
+&& rake gem \
+&& git commit "$@" \
+&& tools/codnar-changelog > ChangeLog \
+&& git add ChangeLog \
+&& git commit --amend

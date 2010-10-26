@@ -6,6 +6,7 @@ require "rcov/rcovtask"
 require "reek/rake/task"
 require "roodi"
 require "roodi_task"
+require "lib/codnar/version"
 
 task :default => "all"
 task "all" => [ "verify", "rdoc", "gem" ]
@@ -14,18 +15,10 @@ task "verify" => [ "rcov", "reek", "roodi" ]
 patterns = { "bin" => "bin/*", "lib" => "lib/**/*.rb", "test" => "test/**/*.rb" }
 files = patterns.merge(patterns) { |key, pattern| FileList[pattern] }
 
-def load_version
-  text = File.read("lib/codnar/version.rb")
-  if text =~ /VERSION = ["'](.*)["']/
-    return $1
-  end
-  abort("lib/codnar/version.rb does not contain a valid version line")
-end
-
 spec = Gem::Specification.new do |s|
 
   s.name = "codenar"
-  s.version = load_version
+  s.version = Codnar::VERSION
 
   s.homepage = "http://codenar.rubygems.org"
 

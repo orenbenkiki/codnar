@@ -1,4 +1,4 @@
-# This file controls the version number of the CodNar gem.
-module CodNar
-  VERSION = "0.0.0"
+# Edit tools/codnar-version to update this file!
+module Codnar
+  VERSION = "0.0.3"
 end
