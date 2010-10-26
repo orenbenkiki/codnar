@@ -1,0 +1,3 @@
+UtilityFunction: # LowCohesion
+  exclude:
+  - !ruby/regexp /^Test[A-Z]/
