@@ -1,5 +1,6 @@
 2010-10-27	Oren Ben-Kiki <oren@ben-kiki.org>
 
+	* Write chunks to a file.
 	* Add implicit Hash.key and Hash.key= methods.
 	* Establish RDoc conventions.
 

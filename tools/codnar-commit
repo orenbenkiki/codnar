@@ -1,10 +1,11 @@
 #!/bin/sh
 true \
 && rake clobber \
-&& rake all \
+&& rake verify \
 && git commit "$@" \
 && tools/codnar-version > lib/codnar/version.rb \
 && git add lib/codnar/version.rb \
 && tools/codnar-changelog > ChangeLog \
 && git add ChangeLog \
+&& rake all \
 && git commit --amend
