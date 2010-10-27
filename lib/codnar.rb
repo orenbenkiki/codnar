@@ -1,6 +1,6 @@
 require "rdiscount"
 
-# This module contains all the codnar code.
+# This module contains all the code narrator code.
 module Codnar
 end
 

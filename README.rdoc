@@ -5,5 +5,5 @@ Code narrator - a reverse literate programming tool.
 == Description
 
 Code narrator is a reverse literate programming tool. It splits the source
-files into "chunk" (including structured comments) and weaves them back into a
+files into "chunks" (including structured comments) and weaves them back into a
 narrative that describes the overall system.

@@ -1,10 +1,10 @@
 require "codnar"
 require "test/spec"
 
-# Test expanding markdown text.
+# Test expanding Markdown text.
 class TestExpandMarkdown < Test::Unit::TestCase
 
-  def test_emphasises_text
+  def test_emphasis_text
     "*text*".md_to_html.should == "<p><em>text</em></p>\n"
   end
 

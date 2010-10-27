@@ -7,7 +7,6 @@ export MINOR=0
 # This is only reliable as long as one developer is doing commits on one
 # machine. Which, so far, is the case.
 export COMMIT=`git rev-list --all | wc -l`
-export COMMIT=`expr $COMMIT + 1`
 
 # This file makes the data available to the Ruby code.
 # The file is made read-only to prevent accidental edits.
