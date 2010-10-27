@@ -1,5 +1,6 @@
 2010-10-27	Oren Ben-Kiki <oren@ben-kiki.org>
 
+	* Add implicit Hash.key and Hash.key= methods.
 	* Establish RDoc conventions.
 
 2010-10-26	Oren Ben-Kiki <oren@ben-kiki.org>

@@ -1,3 +1,6 @@
+FeatureEnvy: # LowCohesion
+  exclude:
+  - !ruby/regexp /^Test[A-Z]/
 UtilityFunction: # LowCohesion
   exclude:
   - !ruby/regexp /^Test[A-Z]/
