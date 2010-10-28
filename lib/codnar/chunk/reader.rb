@@ -1,43 +1,77 @@
-# Read chunks from disk files.
-class Codnar::Chunk::Reader
+module Codnar::Chunk
 
-  # Load all chunks to memory.
-  def initialize(errors, paths)
-    @errors = errors
-    @chunks = {}
-    paths.each do |path|
-      load_path_chunks(path)
+  # Read chunks from disk files.
+  class Reader
+
+    # Load all chunks to memory.
+    def initialize(errors, paths)
+      @errors = errors
+      @chunks = {}
+      paths.each do |path|
+        load_path_chunks(path)
+      end
     end
-  end
 
-  # Load all chunks from a file into memory.
-  def load_path_chunks(path)
-    @errors.in_path(path) do
-      chunks = YAML.load_file(path)
-      merge_loaded_chunks(chunks)
+    # Load all chunks from a file into memory.
+    def load_path_chunks(path)
+      @errors.in_path(path) do
+        chunks = YAML.load_file(path)
+        merge_loaded_chunks(chunks)
+      end
     end
-  end
 
-  # Merge an array of chunks into memory.
-  def merge_loaded_chunks(chunks)
-    chunks.each do |chunk|
-      @chunks[chunk.name] = chunk
+    # Merge an array of chunks into memory.
+    def merge_loaded_chunks(chunks)
+      chunks.each do |new_chunk|
+        old_chunk = @chunks[name = new_chunk.name]
+        if old_chunk.nil?
+          @chunks[name] = new_chunk
+        elsif Reader.same_chunk?(old_chunk, new_chunk)
+          old_chunk.locations += new_chunk.locations
+        else
+          @errors.push(Reader.different_chunks_error(name, old_chunk, new_chunk))
+        end
+      end
     end
-  end
 
-  # Fetch a chunk by its name.
-  def [](name)
-    return @chunks[name] ||= fake_chunk(name)
-  end
+    # Check whether two chunks contain the same "stuff".
+    def self.same_chunk?(old_chunk, new_chunk)
+      return Reader::chunk_payload(old_chunk) == Reader::chunk_payload(new_chunk)
+    end
 
-  # Return a fake chunk for the specified name.
-  def fake_chunk(name)
-    @errors << "Missing chunk: #{name}"
-    return {
-      "name" => name,
-      "locations" => [ { "file" => "MISSING", "line" => "NA" } ],
-      "fragments" => [ { "lines" => 1, "kind" => "html", "content" => "<div class='missing'>MISSING</div>\n" } ],
-    }
+    # Return just the actual payload of a chunk for equality comparison.
+    def self.chunk_payload(chunk)
+      return chunk.reject { |key, value| key == "locations" }
+    end
+
+    # Error message when two different chunks have the same name.
+    def self.different_chunks_error(name, old_chunk, new_chunk)
+      old_location = Reader::locations_message(old_chunk)
+      new_location = Reader::locations_message(new_chunk)
+      return "Chunk: #{name} is different #{new_location}, and #{old_location}"
+    end
+
+    # Format a chunk's location for an error message.
+    def self.locations_message(chunk)
+      locations = chunk.locations.map { |location| "in file: #{location.file} at line: #{location.line}" }
+      return locations.join(" or ")
+    end
+
+    # Fetch a chunk by its name.
+    def [](name)
+      return @chunks[name] ||= fake_chunk(name)
+    end
+
+    # Return a fake chunk for the specified name.
+    def fake_chunk(name)
+      @errors << "Missing chunk: #{name}"
+      return {
+        "name" => name,
+        "locations" => [ { "file" => "MISSING", "line" => "NA" } ],
+        "fragments" => [ { "lines" => 1, "kind" => "html", "content" => "<div class='missing'>MISSING</div>\n" } ],
+      }
+    end
+
   end
 
 end

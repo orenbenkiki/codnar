@@ -1,6 +1,6 @@
 FeatureEnvy: # LowCohesion
   exclude:
-  - !ruby/regexp /^Test[A-Z]/
+  - !ruby/regexp /Test/
 UtilityFunction: # LowCohesion
   exclude:
-  - !ruby/regexp /^Test[A-Z]/
+  - !ruby/regexp /Test/

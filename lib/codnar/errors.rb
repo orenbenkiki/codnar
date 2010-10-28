@@ -3,7 +3,7 @@ class Codnar::Errors < Array
 
   # Create an empty errors collection.
   def initialize
-    @path = $0
+    @path = nil
     @line = nil
   end
 
@@ -28,11 +28,9 @@ class Codnar::Errors < Array
 
   # Format a complete error message.
   def error_message(message)
-    if @line
-      return "#{@path}(#{@line}): #{message}"
-    else
-      return "#{@path}: #{message}"
-    end
+    return "#{$0}: #{message}" unless @path
+    return "#{$0}: #{message} in file: #{@path}" unless @line
+    return "#{$0}: #{message} in file: #{@path} at line: #{@line}"
   end
 
 end

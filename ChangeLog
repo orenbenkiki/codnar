@@ -1,5 +1,6 @@
 2010-10-28	Oren Ben-Kiki <oren@ben-kiki.org>
 
+	* Collect mismatching duplicate chunk errors.
 	* Collect missing chunk errors.
 	* Collect errors.
 	* Read chunks from files.
