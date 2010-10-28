@@ -1,3 +1,7 @@
+2010-10-28	Oren Ben-Kiki <oren@ben-kiki.org>
+
+	* Read chunks from files.
+
 2010-10-27	Oren Ben-Kiki <oren@ben-kiki.org>
 
 	* Write chunks to a file.
