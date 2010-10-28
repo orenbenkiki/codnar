@@ -2,16 +2,24 @@
 class Codnar::Chunk::Reader
 
   # Load all chunks to memory.
-  def initialize(paths)
+  def initialize(errors, paths)
+    @errors = errors
     @chunks = {}
     paths.each do |path|
-      chunks = YAML.load_file(path)
-      load_file_chunks(chunks)
+      load_path_chunks(path)
     end
   end
 
   # Load all chunks from a file into memory.
-  def load_file_chunks(chunks)
+  def load_path_chunks(path)
+    @errors.in_path(path) do
+      chunks = YAML.load_file(path)
+      merge_loaded_chunks(chunks)
+    end
+  end
+
+  # Merge an array of chunks into memory.
+  def merge_loaded_chunks(chunks)
     chunks.each do |chunk|
       @chunks[chunk.name] = chunk
     end
@@ -19,11 +27,12 @@ class Codnar::Chunk::Reader
 
   # Fetch a chunk by its name.
   def [](name)
-    return @chunks[name] ||= Codnar::Chunk::Reader::fake_chunk(name)
+    return @chunks[name] ||= fake_chunk(name)
   end
 
   # Return a fake chunk for the specified name.
-  def self.fake_chunk(name)
+  def fake_chunk(name)
+    @errors << "Missing chunk: #{name}"
     return {
       "name" => name,
       "locations" => [ { "file" => "MISSING", "line" => "NA" } ],
