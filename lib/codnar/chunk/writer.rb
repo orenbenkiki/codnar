@@ -22,7 +22,7 @@ class Codnar::Chunk::Writer
     end
   end
 
-  # Write one chunk on an array of chunks to a disk file.
+  # Write one chunk or an array of chunks to a disk file.
   def self.write(path, data)
     self.new(path) do |writer|
       writer << data

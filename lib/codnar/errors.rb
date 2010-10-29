@@ -20,14 +20,15 @@ class Codnar::Errors < Array
     @line = line
   end
 
-  # Add a single error to the collection. This is the only way errors should be
-  # added to the collection (do not use ".push", "+=", etc.).
+  # Add a single error to the collection, with automatic context annotation
+  # (current file and line). Other methods (push, += etc.) do not automatically
+  # add the context annotation.
   def <<(message)
-    push(error_message(message))
+    push(annotate_error_message(message))
   end
 
-  # Format a complete error message.
-  def error_message(message)
+  # Annotate an error message with the context (current file and line).
+  def annotate_error_message(message)
     return "#{$0}: #{message}" unless @path
     return "#{$0}: #{message} in file: #{@path}" unless @line
     return "#{$0}: #{message} in file: #{@path} at line: #{@line}"

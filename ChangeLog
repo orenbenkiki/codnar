@@ -1,3 +1,7 @@
+2010-10-30	Oren Ben-Kiki <oren@ben-kiki.org>
+
+	* Convert names to identifiers.
+
 2010-10-28	Oren Ben-Kiki <oren@ben-kiki.org>
 
 	* Collect mismatching duplicate chunk errors.
