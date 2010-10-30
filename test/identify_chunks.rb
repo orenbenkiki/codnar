@@ -24,4 +24,9 @@ class TestIdentifyChunks < Test::Unit::TestCase
     "C# for .NET!".to_id.should == "c-for-net-"
   end
 
+  def test_strip_to_id
+    " a ".to_id.should == "a"
+  end
+
+
 end

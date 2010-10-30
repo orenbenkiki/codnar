@@ -9,6 +9,7 @@ module Codnar::Chunk
 
     def setup
       FakeFS.activate!
+      FakeFS::FileSystem.clear
     end
 
     def teardown

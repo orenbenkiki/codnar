@@ -6,9 +6,10 @@ class String
     return Codnar::Markdown::md_to_html(self)
   end
 
-  # Convert the string to an identifier.
+  # Convert the string to an identifier. This is a stable operation, so
+  # anything that accept a name will also accept an identifier as well.
   def to_id
-    return self.gsub(/[^a-zA-Z0-9]+/, "-").downcase
+    return self.strip.gsub(/[^a-zA-Z0-9]+/, "-").downcase
   end
 
 end

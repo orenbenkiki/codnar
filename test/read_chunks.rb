@@ -8,8 +8,9 @@ module Codnar::Chunk
   class TestReadChunks < Test::Unit::TestCase
 
     def setup
-      FakeFS.activate!
       @errors = Codnar::Errors.new
+      FakeFS.activate!
+      FakeFS::FileSystem.clear
     end
 
     def teardown
@@ -54,6 +55,21 @@ module Codnar::Chunk
       reader = Reader::new(@errors, [])
       reader["foo"].name.should == "foo"
       @errors.should == [ "#{$0}: Missing chunk: foo" ]
+    end
+
+    def test_read_equivalent_name_chunks
+      Writer::write("foo.chunks", [
+        { "name" => "Foo?", "locations" => [ { "file" => "foo.chunks", "line" => 1 } ] },
+        { "name" => "FOO!!", "locations" => [ { "file" => "foo.chunks", "line" => 2 } ] }
+      ])
+      reader = Reader::new(@errors, Dir.glob("./**/*.chunks"))
+      check_read_data(reader,  "foo-" => {
+        "name" => "Foo?",
+        "locations" => [
+          { "file" => "foo.chunks", "line" => 1 },
+          { "file" => "foo.chunks", "line" => 2 }
+        ]
+      })
     end
 
     def check_read_data(reader, chunks)
