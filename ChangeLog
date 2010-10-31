@@ -1,5 +1,6 @@
 2010-10-31	Oren Ben-Kiki <oren@ben-kiki.org>
 
+	* Weave chunks to unified HTML.
 	* Refactor away the Codnar
 
 2010-10-30	Oren Ben-Kiki <oren@ben-kiki.org>
