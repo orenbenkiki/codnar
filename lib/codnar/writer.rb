@@ -1,5 +1,5 @@
 # Write chunks into a disk file.
-class Codnar::Chunk::Writer
+class Codnar::Writer
 
   # Write chunks into the specified file.
   def initialize(path, &block)

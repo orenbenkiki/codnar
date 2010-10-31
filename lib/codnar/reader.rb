@@ -1,4 +1,4 @@
-module Codnar::Chunk
+module Codnar
 
   # Read chunks from disk files.
   class Reader
@@ -67,8 +67,8 @@ module Codnar::Chunk
       @errors << "Missing chunk: #{name}"
       return {
         "name" => name,
-        "locations" => [ { "file" => "MISSING", "line" => "NA" } ],
-        "fragments" => [ { "lines" => 1, "kind" => "html", "content" => "<div class='missing'>MISSING</div>\n" } ],
+        "locations" => [ { "file" => "MISSING" } ],
+        "html" => "<div class='missing'>MISSING</div>\n"
       }
     end
 

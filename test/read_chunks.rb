@@ -2,7 +2,7 @@ require "codnar"
 require "test/spec"
 require "fakefs/safe"
 
-module Codnar::Chunk
+module Codnar
 
   # Test reading chunks from files.
   class TestReadChunks < Test::Unit::TestCase
@@ -36,15 +36,15 @@ module Codnar::Chunk
 
     def test_read_different_chunks
       Writer::write("foo.chunks", [
-        { "name" => "foo", "content" => "bar", "locations" => [ { "file" => "foo.chunks", "line" => 1 } ] },
-        { "name" => "foo", "content" => "baz", "locations" => [ { "file" => "foo.chunks", "line" => 2 } ] }
+        { "name" => "foo", "html" => "bar", "locations" => [ { "file" => "foo.chunks", "line" => 1 } ] },
+        { "name" => "foo", "html" => "baz", "locations" => [ { "file" => "foo.chunks", "line" => 2 } ] }
       ])
       Writer::write("bar.chunks",
-        { "name" => "foo", "content" => "bar", "locations" => [ { "file" => "bar.chunks", "line" => 1 } ] })
+        { "name" => "foo", "html" => "bar", "locations" => [ { "file" => "bar.chunks", "line" => 1 } ] })
       reader = Reader::new(@errors, Dir.glob("./**/*.chunks").sort)
       @errors.should == [ "Chunk: foo is different in file: foo.chunks at line: 2, and in file: bar.chunks at line: 1 or in file: foo.chunks at line: 1" ]
       check_read_data(reader, "foo" => {
-        "name" => "foo", "content" => "bar", "locations" => [
+        "name" => "foo", "html" => "bar", "locations" => [
           { "file" => "bar.chunks", "line" => 1 },
           { "file" => "foo.chunks", "line" => 1 },
         ]

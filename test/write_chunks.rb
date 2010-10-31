@@ -2,7 +2,7 @@ require "codnar"
 require "test/spec"
 require "fakefs/safe"
 
-module Codnar::Chunk
+module Codnar
 
   # Test writing chunks to files.
   class TestWriteChunks < Test::Unit::TestCase
