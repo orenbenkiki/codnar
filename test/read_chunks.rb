@@ -53,7 +53,7 @@ module Codnar
 
     def test_read_fake_chunk
       reader = Reader::new(@errors, [])
-      reader["foo"].name.should == "foo"
+      reader["foo"].should == Reader::fake_chunk("foo")
       @errors.should == [ "#{$0}: Missing chunk: foo" ]
     end
 

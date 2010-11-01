@@ -34,6 +34,7 @@ spec = Gem::Specification.new do |s|
 
   s.requirements << "GVim for syntax highlighting, Pod2Html for processing POD documentation (only if these are used in your documentation)."
 
+  s.add_dependency("erb")
   s.add_dependency("getoptions")
   s.add_dependency("rdiscount")
 

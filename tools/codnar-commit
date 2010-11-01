@@ -1,5 +1,6 @@
 #!/bin/sh
 true \
+&& git add . \
 && rake clobber \
 && rake verify \
 && git commit "$@" \

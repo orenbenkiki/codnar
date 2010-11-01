@@ -19,13 +19,17 @@ module Codnar
     def test_weave_chunks
       Writer::write("chunks", CHUNKS)
       errors = Errors.new
-      html = Weaver::new(errors, [ "chunks" ]).weave("top")
-      errors.should == []
-      html.should == <<-EOF.unindent
+      html = Weaver::new(errors, [ "chunks" ], {
+        "wrap_in_div" => "<div>\n<%= chunk.expanded_html %>\n</div>\n"
+      }).weave("top", "include")
+      errors.should == [ "#{$0}: Missing ERB template: include in file: chunk" ]
+      html.should == <<-EOF.unindent.chomp
         <html><body>
         <h1>Top</h1>
         <h2>Intermediate</h2>
+        <div>
         <h3>Bottom</h3>
+        </div>
         </html></body>
       EOF
     end
@@ -34,15 +38,19 @@ module Codnar
 
     CHUNKS = [ {
       "name" => "BOTTOM",
-      "html" => "<h3>Bottom</h3>\n"
+      "locations" => [ "file" => "chunk" ],
+      "html" => "<h3>Bottom</h3>\n",
     }, {
-      "name" => "Intermediate", "html" => <<-EOF.unindent
+      "name" => "Intermediate",
+      "locations" => [ "file" => "chunk" ],
+      "html" => <<-EOF.unindent
         <h2>Intermediate</h2>
-        <script type='x-codnar/include' src='bottom'>
+        <script type='x-codnar/wrap_in_div' src='bottom'>
         </script>
       EOF
     }, {
       "name" => "Top",
+      "locations" => [ "file" => "chunk" ],
       "html" => <<-EOF.unindent
         <html><body>
         <h1>Top</h1>

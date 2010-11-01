@@ -14,7 +14,10 @@ module Codnar
 
     # Fetch a chunk by its name.
     def [](name)
-      return @chunks[name.to_id] ||= fake_chunk(name)
+      return @chunks[name.to_id] ||= (
+        @errors << "Missing chunk: #{name}"
+        Reader::fake_chunk(name)
+      )
     end
 
   protected
@@ -55,7 +58,7 @@ module Codnar
     def self.different_chunks_error(old_chunk, new_chunk)
       old_location = Reader::locations_message(old_chunk)
       new_location = Reader::locations_message(new_chunk)
-      return "Chunk: #{old_chunk["name"]} is different #{new_location}, and #{old_location}"
+      return "Chunk: #{old_chunk.name} is different #{new_location}, and #{old_location}"
     end
 
     # Format a chunk's location for an error message.
@@ -65,8 +68,7 @@ module Codnar
     end
 
     # Return a fake chunk for the specified name.
-    def fake_chunk(name)
-      @errors << "Missing chunk: #{name}"
+    def self.fake_chunk(name)
       return {
         "name" => name,
         "locations" => [ { "file" => "MISSING" } ],

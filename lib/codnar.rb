@@ -1,3 +1,4 @@
+require "erb"
 require "rdiscount"
 require "yaml"
 

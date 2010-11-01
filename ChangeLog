@@ -1,5 +1,6 @@
 2010-11-01	Oren Ben-Kiki <oren@ben-kiki.org>
 
+	* Apply ERB templates while weaving.
 	* Protect methods and improve RDoc.
 
 2010-10-31	Oren Ben-Kiki <oren@ben-kiki.org>
