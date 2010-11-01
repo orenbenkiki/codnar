@@ -3,12 +3,10 @@ module Codnar
   # Write chunks into a disk file.
   class Writer
 
-    # Write chunks into the specified file.
-    def initialize(path, &block)
-      @chunks = []
-      File.open(path, "w") do |file|
-        block.call(self)
-        file.print(@chunks.to_yaml)
+    # Write one chunk or an array of chunks to a disk file.
+    def self.write(path, data)
+      self.new(path) do |writer|
+        writer << data
       end
     end
 
@@ -24,10 +22,14 @@ module Codnar
       end
     end
 
-    # Write one chunk or an array of chunks to a disk file.
-    def self.write(path, data)
-      self.new(path) do |writer|
-        writer << data
+  protected
+
+    # Write chunks into the specified disk file.
+    def initialize(path, &block)
+      @chunks = []
+      File.open(path, "w") do |file|
+        block.call(self)
+        file.print(@chunks.to_yaml)
       end
     end
 

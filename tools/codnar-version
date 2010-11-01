@@ -11,8 +11,10 @@ export COMMIT=`git rev-list --all | wc -l`
 # This file makes the data available to the Ruby code.
 # The file is made read-only to prevent accidental edits.
 cat <<EOF | sed 's/\r//g'
-# Edit tools/codnar-version to update this file!
+# This module contains all the code narrator code.
 module Codnar
+  # This version number.
   VERSION = "$MAJOR.$MINOR.$COMMIT"
+  # Edit tools/codnar-version to update this file!
 end
 EOF

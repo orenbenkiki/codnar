@@ -1,4 +1,6 @@
-# Edit tools/codnar-version to update this file!
+# This module contains all the code narrator code.
 module Codnar
-  VERSION = "0.0.15"
+  # This version number.
+  VERSION = "0.0.16"
+  # Edit tools/codnar-version to update this file!
 end

@@ -3,8 +3,9 @@ module Codnar
   # Weave all chunks to a unified HTML.
   class Weaver < Reader
 
-    # Load all chunks to memory.
-    def initialize(errors, paths, templates = {})
+    # Load all chunks from the specified disk files to memory for weaving using
+    # the specified templates.
+    def initialize(errors, paths, templates)
       super(errors, paths)
       @templates = templates
     end

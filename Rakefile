@@ -80,8 +80,6 @@ RoodiTask.new do |task|
   task.patterns = patterns.values
 end
 
-CLEAN.include("SANDBOX*")
-
 Rake::TestTask.new("test") do |task|
   task.test_files = files["test"]
   task.libs << "lib"

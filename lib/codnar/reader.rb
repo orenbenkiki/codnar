@@ -3,7 +3,8 @@ module Codnar
   # Read chunks from disk files.
   class Reader
 
-    # Load all chunks to memory.
+    # Load all chunks from the specified disk files to memory for later access
+    # by name.
     def initialize(errors, paths)
       @errors = errors
       @chunks = {}
@@ -22,7 +23,7 @@ module Codnar
 
   protected
 
-    # Load all chunks from a file into memory.
+    # Load all chunks from a disk file into memory.
     def load_path_chunks(path)
       @errors.in_path(path) do
         chunks = YAML::load_file(path)

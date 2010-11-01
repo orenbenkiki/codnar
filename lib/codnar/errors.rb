@@ -9,7 +9,7 @@ module Codnar
       @line = nil
     end
 
-    # Collect errors associated with a specific file.
+    # Collect errors associated with a specific disk file.
     def in_path(path, &block)
       prev_path, prev_line = @path, @line
       @path, @line = path, nil
