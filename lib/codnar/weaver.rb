@@ -11,6 +11,8 @@ module Codnar
       return expand_embedded_chunks(chunk_html || "")
     end
 
+  protected
+
     # Due to http://github.com/relevance/rcov/issues/#issue/43 the following regular expressions must be on a single line.
 
     # Detect embedded chunks (type= before src=).

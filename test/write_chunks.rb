@@ -26,6 +26,8 @@ module Codnar
       lambda { check_writing_data("not a chunk") }.should.raise
     end
 
+  protected
+
     def check_writing_data(data)
       Writer::write("path", data)
       data = [ data ] unless Array === data

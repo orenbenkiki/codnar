@@ -72,6 +72,8 @@ module Codnar
       })
     end
 
+  protected
+
     def check_read_data(reader, chunks)
       chunks.each do |name, chunk|
         reader[name].should == chunk

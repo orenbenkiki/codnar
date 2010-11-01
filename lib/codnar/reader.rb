@@ -12,10 +12,17 @@ module Codnar
       end
     end
 
+    # Fetch a chunk by its name.
+    def [](name)
+      return @chunks[name.to_id] ||= fake_chunk(name)
+    end
+
+  protected
+
     # Load all chunks from a file into memory.
     def load_path_chunks(path)
       @errors.in_path(path) do
-        chunks = YAML.load_file(path)
+        chunks = YAML::load_file(path)
         merge_loaded_chunks(chunks)
       end
     end
@@ -26,7 +33,7 @@ module Codnar
         old_chunk = @chunks[id = new_chunk.name.to_id]
         if old_chunk.nil?
           @chunks[id] = new_chunk
-        elsif Reader.same_chunk?(old_chunk, new_chunk)
+        elsif Reader::same_chunk?(old_chunk, new_chunk)
           old_chunk.locations += new_chunk.locations
         else
           @errors.push(Reader.different_chunks_error(old_chunk, new_chunk))
@@ -55,11 +62,6 @@ module Codnar
     def self.locations_message(chunk)
       locations = chunk.locations.map { |location| "in file: #{location.file} at line: #{location.line}" }
       return locations.join(" or ")
-    end
-
-    # Fetch a chunk by its name.
-    def [](name)
-      return @chunks[name.to_id] ||= fake_chunk(name)
     end
 
     # Return a fake chunk for the specified name.

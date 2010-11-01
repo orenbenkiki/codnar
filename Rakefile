@@ -53,6 +53,7 @@ spec = Gem::Specification.new do |s|
   s.rdoc_options << "--title" << "Code narrator #{s.version}"
   s.rdoc_options << "--main" << "README.rdoc"
   s.rdoc_options << "--line-numbers"
+  s.rdoc_options << "--all"
 
 end
 

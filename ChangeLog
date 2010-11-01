@@ -1,3 +1,7 @@
+2010-11-01	Oren Ben-Kiki <oren@ben-kiki.org>
+
+	* Protect methods and improve RDoc.
+
 2010-10-31	Oren Ben-Kiki <oren@ben-kiki.org>
 
 	* Weave chunks to unified HTML.
