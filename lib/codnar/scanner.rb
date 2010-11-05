@@ -58,9 +58,10 @@ module Codnar
     #     line: <text>
     #     state: <name>
     def lines(path)
+      @path = path
       @lines = []
       @state = @syntax.start_state
-      @errors.in_path(path) { scan_path(path) }
+      @errors.in_path(path) { scan_path }
       return @lines
     end
 
@@ -113,17 +114,17 @@ module Codnar
     end
 
     # Scan a disk file.
-    def scan_path(path)
-      File.open(path, "r") do |file|
+    def scan_path
+      File.open(@path, "r") do |file|
         scan_file(file)
       end
     end
 
     # Scan an opened file.
     def scan_file(file)
-      line_number = 0
+      @line_number = 0
       file.read.each_line do |line|
-        @errors.at_line(line_number += 1)
+        @errors.at_line(@line_number += 1)
         scan_line(line)
       end
     end
@@ -140,7 +141,7 @@ module Codnar
 
     # Handle a line that couldn't be classified.
     def unclassified_line(line, state_name)
-      @lines << { "line" => line, "kind" => "error", "state" => state_name }
+      @lines << { "line" => line, "kind" => "error", "state" => state_name }.merge(line_location)
       @errors << "State: #{state_name} failed to classify line: #{line.chomp}"
     end
 
@@ -148,9 +149,14 @@ module Codnar
     def classify_matching_line(line, pattern, next_state)
       match = pattern.regexp.match(line)
       return false unless match
-      @lines << Scanner::extracted_groups(match, pattern.groups).update({ "line" => line, "kind" => @state.kind })
+      @lines << Scanner::extracted_groups(match, pattern.groups).update({ "line" => line, "kind" => @state.kind }.merge(line_location))
       @state = next_state
       return true
+    end
+
+    # Return the location of the current line
+    def line_location
+      return { "location" => { "file" => @path, "line" => @line_number } }
     end
 
     # Extract named groups from a match.

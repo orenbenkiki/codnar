@@ -17,7 +17,7 @@ module Codnar
       FakeFS.deactivate!
     end
 
-    def test_scan_fragments
+    def test_scan_lines
       File::open("comments", "w") { |file| file.write(INPUT) }
       scanner = Scanner.new(@errors, SYNTAX)
       scanner.lines("comments").should == LINES
@@ -52,14 +52,17 @@ module Codnar
       "kind" => "comment",
       "line" => "# foo\n",
       "comment" => "foo",
+      "location" => { "file" => "comments", "line" => 1 },
     }, {
       "kind" => "comment",
       "line" => "// bar\n",
       "comment" => "bar",
+      "location" => { "file" => "comments", "line" => 2 },
     }, {
       "kind" => "error",
       "line" => "baz\n",
-      "state" => "comment"
+      "state" => "comment",
+      "location" => { "file" => "comments", "line" => 3 },
     } ]
 
     ERRORS = [
