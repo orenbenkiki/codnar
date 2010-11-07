@@ -141,7 +141,7 @@ module Codnar
 
     # Handle a line that couldn't be classified.
     def unclassified_line(line, state_name)
-      @lines << { "line" => line, "kind" => "error", "state" => state_name }.merge(line_location)
+      @lines << { "line" => line, "kind" => "error", "state" => state_name, "number" => @line_number }
       @errors << "State: #{state_name} failed to classify line: #{line.chomp}"
     end
 
@@ -149,14 +149,9 @@ module Codnar
     def classify_matching_line(line, pattern, next_state)
       match = pattern.regexp.match(line)
       return false unless match
-      @lines << Scanner::extracted_groups(match, pattern.groups).update({ "line" => line, "kind" => @state.kind }.merge(line_location))
+      @lines << Scanner.extracted_groups(match, pattern.groups).update({ "line" => line, "kind" => @state.kind, "number" => @line_number })
       @state = next_state
       return true
-    end
-
-    # Return the location of the current line
-    def line_location
-      return { "location" => { "file" => @path, "line" => @line_number } }
     end
 
     # Extract named groups from a match.

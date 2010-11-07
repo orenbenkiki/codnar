@@ -17,7 +17,7 @@ module Codnar
     def [](name)
       return @chunks[name.to_id] ||= (
         @errors << "Missing chunk: #{name}"
-        Reader::fake_chunk(name)
+        Reader.fake_chunk(name)
       )
     end
 
@@ -26,7 +26,7 @@ module Codnar
     # Load all chunks from a disk file into memory.
     def load_path_chunks(path)
       @errors.in_path(path) do
-        chunks = YAML::load_file(path)
+        chunks = YAML.load_file(path)
         merge_loaded_chunks(chunks)
       end
     end
@@ -37,7 +37,7 @@ module Codnar
         old_chunk = @chunks[id = new_chunk.name.to_id]
         if old_chunk.nil?
           @chunks[id] = new_chunk
-        elsif Reader::same_chunk?(old_chunk, new_chunk)
+        elsif Reader.same_chunk?(old_chunk, new_chunk)
           old_chunk.locations += new_chunk.locations
         else
           @errors.push(Reader.different_chunks_error(old_chunk, new_chunk))
@@ -47,7 +47,7 @@ module Codnar
 
     # Check whether two chunks contain the same "stuff".
     def self.same_chunk?(old_chunk, new_chunk)
-      return Reader::chunk_payload(old_chunk) == Reader::chunk_payload(new_chunk)
+      return Reader.chunk_payload(old_chunk) == Reader.chunk_payload(new_chunk)
     end
 
     # Return just the actual payload of a chunk for equality comparison.
@@ -57,8 +57,8 @@ module Codnar
 
     # Error message when two different chunks have the same name.
     def self.different_chunks_error(old_chunk, new_chunk)
-      old_location = Reader::locations_message(old_chunk)
-      new_location = Reader::locations_message(new_chunk)
+      old_location = Reader.locations_message(old_chunk)
+      new_location = Reader.locations_message(new_chunk)
       return "Chunk: #{old_chunk.name} is different #{new_location}, and #{old_location}"
     end
 

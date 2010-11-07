@@ -17,9 +17,9 @@ module Codnar
     end
 
     def test_weave_chunks
-      Writer::write("chunks", CHUNKS)
+      Writer.write("chunks", CHUNKS)
       errors = Errors.new
-      html = Weaver::new(errors, [ "chunks" ], {
+      html = Weaver.new(errors, [ "chunks" ], {
         "wrap_in_div" => "<div>\n<%= chunk.expanded_html %>\n</div>\n"
       }).weave("top", "include")
       errors.should == [ "#{$0}: Missing ERB template: include in file: chunk" ]

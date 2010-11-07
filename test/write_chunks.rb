@@ -29,7 +29,7 @@ module Codnar
   protected
 
     def check_writing_data(data)
-      Writer::write("path", data)
+      Writer.write("path", data)
       data = [ data ] unless Array === data
       YAML.load_file("path").should == data
     end

@@ -17,7 +17,7 @@ module Codnar
     # Split a disk file into chunks.
     def chunks(path)
       @lines = @scanner.lines(path)
-      merge_similar_lines
+      merge_similar_lines(path)
       convert_fragments_to_html
       return file_chunk(path)
     end
@@ -37,9 +37,9 @@ module Codnar
   protected
 
     # Merge consequitive lines that have the same kind.
-    def merge_similar_lines
+    def merge_similar_lines(path)
       return [] if @lines.size == 0
-      single_line_fragments = @lines.map { |line| Splitter.line_fragment(line) }
+      single_line_fragments = @lines.map { |line| Splitter.line_fragment(path, line) }
       @fragments = [ single_line_fragments.shift ]
       single_line_fragments.each do |next_fragment|
         merge_next_fragment(next_fragment)
@@ -60,10 +60,10 @@ module Codnar
     end
 
     # Construct a multi-line fragment for a single line.
-    def self.line_fragment(line)
+    def self.line_fragment(path, line)
       return {
-        "kind" => line.delete("kind"),
-        "location" => line.location.merge({ "lines" => 1 }),
+        "kind" => line.kind,
+        "location" => { "file" => path, "line" => line.number, "lines" => 1 },
         "lines" => [ line ]
       }
     end

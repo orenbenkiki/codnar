@@ -83,19 +83,14 @@ end
 Rake::TestTask.new("test") do |task|
   task.test_files = files["test"]
   task.libs << "lib"
-  task.verbose = false
 end
 
 Rcov::RcovTask.new("rcov") do |task|
   task.output_dir = "rcov"
   task.test_files = files["test"]
   task.libs << "lib"
-  task.verbose = false
-  task.rcov_opts << "--text-summary"
-  task.rcov_opts << "--text-summary"
   task.rcov_opts << "--failure-threshold" << "100"
   (files["lib"] + files["test"]).each do |file|
-    task.rcov_opts << "--include-file" << file \
-      unless file == "lib/codnar/test/failure.rb" # TRICKY: Test failure code should not be reached.
+    task.rcov_opts << "--include-file" << file
   end
 end

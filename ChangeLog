@@ -1,3 +1,7 @@
+2010-11-07	Oren Ben-Kiki <oren@ben-kiki.org>
+
+	* Merge lines into chunks.
+
 2010-11-06	Oren Ben-Kiki <oren@ben-kiki.org>
 
 	* "Split" markdown documentation files.

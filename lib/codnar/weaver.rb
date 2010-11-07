@@ -30,7 +30,7 @@ module Codnar
     # Recursively expand all embedded chunks inside a container chunk.
     def expand_chunk_html(chunk)
       html = chunk.html
-      @errors.push("No HTML in chunk: #{chunk.name} #{Weaver::locations_message(chunk)}") unless html
+      @errors.push("No HTML in chunk: #{chunk.name} #{Weaver.locations_message(chunk)}") unless html
       # TRICKY: All "container" chunks are assumed to be whole-file chunks with
       # a single location. Which makes sense as these are documentation and not
       # code chunks. TODO: It would be nice to know the exact line number of

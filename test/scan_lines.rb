@@ -18,7 +18,7 @@ module Codnar
     end
 
     def test_scan_lines
-      File::open("comments", "w") { |file| file.write(INPUT) }
+      File.open("comments", "w") { |file| file.write(INPUT) }
       scanner = Scanner.new(@errors, SYNTAX)
       scanner.lines("comments").should == LINES
       @errors.should == ERRORS
@@ -52,17 +52,17 @@ module Codnar
       "kind" => "comment",
       "line" => "# foo\n",
       "comment" => "foo",
-      "location" => { "file" => "comments", "line" => 1 },
+      "number" => 1,
     }, {
       "kind" => "comment",
       "line" => "// bar\n",
       "comment" => "bar",
-      "location" => { "file" => "comments", "line" => 2 },
+      "number" => 2,
     }, {
       "kind" => "error",
       "line" => "baz\n",
       "state" => "comment",
-      "location" => { "file" => "comments", "line" => 3 },
+      "number" => 3,
     } ]
 
     ERRORS = [
