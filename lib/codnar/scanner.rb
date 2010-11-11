@@ -99,9 +99,8 @@ module Codnar
     def lookup(mapping, type, reference)
       return reference unless String === reference
       data = mapping[reference]
-      return data if data
-      @errors << "Reference to a missing #{type}: #{reference}"
-      return nil
+      @errors << "Reference to a missing #{type}: #{reference}" unless data
+      return data
     end
 
     # Resolve the start state reference.

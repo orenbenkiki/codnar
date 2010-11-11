@@ -1,3 +1,7 @@
+2010-11-11	Oren Ben-Kiki <oren@ben-kiki.org>
+
+	* Group lines of the same kind.
+
 2010-11-07	Oren Ben-Kiki <oren@ben-kiki.org>
 
 	* Merge lines into chunks.

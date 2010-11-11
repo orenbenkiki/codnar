@@ -96,8 +96,7 @@ module Codnar
     # Check whether an end chunk line matches the begin chunk line.
     def self.matching_end_chunk_line?(chunk, line)
       line_name = line.name
-      return true if line_name.nil? || line_name == ""
-      return line_name.to_id == chunk.name.to_id
+      return line_name.to_s == "" || line_name.to_id == chunk.name.to_id
     end
 
   end
