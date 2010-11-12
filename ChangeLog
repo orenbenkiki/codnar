@@ -1,5 +1,6 @@
 2010-11-12	Oren Ben-Kiki <oren@ben-kiki.org>
 
+	* Highlight syntax using GVim.
 	* Expand RDoc lines to HTML.
 	* Refactor Splitter to use Scanner, Merger, and Formatter.
 

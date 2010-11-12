@@ -11,7 +11,7 @@ module Codnar
     end
 
     def test_merge_no_chunks
-      lines = [ { "kind" => "code", "line" => "foo\n", "number" => 1 } ]
+      lines = [ { "kind" => "code", "line" => "foo", "number" => 1 } ]
       Merger.chunks(@errors, "path", lines).should == [ {
         "name" => "path",
         "locations" => [ { "file" => "path", "line" => 1 } ],
@@ -26,19 +26,19 @@ module Codnar
     end
 
     VALID_LINES = [
-      { "kind" => "code", "line" => "before top\n", "number" => 1 },
-      { "kind" => "begin_chunk", "line" => "{{{ top chunk\n", "number" => 2, "name" => "top chunk" },
-      { "kind" => "code", "line" => "before intermediate\n", "number" => 3 },
-      { "kind" => "begin_chunk", "line" => "{{{ intermediate chunk\n", "number" => 4, "name" => "intermediate chunk" },
-      { "kind" => "code", "line" => "before inner\n", "number" => 5 },
-      { "kind" => "begin_chunk", "line" => "{{{ inner chunk\n", "number" => 6, "name" => "inner chunk" },
-      { "kind" => "code", "line" => "inner line\n", "number" => 7 },
-      { "kind" => "end_chunk", "line" => "}}} inner chunk\n", "number" => 8, "name" => "inner chunk" },
-      { "kind" => "code", "line" => "after inner\n", "number" => 9 },
-      { "kind" => "end_chunk", "line" => "}}}\n", "number" => 10, "name" => "" },
-      { "kind" => "code", "line" => "after intermediate\n", "number" => 11 },
-      { "kind" => "end_chunk", "line" => "}}} TOP CHUNK\n", "number" => 12, "name" => "TOP CHUNK" },
-      { "kind" => "code", "line" => "after top\n", "number" => 13 }
+      { "kind" => "code", "line" => "before top", "number" => 1 },
+      { "kind" => "begin_chunk", "line" => "{{{ top chunk", "number" => 2, "name" => "top chunk" },
+      { "kind" => "code", "line" => "before intermediate", "number" => 3 },
+      { "kind" => "begin_chunk", "line" => "{{{ intermediate chunk", "number" => 4, "name" => "intermediate chunk" },
+      { "kind" => "code", "line" => "before inner", "number" => 5 },
+      { "kind" => "begin_chunk", "line" => "{{{ inner chunk", "number" => 6, "name" => "inner chunk" },
+      { "kind" => "code", "line" => "inner line", "number" => 7 },
+      { "kind" => "end_chunk", "line" => "}}} inner chunk", "number" => 8, "name" => "inner chunk" },
+      { "kind" => "code", "line" => "after inner", "number" => 9 },
+      { "kind" => "end_chunk", "line" => "}}}", "number" => 10, "name" => "" },
+      { "kind" => "code", "line" => "after intermediate", "number" => 11 },
+      { "kind" => "end_chunk", "line" => "}}} TOP CHUNK", "number" => 12, "name" => "TOP CHUNK" },
+      { "kind" => "code", "line" => "after top", "number" => 13 }
     ]
 
     VALID_CHUNKS = [ {
@@ -46,7 +46,7 @@ module Codnar
       "locations" => [ { "file" => "path", "line" => 1 } ],
       "lines" => [
         VALID_LINES[0],
-        { "kind" => "nested_chunk", "line" => "{{{ top chunk\n", "number" => 2, "name" => "top chunk" },
+        { "kind" => "nested_chunk", "line" => "{{{ top chunk", "number" => 2, "name" => "top chunk" },
         VALID_LINES[12],
       ],
     }, {
@@ -54,7 +54,7 @@ module Codnar
       "locations" => [ { "file" => "path", "line" => 2 } ],
       "lines" => [
         VALID_LINES[1], VALID_LINES[2],
-        { "kind" => "nested_chunk", "line" => "{{{ intermediate chunk\n", "number" => 4, "name" => "intermediate chunk" },
+        { "kind" => "nested_chunk", "line" => "{{{ intermediate chunk", "number" => 4, "name" => "intermediate chunk" },
         VALID_LINES[10], VALID_LINES[11],
       ],
     }, {
@@ -62,7 +62,7 @@ module Codnar
       "locations" => [ { "file" => "path", "line" => 4 } ],
       "lines" => [
         VALID_LINES[3], VALID_LINES[4],
-        { "kind" => "nested_chunk", "line" => "{{{ inner chunk\n", "number" => 6, "name" => "inner chunk" },
+        { "kind" => "nested_chunk", "line" => "{{{ inner chunk", "number" => 6, "name" => "inner chunk" },
         VALID_LINES[8], VALID_LINES[9],
       ],
     }, {
@@ -73,8 +73,8 @@ module Codnar
 
     def test_mismatching_end_chunk_line
       lines = [
-        { "kind" => "begin_chunk", "line" => "{{{ top chunk\n", "number" => 1, "name" => "top chunk" },
-        { "kind" => "end_chunk", "line" => "}}} not top chunk\n", "number" => 2, "name" => "not top chunk" }
+        { "kind" => "begin_chunk", "line" => "{{{ top chunk", "number" => 1, "name" => "top chunk" },
+        { "kind" => "end_chunk", "line" => "}}} not top chunk", "number" => 2, "name" => "not top chunk" }
       ]
       Merger.chunks(@errors, "path", lines)
       @errors.should == [ "#{$0}: End line for chunk: not top chunk mismatches begin line for chunk: top chunk in file: path at line: 2" ]
@@ -82,15 +82,15 @@ module Codnar
 
     def test_missing_begin_chunk_name
       lines = [
-        { "kind" => "begin_chunk", "line" => "{{{\n", "number" => 1, "name" => "" },
-        { "kind" => "end_chunk", "line" => "}}}\n", "number" => 2, "name" => "" }
+        { "kind" => "begin_chunk", "line" => "{{{", "number" => 1, "name" => "" },
+        { "kind" => "end_chunk", "line" => "}}}", "number" => 2, "name" => "" }
       ]
       Merger.chunks(@errors, "path", lines)
       @errors.should == [ "#{$0}: Begin line for chunk with no name in file: path at line: 1" ]
     end
 
     def test_missing_end_chunk_line
-      lines = [ { "kind" => "begin_chunk", "line" => "{{{ top chunk\n", "number" => 1, "name" => "top chunk" } ]
+      lines = [ { "kind" => "begin_chunk", "line" => "{{{ top chunk", "number" => 1, "name" => "top chunk" } ]
       Merger.chunks(@errors, "path", lines)
       @errors.should == [ "#{$0}: Missing end line for chunk: top chunk in file: path at line: 1" ]
     end

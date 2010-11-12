@@ -7,11 +7,11 @@ module Codnar
   class TestExpandRDoc < Test::Unit::TestCase
 
     def test_emphasis_text
-      RDoc.rdoc_to_html("_text_").should == "<p>\n<em>text</em>\n</p>"
+      RDoc.rdoc_to_html("_text_").should == "<p>\n<em>text</em>\n</p>\n"
     end
 
     def test_strong_text
-      RDoc.rdoc_to_html("*text*").should == "<p>\n<b>text</b>\n</p>"
+      RDoc.rdoc_to_html("*text*").should == "<p>\n<b>text</b>\n</p>\n"
     end
 
   end

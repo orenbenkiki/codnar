@@ -27,15 +27,15 @@ module Codnar
     SYNTAX = {
       "start_state" => "comment",
       "patterns" => {
-        "shell" => { "regexp" => "^#+\s*(.*)$", "groups" => [ "comment" ] },
-        "c++" => { "regexp" => /^\/\/+\s*(.*)$/, "groups" => [ "comment" ] },
+        "shell" => { "regexp" => "^#+\s*(.*)$", "groups" => [ "comment" ], "kind" => "comment" },
+        "c++" => { "regexp" => /^\/\/+\s*(.*)$/, "groups" => [ "comment" ], "kind" => "comment" },
         "invalid" => { "regexp" => "(" }
       },
       "states" => {
         "comment" => {
           "transitions" => [
-            { "pattern" => "shell", "next_state" => "comment" },
-            { "pattern" => "c++", "next_state" => "comment" },
+            { "pattern" => "shell" },
+            { "pattern" => "c++" },
             { "pattern" => "no-such-pattern", "next_state" => "no-such-state" },
           ]
         }
@@ -50,17 +50,17 @@ module Codnar
 
     LINES = [ {
       "kind" => "comment",
-      "line" => "# foo\n",
+      "line" => "# foo",
       "comment" => "foo",
       "number" => 1,
     }, {
       "kind" => "comment",
-      "line" => "// bar\n",
+      "line" => "// bar",
       "comment" => "bar",
       "number" => 2,
     }, {
       "kind" => "error",
-      "line" => "baz\n",
+      "line" => "baz",
       "state" => "comment",
       "number" => 3,
     } ]

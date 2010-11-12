@@ -91,10 +91,22 @@ module Codnar
       merged_line.kind = "html"
       merged_line.html = "<pre" \
                        + (attributes == {} ? "" : " " + attributes.map { |name, value| "#{name}='#{CGI.escapeHTML(value.to_s)}'" }.join(" ")) \
-                       + ">" \
-                       + lines.map { |line| CGI.escapeHTML(line.line.chomp) }.join("\n") \
+                       + ">\n" \
+                       + lines.map { |line| CGI.escapeHTML(line.line) + "\n" }.join \
                        + "</pre>"
       return [ merged_line ]
+    end
+
+    # Format lines that indicate a nested chunk to HTML.
+    def self.nested_chunk_lines_to_html(lines)
+      return lines.map do |line|
+        (line = line.dup).kind = "html"
+        chunk_name = line.name
+        line.html = "<pre class='nested_chunk'>\n" \
+                  + "#{line.line.indentation}<a href='#{chunk_name.to_id}'>#{CGI.escapeHTML(chunk_name)}</a>\n" \
+                  + "</pre>"
+        line
+      end
     end
 
   end

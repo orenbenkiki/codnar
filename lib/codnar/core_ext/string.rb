@@ -9,9 +9,13 @@ class String
 
   # Strip away common indentation from the beginning of each line in this
   # String. By default, detects the indentation from the first line.
-  def unindent(indentation = nil)
-    indentation ||= sub(/[^ ].*/m, "")
-    return gsub(/^#{indentation}/, "")
+  def unindent(unindentation = indentation)
+    return gsub(/^#{unindentation}/, "")
+  end
+
+  # Extract the indentation from the beginning of this String.
+  def indentation
+    return sub(/[^ ].*$/m, "")
   end
 
 end

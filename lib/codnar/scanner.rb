@@ -8,15 +8,16 @@ module Codnar
     #   patterns:
     #     <name>:
     #       name: <name>
+    #       kind: <kind>
     #       regexp: <regexp>
     #       groups:
     #       - <name>
     #   states:
     #     <name>:
     #       name: <name>
-    #       kind: <kind>
     #       transitions:
     #       - pattern: <pattern>
+    #         kind: <kind>
     #         next_state: <state>
     #   start_state: <state>
     #
@@ -27,11 +28,15 @@ module Codnar
     #   state name.
     # - The name field of a state or pattern can be ommitted. If specified, it
     #   must be identical to the key in the states or patterns mapping.
-    # - The kind field of a state can be ommitted; by default it is assumed to
-    #   be identical to the state name.
-    # - A regexp can be presented by a plain string.
+    # - The kind field of a pattern can be ommitted; by default it is assumed
+    #   to be identical to the pattern name.
+    # - A pattern regexp can be presented by a plain string.
     # - The pattern groups field can be ommitted or contain null if it is
     #   empty.
+    # - The kind field of a transition can be ommitted; by default it is
+    #   assumed to be identical to the pattern kind.
+    # - The next step of a transition can be ommitted; by default it is
+    #   assumed to be identical to the containing state.
     #
     # When the Scanner is constructed, the syntax object is modified in place
     # to expand all the above shorthands, collecting any invalid references
@@ -69,13 +74,18 @@ module Codnar
 
     # Expand all the shorthands used in the pattern.
     def expand_pattern_shorthands(name, pattern)
-      fill_name(name, pattern, "Pattern")
+      pattern.kind ||= fill_name(name, pattern, "Pattern")
       pattern.groups ||= []
+      pattern.regexp = convert_to_regexp(name, pattern.regexp)
+    end
+
+    # Convert a string regexp to a real Regexp.
+    def convert_to_regexp(name, regexp)
+      return regexp if Regexp == regexp
       begin
-        pattern_regexp = pattern.regexp
-        pattern.regexp = Regexp.new(pattern_regexp) unless Regexp === pattern_regexp
+        return Regexp.new(regexp)
       rescue
-        @errors << "Invalid pattern: #{name} regexp: #{pattern_regexp} error: #{$!}"
+        @errors << "Invalid pattern: #{name} regexp: #{regexp} error: #{$!}"
       end
     end
 
@@ -83,15 +93,16 @@ module Codnar
     def fill_name(name, data, type)
       data_name = data.name ||= name
       @errors << "#{type}: #{name} has wrong name: #{data_name}" if data_name != name
+      return data_name
     end
 
     # Expand all the shorthands used in the state.
     def expand_state_shorthands(name, state)
       fill_name(name, state, "State")
-      state.kind ||= name
       state.transitions.each do |transition|
-        transition.pattern = lookup(@syntax.patterns, "pattern", transition.pattern)
-        transition.next_state = lookup(@syntax.states, "state", transition.next_state)
+        pattern = transition.pattern = lookup(@syntax.patterns, "pattern", transition.pattern)
+        transition.kind ||= pattern.andand.kind
+        transition.next_state = lookup(@syntax.states, "state", transition.next_state || state)
       end
     end
 
@@ -124,16 +135,14 @@ module Codnar
       @line_number = 0
       file.read.each_line do |line|
         @errors.at_line(@line_number += 1)
-        scan_line(line)
+        scan_line(line.chomp)
       end
     end
 
     # Scan the next line.
     def scan_line(line)
       @state.transitions.each do |transition|
-        pattern = transition.pattern
-        next_state = transition.next_state
-        return if pattern && next_state && classify_matching_line(line, pattern, next_state)
+        return if transition.pattern && transition.next_state && classify_matching_line(line, transition)
       end
       unclassified_line(line, @state.name)
     end
@@ -141,15 +150,15 @@ module Codnar
     # Handle a line that couldn't be classified.
     def unclassified_line(line, state_name)
       @lines << { "line" => line, "kind" => "error", "state" => state_name, "number" => @line_number }
-      @errors << "State: #{state_name} failed to classify line: #{line.chomp}"
+      @errors << "State: #{state_name} failed to classify line: #{line}"
     end
 
     # Handle a classified line only if it matches the pattern.
-    def classify_matching_line(line, pattern, next_state)
-      match = pattern.regexp.match(line)
+    def classify_matching_line(line, transition)
+      match = (pattern = transition.pattern).regexp.match(line)
       return false unless match
-      @lines << Scanner.extracted_groups(match, pattern.groups).update({ "line" => line, "kind" => @state.kind, "number" => @line_number })
-      @state = next_state
+      @lines << Scanner.extracted_groups(match, pattern.groups).update({ "line" => line, "kind" => transition.kind, "number" => @line_number })
+      @state = transition.next_state
       return true
     end
 

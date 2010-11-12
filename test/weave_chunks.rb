@@ -23,7 +23,7 @@ module Codnar
         "wrap_in_div" => "<div>\n<%= chunk.expanded_html %>\n</div>\n"
       }).weave("top", "include")
       errors.should == [ "#{$0}: Missing ERB template: include in file: chunk" ]
-      html.should == <<-EOF.unindent.chomp
+      html.should == <<-EOF.unindent
         <html><body>
         <h1>Top</h1>
         <h2>Intermediate</h2>

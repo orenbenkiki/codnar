@@ -23,7 +23,7 @@ module Codnar
       splitter.chunks("raw.html").should == [ {
         "name" => "raw.html",
         "locations" => [ { "file" => "raw.html", "line" => 1 } ],
-        "html" => "<foo>\nbar\n</foo>"
+        "html" => "<foo>\nbar\n</foo>\n"
       } ]
       @errors.should == []
     end
@@ -34,7 +34,7 @@ module Codnar
       splitter.chunks("markdown.md").should == [ {
         "name" => "markdown.md",
         "locations" => [ { "file" => "markdown.md", "line" => 1 } ],
-        "html" => "<p><em>foo</em>\nbar</p>"
+        "html" => "<div class='markdown'>\n<p><em>foo</em>bar</p>\n</div>\n"
       } ]
       @errors.should == []
     end
@@ -45,7 +45,7 @@ module Codnar
       splitter.chunks("rdoc.rdoc").should == [ {
         "name" => "rdoc.rdoc",
         "locations" => [ { "file" => "rdoc.rdoc", "line" => 1 } ],
-        "html" => "<p>\n<b>foo</b> bar\n</p>"
+        "html" => "<div class='rdoc'>\n<p>\n<b>foo</b> bar\n</p>\n</div>\n"
       } ]
       @errors.should == []
     end
@@ -56,7 +56,7 @@ module Codnar
       splitter.chunks("unknown.kind").should == [ {
         "name" => "unknown.kind",
         "locations" => [ { "file" => "unknown.kind", "line" => 1 } ],
-        "html" => "<pre class='missing_formatter'>foo\nbar</pre>"
+        "html" => "<pre class='missing_formatter'>\nfoo\nbar\n</pre>\n"
       } ]
       @errors.should == [ "#{$0}: No formatter specified for lines of kind: unknown-kind" ]
     end

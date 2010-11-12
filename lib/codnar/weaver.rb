@@ -42,8 +42,8 @@ module Codnar
 
     # Recursively expand_embedded_chunks all embedded chunk inside an HTML.
     def expand_embedded_chunks(html)
-      return html.gsub(TYPE_SRC_CHUNK) { |match| weave($2, $1) } \
-                 .gsub(SRC_TYPE_CHUNK) { |match| weave($1, $2) }
+      return html.gsub(TYPE_SRC_CHUNK) { |match| weave($2, $1).chomp } \
+                 .gsub(SRC_TYPE_CHUNK) { |match| weave($1, $2).chomp }
     end
 
     # Process the chunk using an ERB template prior to inclusion in container
@@ -57,7 +57,7 @@ module Codnar
         (
           chunk.erb ||= {}
         )[template_name] ||= ERB.new(template_text, nil, "%")
-      ).result(binding).chomp
+      ).result(binding)
     end
 
   end

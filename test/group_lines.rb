@@ -16,17 +16,17 @@ module Codnar
 
     def test_group_lines
       Grouper.lines_to_groups([
-        { "kind" => "code", "line" => "0\n" },
-        { "kind" => "code", "line" => "1\n" },
-        { "kind" => "comment", "line" => "2\n" },
-        { "kind" => "code", "line" => "3\n" },
+        { "kind" => "code", "line" => "0" },
+        { "kind" => "code", "line" => "1" },
+        { "kind" => "comment", "line" => "2" },
+        { "kind" => "code", "line" => "3" },
       ]).should == [ [
-        { "kind" => "code", "line" => "0\n" },
-        { "kind" => "code", "line" => "1\n" },
+        { "kind" => "code", "line" => "0" },
+        { "kind" => "code", "line" => "1" },
       ], [
-        { "kind" => "comment", "line" => "2\n" },
+        { "kind" => "comment", "line" => "2" },
       ], [
-        { "kind" => "code", "line" => "3\n" },
+        { "kind" => "code", "line" => "3" },
       ] ]
     end
 
