@@ -7,9 +7,9 @@ module Codnar
     def self.lines_to_html(lines)
       merged_line = lines[0]
       merged_line.kind = "html"
-      merged_line.html = "<div class='markdown'>\n" \
-                       + Markdown.md_to_html(lines.map { |line| line.markdown "\n" }.join) \
-                       + "</div>"
+      merged_line.payload = "<div class='markdown'>\n" \
+                          + Markdown.md_to_html(lines.map { |line| line.payload + "\n" }.join) \
+                          + "</div>"
       return [ merged_line ]
     end
 

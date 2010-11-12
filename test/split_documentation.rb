@@ -34,7 +34,7 @@ module Codnar
       splitter.chunks("markdown.md").should == [ {
         "name" => "markdown.md",
         "locations" => [ { "file" => "markdown.md", "line" => 1 } ],
-        "html" => "<div class='markdown'>\n<p><em>foo</em>bar</p>\n</div>\n"
+        "html" => "<div class='markdown'>\n<p><em>foo</em>\nbar</p>\n</div>\n"
       } ]
       @errors.should == []
     end
@@ -72,12 +72,12 @@ module Codnar
         "syntax" => {
           "start_state" => kind,
           "patterns" => {
-            kind => { "regexp" => "^(.*)$", "groups" => [ kind ] },
+            kind => { "regexp" => "^(.*)$", "groups" => [ "payload" ] },
           },
           "states" => {
             kind => {
               "transitions" => [
-                { "pattern" => kind, "next_state" => kind }
+                { "pattern" => kind }
               ]
             }
           }

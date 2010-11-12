@@ -32,9 +32,9 @@ module Codnar
 
     RUBY_FILE = <<-EOF.unindent
       # This is *rdoc*.
-      # {{{ assignment
-      local = $global
-      # }}}
+        # {{{ assignment
+        local = $global
+        # }}}
     EOF
 
     RUBY_CONFIGURATION = {
@@ -48,10 +48,10 @@ module Codnar
       "syntax" => {
         "start_state" => "ruby",
         "patterns" => {
-          "rdoc" => { "regexp" => "^\\s*#\\s*(.*)$", "groups" => [ "rdoc" ] },
-          "ruby" => { "regexp" => "^(.*)$", "groups" => [ "ruby" ] },
-          "begin_chunk" => { "regexp" => "^\\W*\\{\\{\\{\\s*(.*?)\\s*$", "groups" => [ "name" ] },
-          "end_chunk" => { "regexp" => "^\\W*\\}\\}\\}\\s*(.*?)\\s*$", "groups" => [ "name" ] },
+          "rdoc" => { "regexp" => "^(\\s*)#\\s*(.*)$", "groups" => [ "indentation", "payload" ] },
+          "ruby" => { "regexp" => "^(\\s*)(.*)$", "groups" => [ "indentation", "payload" ] },
+          "begin_chunk" => { "regexp" => "^(\\s*)\\W*\\{\\{\\{\\s*(.*?)\\s*$", "groups" => [ "indentation", "payload" ] },
+          "end_chunk" => { "regexp" => "^(\\s*)\\W*\\}\\}\\}\\s*(.*?)\\s*$", "groups" => [ "indentation", "payload" ] },
         },
         "states" => {
           "ruby" => {
@@ -76,7 +76,7 @@ module Codnar
         </p>
         </div>
         <pre class='nested_chunk'>
-        <a href='assignment'>assignment</a>
+          <a href='assignment'>assignment</a>
         </pre>
       EOF
     }, {

@@ -40,7 +40,7 @@ module Codnar
       until Formatter.single_html_line?(lines)
         lines = Grouper.lines_to_groups(lines).map { |group| process_lines_group(group) }.flatten
       end
-      return lines.last.andand.html.to_s
+      return lines.last.andand.payload.to_s
     end
 
   protected
@@ -80,7 +80,7 @@ module Codnar
     # "line". This is the default "formatter" for HTML lines.
     def self.merge_html_lines(lines)
       merged_line = lines[0]
-      merged_line.html = lines.map { |line| line.html }.join("\n")
+      merged_line.payload = lines.map { |line| line.payload }.join("\n")
       return [ merged_line ]
     end
 
@@ -89,11 +89,11 @@ module Codnar
     def self.lines_to_pre_html(lines, attributes = {})
       merged_line = lines[0]
       merged_line.kind = "html"
-      merged_line.html = "<pre" \
-                       + (attributes == {} ? "" : " " + attributes.map { |name, value| "#{name}='#{CGI.escapeHTML(value.to_s)}'" }.join(" ")) \
-                       + ">\n" \
-                       + lines.map { |line| CGI.escapeHTML(line.line) + "\n" }.join \
-                       + "</pre>"
+      merged_line.payload = "<pre" \
+                          + (attributes == {} ? "" : " " + attributes.map { |name, value| "#{name}='#{CGI.escapeHTML(value.to_s)}'" }.join(" ")) \
+                          + ">\n" \
+                          + lines.map { |line| CGI.escapeHTML(line.payload) + "\n" }.join \
+                          + "</pre>"
       return [ merged_line ]
     end
 
@@ -101,10 +101,10 @@ module Codnar
     def self.nested_chunk_lines_to_html(lines)
       return lines.map do |line|
         (line = line.dup).kind = "html"
-        chunk_name = line.name
-        line.html = "<pre class='nested_chunk'>\n" \
-                  + "#{line.line.indentation}<a href='#{chunk_name.to_id}'>#{CGI.escapeHTML(chunk_name)}</a>\n" \
-                  + "</pre>"
+        chunk_name = line.payload
+        line.payload = "<pre class='nested_chunk'>\n" \
+                     + "#{line.indentation}<a href='#{chunk_name.to_id}'>#{CGI.escapeHTML(chunk_name)}</a>\n" \
+                     + "</pre>"
         line
       end
     end

@@ -20,7 +20,7 @@ module Codnar
     def self.lines_to_html(lines, syntax)
       merged_line = lines[0]
       merged_line.kind = "html"
-      merged_line.html = GVim.syntax_to_html(lines.map { |line| line[syntax] }.join("\n"), syntax).chomp
+      merged_line.payload = GVim.syntax_to_html(lines.map { |line| line.payload }.join("\n"), syntax).chomp
       return [ merged_line ]
     end
 

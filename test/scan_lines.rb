@@ -27,8 +27,8 @@ module Codnar
     SYNTAX = {
       "start_state" => "comment",
       "patterns" => {
-        "shell" => { "regexp" => "^#+\s*(.*)$", "groups" => [ "comment" ], "kind" => "comment" },
-        "c++" => { "regexp" => /^\/\/+\s*(.*)$/, "groups" => [ "comment" ], "kind" => "comment" },
+        "shell" => { "regexp" => "^(\\s*)#+\\s*(.*)$", "groups" => [ "indentation", "payload" ], "kind" => "comment" },
+        "c++" => { "regexp" => /^(\s*)\/\/+\s*(.*)$/, "groups" => [ "indentation", "payload" ], "kind" => "comment" },
         "invalid" => { "regexp" => "(" }
       },
       "states" => {
@@ -44,23 +44,27 @@ module Codnar
 
     INPUT = <<-EOF.unindent
       # foo
-      // bar
-      baz
+       // bar
+        baz
     EOF
 
     LINES = [ {
       "kind" => "comment",
       "line" => "# foo",
-      "comment" => "foo",
+      "indentation" => "",
+      "payload" => "foo",
       "number" => 1,
     }, {
       "kind" => "comment",
-      "line" => "// bar",
-      "comment" => "bar",
+      "line" => " // bar",
+      "indentation" => " ",
+      "payload" => "bar",
       "number" => 2,
     }, {
       "kind" => "error",
-      "line" => "baz",
+      "line" => "  baz",
+      "indentation" => "  ",
+      "payload" => "baz",
       "state" => "comment",
       "number" => 3,
     } ]

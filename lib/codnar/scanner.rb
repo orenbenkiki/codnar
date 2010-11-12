@@ -56,12 +56,20 @@ module Codnar
     #     line: <text>
     #     <group>: <text>
     #
+    # By convention, each line has a "payload" group that contains the "main"
+    # content of the line (chunk name for begin/end/nested chunk lines, clean
+    # comment text for comment lines, etc.). In addition, most lines have an
+    # "indentation" group that contains the leading white space (which is not
+    # included in the payload).
+    #
     # If at some state, a line does not match any pattern, the scanner will
     # collect an error message for it and classify the line as follows:
     #
     #   - kind: error
-    #     line: <text>
     #     state: <name>
+    #     line: <text>
+    #     indentation: <leading white space>
+    #     payload: <line text following the indentation>
     def lines(path)
       @path = path
       @lines = []
@@ -149,15 +157,26 @@ module Codnar
 
     # Handle a line that couldn't be classified.
     def unclassified_line(line, state_name)
-      @lines << { "line" => line, "kind" => "error", "state" => state_name, "number" => @line_number }
-      @errors << "State: #{state_name} failed to classify line: #{line}"
+      @lines << {
+        "line" => line,
+        "indentation" => line.indentation,
+        "payload" => line.unindent,
+        "kind" => "error",
+        "state" => state_name,
+        "number" => @line_number
+      }
+      @errors << "State: #{state_name} failed to classify line: #{@lines.last.payload}"
     end
 
     # Handle a classified line only if it matches the pattern.
     def classify_matching_line(line, transition)
       match = (pattern = transition.pattern).regexp.match(line)
       return false unless match
-      @lines << Scanner.extracted_groups(match, pattern.groups).update({ "line" => line, "kind" => transition.kind, "number" => @line_number })
+      @lines << Scanner.extracted_groups(match, pattern.groups).update({
+        "line" => line,
+        "kind" => transition.kind,
+        "number" => @line_number
+      })
       @state = transition.next_state
       return true
     end
