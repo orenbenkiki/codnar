@@ -1,6 +1,6 @@
 module Codnar
 
-  # Merge classified lines into chunk.s
+  # Merge classified lines into chunks.
   class Merger
 
     # Convert classified lines from a disk file into chunks.
@@ -31,7 +31,7 @@ module Codnar
     def file_chunk
       return { 
         "name" => @path,
-        "locations" => [ { "file" => @path, "line" => 0 } ],
+        "locations" => [ { "file" => @path, "line" => 1 } ],
         "lines" => []
       }
     end

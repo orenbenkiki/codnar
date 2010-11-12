@@ -14,7 +14,7 @@ module Codnar
       lines = [ { "kind" => "code", "line" => "foo\n", "number" => 1 } ]
       Merger.chunks(@errors, "path", lines).should == [ {
         "name" => "path",
-        "locations" => [ { "file" => "path", "line" => 0 } ],
+        "locations" => [ { "file" => "path", "line" => 1 } ],
         "lines" => lines
       } ]
       @errors.should == []
@@ -43,7 +43,7 @@ module Codnar
 
     VALID_CHUNKS = [ {
       "name" => "path",
-      "locations" => [ { "file" => "path", "line" => 0 } ],
+      "locations" => [ { "file" => "path", "line" => 1 } ],
       "lines" => [
         VALID_LINES[0],
         { "kind" => "nested_chunk", "line" => "{{{ top chunk\n", "number" => 2, "name" => "top chunk" },

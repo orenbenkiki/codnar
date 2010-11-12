@@ -3,15 +3,39 @@ module Codnar
   # Format chunks into HTML.
   class Formatter
 
-    # Construct a formatter based on a mapping from a line kind to a Ruby
-    # expression that converts an array of lines of that kind into an array of
-    # lines of another kind.
+    # Construct a Formatter based on a mapping from a line kind, to a Ruby
+    # expression, that converts an array of lines of that kind, into an array
+    # of lines of another kind. This expression is simply eval-ed, and is
+    # expected to make use of a variable called "lines" that contains an array
+    # of classified lines, as produced by a Scanner. The result of evaluating
+    # the expressions is expected to be an array of any number of classified
+    # lines of any kind.
+    #
+    # Formatting repeatedly applies these formatting expressions, until the
+    # result is an array containing a single line, which has the kind "html"
+    # and whose html field contains the unified final HTML presentation of the
+    # original lines. In each processing round, all consecutive lines of the
+    # same kind are formated together. This allows for properly formating line
+    # kinds that use a multi-line notation such as Markdown.
+    #
+    # The default formatting expression for the kind "html" simply joins all
+    # the html fields of all the lines into a single html, and returns a single
+    # "line" containing this joined HTML. All other line kinds need to have a
+    # formatting expression explicitly specified in the formatters mapping.
+    #
+    # If no formatting expression is specified for some line kind, an error is
+    # reported and the lines are wrapped in a pre HTML element with a
+    # "missing_formatter" class. Similarly, if a formatting expression fails
+    # (raises an exception), an error is reported and the lines are wrapped in
+    # a pre HTML element with a "failed_formatter" class.
     def initialize(errors, formatters)
       @errors = errors
       @formatters = { "html" => "Formatter.merge_html_lines(lines)" }.merge(formatters)
     end
 
-    # Process lines of arbitrary kinds until we obtain a single complete HTML.
+    # Repeatedly process an array of classified lines of arbitrary kinds until
+    # we obtain a single "line" containing a unified final HTML presentation of
+    # the original lines.
     def lines_to_html(lines)
       until Formatter.single_html_line?(lines)
         lines = Grouper.lines_to_groups(lines).map { |group| process_lines_group(group) }.flatten
@@ -27,8 +51,8 @@ module Codnar
       return lines.size <= 1 && lines[0].andand.kind == "html"
     end
 
-    # Perform one pass of processing toward HTML on a group of lines with the
-    # same kind.
+    # Perform one pass of processing toward HTML on a group of consecutive
+    # lines with the same kind.
     def process_lines_group(lines)
       kind = lines.last.kind
       formatter = @formatters[kind] ||= missing_formatter(kind)
@@ -39,10 +63,17 @@ module Codnar
       end
     end
 
-    # Return a formatter for a kind that doesn't have one already specified.
+    # Return an expression for formatting lines of a kind that doesn't have one
+    # already specified.
     def missing_formatter(kind)
       @errors << "No formatter specified for lines of kind: #{kind}"
-      return "Formatter.lines_to_pre_html(lines)"
+      return "Formatter.lines_to_pre_html(lines, :class => :missing_formatter)"
+    end
+
+    # Format lines as HTML if the specified formatting expression failed.
+    def failed_formatter(lines, formatter, exception)
+      @errors << "Formatter: #{formatter} for lines of kind: #{lines.last.kind} failed with exception: #{exception}"
+      return Formatter.lines_to_pre_html(lines, :class => :failed_formatter)
     end
 
     # Merge a group of consecutive HTML lines into a group with a single HTML
@@ -53,19 +84,17 @@ module Codnar
       return [ merged_line ]
     end
 
-    # Format lines into HTML using a pre element. This is the default formatter
-    # for lines of unknown kinds.
-    def self.lines_to_pre_html(lines)
+    # Format lines into HTML using a pre element with optional attributes. This
+    # is the default formatter for lines of unknown kinds.
+    def self.lines_to_pre_html(lines, attributes = {})
       merged_line = lines[0]
       merged_line.kind = "html"
-      merged_line.html = "<pre>" + lines.map { |line| CGI::escapeHTML(line.line) }.join("\n") + "</pre>"
+      merged_line.html = "<pre" \
+                       + (attributes == {} ? "" : " " + attributes.map { |name, value| "#{name}='#{CGI.escapeHTML(value.to_s)}'" }.join(" ")) \
+                       + ">" \
+                       + lines.map { |line| CGI.escapeHTML(line.line.chomp) }.join("\n") \
+                       + "</pre>"
       return [ merged_line ]
-    end
-
-    # Format lines if the specified formatter failed.
-    def failed_formatter(lines, formatter, exception)
-      @errors << "Formatter: #{formatter} for lines of kind: #{lines.last.kind} failed with exception: #{exception}"
-      return Formatter.lines_to_pre_html(lines)
     end
 
   end
