@@ -40,7 +40,7 @@ module Codnar
     RUBY_CONFIGURATION = {
       "formatters" => {
         "ruby" => "GVim.lines_to_html(lines, 'ruby')",
-        "rdoc" => "RDoc.lines_to_html(lines)",
+        "rdoc" => "Formatter.markup_to_html(lines, 'RDoc')",
         "begin_chunk" => "[]",
         "end_chunk" => "[]",
         "nested_chunk" => "Formatter.nested_chunk_lines_to_html(lines)",

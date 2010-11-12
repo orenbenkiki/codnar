@@ -89,12 +89,15 @@ module Codnar
     def self.lines_to_pre_html(lines, attributes = {})
       merged_line = lines[0]
       merged_line.kind = "html"
-      merged_line.payload = "<pre" \
-                          + (attributes == {} ? "" : " " + attributes.map { |name, value| "#{name}='#{CGI.escapeHTML(value.to_s)}'" }.join(" ")) \
-                          + ">\n" \
+      merged_line.payload = "<pre" + Formatter.html_attributes(attributes) + ">\n" \
                           + lines.map { |line| CGI.escapeHTML(line.payload) + "\n" }.join \
                           + "</pre>"
       return [ merged_line ]
+    end
+
+    # Convert an attribute mapping to HTML.
+    def self.html_attributes(attributes)
+      return attributes == {} ? "" : " " + attributes.map { |name, value| "#{name}='#{CGI.escapeHTML(value.to_s)}'" }.join(" ")
     end
 
     # Format lines that indicate a nested chunk to HTML.
@@ -107,6 +110,17 @@ module Codnar
                      + "</pre>"
         line
       end
+    end
+
+    # Convert a sequence of marked-up lines to HTML.
+    def self.markup_to_html(lines, klass)
+      klass = Kernel.const_get(klass) if String === klass
+      kind = (merged_line = lines[0]).kind
+      merged_line.kind = "html"
+      merged_line.payload = "<div class='#{kind}'>\n" \
+                          + klass.to_html(lines.map { |line| line.payload + "\n" }.join) \
+                          + "</div>"
+      return [ merged_line ]
     end
 
   end

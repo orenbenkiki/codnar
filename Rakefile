@@ -10,7 +10,7 @@ require "lib/codnar/version"
 
 task :default => "all"
 task "all" => [ "verify", "rdoc", "gem" ]
-task "verify" => [ "rcov", "reek", "roodi" ]
+task "verify" => [ "rcov", "reek", "roodi", "flay" ]
 
 patterns = { "bin" => "bin/*", "lib" => "lib/**/*.rb", "test" => "test/**/*.rb" }
 files = patterns.merge(patterns) { |key, pattern| FileList[pattern] }
@@ -94,5 +94,14 @@ Rcov::RcovTask.new("rcov") do |task|
   task.rcov_opts << "--failure-threshold" << "100"
   (files["lib"] + files["test"]).each do |file|
     task.rcov_opts << "--include-file" << file
+  end
+end
+
+desc "Flay the library code"
+task :flay do
+  result = IO.popen("flay lib", "r").read.chomp
+  unless result == "Total score (lower is better) = 0\n"
+    print result
+    raise "Flay found code duplication."
   end
 end
