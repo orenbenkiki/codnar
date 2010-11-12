@@ -39,6 +39,17 @@ module Codnar
       @errors.should == []
     end
 
+    def test_split_rdoc
+      File.open("rdoc.rdoc", "w") { |file| file.write("*foo*\nbar\n") }
+      splitter = Splitter.new(@errors, configuration("rdoc"))
+      splitter.chunks("rdoc.rdoc").should == [ {
+        "name" => "rdoc.rdoc",
+        "locations" => [ { "file" => "rdoc.rdoc", "line" => 1 } ],
+        "html" => "<p>\n<b>foo</b> bar\n</p>"
+      } ]
+      @errors.should == []
+    end
+
     def test_split_unknown_kind
       File.open("unknown.kind", "w") { |file| file.write("foo\nbar\n") }
       splitter = Splitter.new(@errors, configuration("unknown-kind"))
@@ -54,7 +65,10 @@ module Codnar
 
     def configuration(kind)
       return {
-        "formatters" => { "markdown" => "Markdown.lines_to_html(lines)" },
+        "formatters" => {
+          "markdown" => "Markdown.lines_to_html(lines)",
+          "rdoc" => "RDoc.lines_to_html(lines)",
+        },
         "syntax" => {
           "start_state" => kind,
           "patterns" => {

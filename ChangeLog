@@ -1,5 +1,6 @@
 2010-11-12	Oren Ben-Kiki <oren@ben-kiki.org>
 
+	* Expand RDoc lines to HTML.
 	* Refactor Splitter to use Scanner, Merger, and Formatter.
 
 2010-11-11	Oren Ben-Kiki <oren@ben-kiki.org>

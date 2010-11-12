@@ -38,6 +38,7 @@ spec = Gem::Specification.new do |s|
   s.add_dependency("erb")
   s.add_dependency("getoptions")
   s.add_dependency("rdiscount")
+  s.add_dependency("rdoc")
 
   s.add_development_dependency("rake")
   s.add_development_dependency("rcov")

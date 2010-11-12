@@ -7,11 +7,11 @@ module Codnar
   class TestExpandMarkdown < Test::Unit::TestCase
 
     def test_emphasis_text
-      Markdown.md_to_html("*text*").should == "<p><em>text</em></p>\n"
+      Markdown.md_to_html("*text*").should == "<p><em>text</em></p>"
     end
 
     def test_strong_text
-      Markdown.md_to_html("**text**").should == "<p><strong>text</strong></p>\n"
+      Markdown.md_to_html("**text**").should == "<p><strong>text</strong></p>"
     end
 
   end
