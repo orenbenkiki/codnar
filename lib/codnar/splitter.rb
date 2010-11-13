@@ -10,8 +10,8 @@ module Codnar
     #     <kind>: <expression>
     #
     # Where the syntax is passed as-is to (and expanded in-place by) a Scanner,
-    # and the formatters are passed as-is to a Formatter to convert the
-    # classified chunk lines into HTML.
+    # and the formatters are passed as-is to a Formatter to convert the chunk's
+    # classified lines into HTML.
     def initialize(errors, configuration)
       @errors = errors
       @configuration = configuration

@@ -9,7 +9,11 @@ require "roodi_task"
 require "lib/codnar/version"
 
 task :default => "all"
+
+desc "Verify, document, package"
 task "all" => [ "verify", "rdoc", "gem" ]
+
+desc "Test, coverage, analyze code"
 task "verify" => [ "rcov", "reek", "roodi", "flay", "saikuro" ]
 
 patterns = { "bin" => "bin/*", "lib" => "lib/**/*.rb", "test" => "test/**/*.rb" }
@@ -100,7 +104,7 @@ Rcov::RcovTask.new("rcov") do |task|
   end
 end
 
-desc "Flay the library code"
+desc "Check for duplicated code with Flay"
 task :flay do
   result = IO.popen("flay lib", "r").read.chomp
   unless result == "Total score (lower is better) = 0\n"
@@ -111,7 +115,7 @@ end
 
 CLOBBER << "saikuro"
 
-desc "Measure complexitry with Saikuro"
+desc "Check for complex code with Saikuro"
 task :saikuro do
   system("saikuro -c -t -i lib -y 0 -e 10 -o saikuro/ > /dev/null")
   result = File.read("saikuro/index_cyclo.html")

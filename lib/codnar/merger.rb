@@ -28,7 +28,7 @@ module Codnar
       @lines = lines
     end
 
-    # The top-level all-the-disk-file chunk (without any lines)
+    # The top-level all-the-disk-file chunk (without any classified lines)
     def file_chunk
       return { 
         "name" => @path,
@@ -39,7 +39,7 @@ module Codnar
       }
     end
 
-    # End all chunks missing an end line.
+    # End all chunks missing a terminating end chunk classified line.
     def end_unterminated_chunks
       @stack.shift
       @stack.each do |chunk|
@@ -68,7 +68,7 @@ module Codnar
       end
     end
 
-    # Merge a line that starts a new chunk.
+    # Merge a classified line that starts a new chunk.
     def begin_chunk_line(line)
       chunk = contained_chunk(container = @chunks.last, line)
       container.contained << chunk.name
@@ -95,7 +95,7 @@ module Codnar
       return "#{@path}/#{@chunks.size}"
     end
 
-    # Merge a line that ends an existing chunk.
+    # Merge a classified line that ends an existing chunk.
     def end_chunk_line(line)
       return missing_begin_chunk_line(line) if @stack.size == 1
       chunk = @stack.last
@@ -104,13 +104,14 @@ module Codnar
       @stack.pop
     end
 
-    # Check whether an end chunk line matches the begin chunk line.
+    # Check whether an end chunk classified line matches the begin chunk
+    # classified line.
     def self.matching_end_chunk_line?(chunk, line)
       line_name = line.payload
       return line_name.to_s == "" || line_name.to_id == chunk.name.to_id
     end
 
-    # Remove the common indentation from a sequence of lines.
+    # Remove the common indentation from a sequence of classified lines.
     def self.unindent_lines(lines)
       indentation = Merger.minimal_indentation(lines)
       lines.each do |line|
@@ -118,7 +119,7 @@ module Codnar
       end
     end
 
-    # Find out the minimal indentation of all the lines.
+    # Find out the minimal indentation of all the classified lines.
     def self.minimal_indentation(lines)
       return lines.map { |line| line.indentation }.compact.min
     end

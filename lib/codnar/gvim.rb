@@ -16,7 +16,8 @@ module Codnar
       return clean_html(html)
     end
 
-    # Convert a sequence of code lines to HTML using GVim syntax highlighting.
+    # Convert a sequence of classified code lines to HTML using GVim syntax
+    # highlighting.
     def self.lines_to_html(lines, syntax)
       merged_line = lines[0]
       merged_line.kind = "html"

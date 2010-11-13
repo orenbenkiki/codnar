@@ -3,7 +3,7 @@ require "test/spec"
 
 module Codnar
 
-  # Test grouping lines by kind.
+  # Test grouping classified lines by their kind.
   class TestGroupLines < Test::Unit::TestCase
 
     def test_group_empty_lines

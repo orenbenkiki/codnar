@@ -56,14 +56,14 @@ module Codnar
     #     line: <text>
     #     <group>: <text>
     #
-    # By convention, each line has a "payload" group that contains the "main"
-    # content of the line (chunk name for begin/end/nested chunk lines, clean
-    # comment text for comment lines, etc.). In addition, most lines have an
-    # "indentation" group that contains the leading white space (which is not
-    # included in the payload).
+    # By convention, each classified line has a "payload" group that contains
+    # the "main" content of the line (chunk name for begin/end/nested chunk
+    # lines, clean comment text for comment lines, etc.). In addition, most
+    # classified lines have an "indentation" group that contains the leading
+    # white space (which is not included in the payload).
     #
-    # If at some state, a line does not match any pattern, the scanner will
-    # collect an error message for it and classify the line as follows:
+    # If at some state, a file line does not match any pattern, the scanner
+    # will collect an error message for it and classify the line as follows:
     #
     #   - kind: error
     #     state: <name>
@@ -147,7 +147,7 @@ module Codnar
       end
     end
 
-    # Scan the next line.
+    # Scan the next file line.
     def scan_line(line)
       @state.transitions.each do |transition|
         return if transition.pattern && transition.next_state && classify_matching_line(line, transition)
@@ -155,7 +155,7 @@ module Codnar
       unclassified_line(line, @state.name)
     end
 
-    # Handle a line that couldn't be classified.
+    # Handle a file line that couldn't be classified.
     def unclassified_line(line, state_name)
       @lines << {
         "line" => line,
@@ -168,7 +168,7 @@ module Codnar
       @errors << "State: #{state_name} failed to classify line: #{@lines.last.payload}"
     end
 
-    # Handle a classified line only if it matches the pattern.
+    # Handle a file line, only if it matches the pattern.
     def classify_matching_line(line, transition)
       match = (pattern = transition.pattern).regexp.match(line)
       return false unless match
