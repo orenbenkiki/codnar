@@ -10,7 +10,7 @@ require "lib/codnar/version"
 
 task :default => "all"
 task "all" => [ "verify", "rdoc", "gem" ]
-task "verify" => [ "rcov", "reek", "roodi", "flay" ]
+task "verify" => [ "rcov", "reek", "roodi", "flay", "saikuro" ]
 
 patterns = { "bin" => "bin/*", "lib" => "lib/**/*.rb", "test" => "test/**/*.rb" }
 files = patterns.merge(patterns) { |key, pattern| FileList[pattern] }
@@ -40,10 +40,12 @@ spec = Gem::Specification.new do |s|
   s.add_dependency("rdiscount")
   s.add_dependency("rdoc")
 
+  s.add_development_dependency("flay")
   s.add_development_dependency("rake")
   s.add_development_dependency("rcov")
   s.add_development_dependency("reek")
   s.add_development_dependency("roodi")
+  s.add_development_dependency("saikuro")
   s.add_development_dependency("test-spec")
 
   s.files = files["lib"] + files["bin"]
@@ -57,6 +59,7 @@ spec = Gem::Specification.new do |s|
   s.rdoc_options << "--main" << "README.rdoc"
   s.rdoc_options << "--line-numbers"
   s.rdoc_options << "--all"
+  s.rdoc_options << "--quiet"
 
 end
 
@@ -103,5 +106,16 @@ task :flay do
   unless result == "Total score (lower is better) = 0\n"
     print result
     raise "Flay found code duplication."
+  end
+end
+
+CLOBBER << "saikuro"
+
+desc "Measure complexitry with Saikuro"
+task :saikuro do
+  system("saikuro -c -t -i lib -y 0 -e 10 -o saikuro/ > /dev/null")
+  result = File.read("saikuro/index_cyclo.html")
+  if result.include?("Errors and Warnings")
+    raise "Saikuro found complicated code."
   end
 end
