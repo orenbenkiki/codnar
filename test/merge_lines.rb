@@ -15,6 +15,8 @@ module Codnar
       Merger.chunks(@errors, "path", lines).should == [ {
         "name" => "path",
         "locations" => [ { "file" => "path", "line" => 1 } ],
+        "containers" => [],
+        "contained" => [],
         "lines" => lines
       } ]
       @errors.should == []
@@ -44,6 +46,8 @@ module Codnar
     VALID_CHUNKS = [ {
       "name" => "path",
       "locations" => [ { "file" => "path", "line" => 1 } ],
+      "containers" => [],
+      "contained" => [ "top chunk" ],
       "lines" => [
         VALID_LINES[0].merge("indentation" => ""),
         { "kind" => "nested_chunk", "line" => " {{{ top chunk", "number" => 2, "indentation" => " ", "payload" => "top chunk" },
@@ -52,6 +56,8 @@ module Codnar
     }, {
       "name" => "top chunk",
       "locations" => [ { "file" => "path", "line" => 2 } ],
+      "containers" => [ "path" ],
+      "contained" => [ "intermediate chunk" ],
       "lines" => [
         VALID_LINES[1].merge("indentation" => ""), VALID_LINES[2].merge("indentation" => ""),
         { "kind" => "nested_chunk", "line" => "  {{{ intermediate chunk", "number" => 4, "indentation" => " ", "payload" => "intermediate chunk" },
@@ -60,6 +66,8 @@ module Codnar
     }, {
       "name" => "intermediate chunk",
       "locations" => [ { "file" => "path", "line" => 4 } ],
+      "containers" => [ "top chunk" ],
+      "contained" => [ "inner chunk" ],
       "lines" => [
         VALID_LINES[3].merge("indentation" => ""), VALID_LINES[4].merge("indentation" => ""),
         { "kind" => "nested_chunk", "line" => "   {{{ inner chunk", "number" => 6, "indentation" => " ", "payload" => "inner chunk" },
@@ -68,6 +76,8 @@ module Codnar
     }, {
       "name" => "inner chunk",
       "locations" => [ { "file" => "path", "line" => 6 } ],
+      "containers" => [ "intermediate chunk" ],
+      "contained" => [],
       "lines" => [ VALID_LINES[5].merge("indentation" => ""), VALID_LINES[6].merge("indentation" => ""), VALID_LINES[7].merge("indentation" => "") ],
     } ]
 

@@ -26,6 +26,7 @@ module Codnar
 
     def ruby_chunks(path)
       RUBY_CHUNKS[0].name = path
+      RUBY_CHUNKS[1].containers[0] = path
       RUBY_CHUNKS.each { |chunk| chunk.locations[0].file = path }
       return RUBY_CHUNKS
     end
@@ -69,6 +70,8 @@ module Codnar
     RUBY_CHUNKS = [ {
       "name" => "PATH",
       "locations" => [ "file" => "PATH", "line" => 1 ],
+      "containers" => [],
+      "contained" => [ "assignment" ],
       "html" => <<-EOF.unindent,
         <div class='rdoc'>
         <p>
@@ -81,6 +84,8 @@ module Codnar
       EOF
     }, {
       "name" => "assignment",
+      "containers" => [ "PATH" ],
+      "contained" => [],
       "locations" => [ "file" => "PATH", "line" => 2 ],
       "html" => <<-EOF.unindent,
         <pre class='highlighted_syntax'>

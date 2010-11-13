@@ -33,6 +33,8 @@ module Codnar
       return { 
         "name" => @path,
         "locations" => [ { "file" => @path, "line" => 1 } ],
+        "containers" => [],
+        "contained" => [],
         "lines" => []
       }
     end
@@ -68,14 +70,22 @@ module Codnar
 
     # Merge a line that starts a new chunk.
     def begin_chunk_line(line)
-      chunk = {
-        "name" => new_chunk_name(line.payload),
-        "locations" => [ { "file" => @path, "line" => line.number } ],
-        "lines" => [ line ]
-      }
-      @chunks.last.lines << line.merge("kind" => "nested_chunk")
+      chunk = contained_chunk(container = @chunks.last, line)
+      container.contained << chunk.name
+      container.lines << line.merge("kind" => "nested_chunk")
       @chunks << chunk
       @stack << chunk
+    end
+
+    # A chunk contained in another chunk.
+    def contained_chunk(container, line)
+      return {
+        "name" => new_chunk_name(line.payload),
+        "locations" => [ { "file" => @path, "line" => line.number } ],
+        "containers" => [ container.name ],
+        "contained" => [],
+        "lines" => [ line ]
+      }
     end
 
     # Return the name of a new chunk.

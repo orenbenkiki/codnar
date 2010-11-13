@@ -1,5 +1,6 @@
 2010-11-13	Oren Ben-Kiki <oren@ben-kiki.org>
 
+	* Collect chunk container/contained meta-data.
 	* Measure complexity with Saikuro.
 	* Flay the library code.
 	* Unindent nested chunks.
