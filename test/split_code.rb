@@ -40,6 +40,8 @@ module Codnar
 
     RUBY_CONFIGURATION = {
       "formatters" => {
+        "code" => "Formatter.cast_lines(lines, 'ruby')",
+        "comment" => "Formatter.cast_lines(lines, 'rdoc')",
         "ruby" => "GVim.lines_to_html(lines, 'ruby')",
         "rdoc" => "Formatter.markup_to_html(lines, 'RDoc')",
         "begin_chunk" => "[]",
@@ -49,18 +51,18 @@ module Codnar
       "syntax" => {
         "start_state" => "ruby",
         "patterns" => {
-          "rdoc" => { "regexp" => "^(\\s*)#\\s*(.*)$", "groups" => [ "indentation", "payload" ] },
-          "ruby" => { "regexp" => "^(\\s*)(.*)$", "groups" => [ "indentation", "payload" ] },
-          "begin_chunk" => { "regexp" => "^(\\s*)\\W*\\{\\{\\{\\s*(.*?)\\s*$", "groups" => [ "indentation", "payload" ] },
-          "end_chunk" => { "regexp" => "^(\\s*)\\W*\\}\\}\\}\\s*(.*?)\\s*$", "groups" => [ "indentation", "payload" ] },
+          "comment" => { "regexp" => "^(\\s*)#\\s*(.*)$" },
+          "code" => { "regexp" => "^(\\s*)(.*)$" },
+          "begin_chunk" => { "regexp" => "^(\\s*)\\W*\\{\\{\\{\\s*(.*?)\\s*$" },
+          "end_chunk" => { "regexp" => "^(\\s*)\\W*\\}\\}\\}\\s*(.*?)\\s*$" },
         },
         "states" => {
           "ruby" => {
             "transitions" => [
               { "pattern" => "begin_chunk" },
               { "pattern" => "end_chunk" },
-              { "pattern" => "rdoc" },
-              { "pattern" => "ruby" },
+              { "pattern" => "comment" },
+              { "pattern" => "code" },
             ],
           },
         },

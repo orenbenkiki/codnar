@@ -128,6 +128,14 @@ module Codnar
       return [ merged_line ]
     end
 
+    # Cash a sequence of classified lines into a different kind without
+    # any processing.
+    def self.cast_lines(lines, kind)
+      lines = lines.dup
+      lines.each { |line| line.kind = kind }
+      return lines
+    end
+
   end
 
 end

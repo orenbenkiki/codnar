@@ -32,7 +32,7 @@ module Codnar
     #   to be identical to the pattern name.
     # - A pattern regexp can be presented by a plain string.
     # - The pattern groups field can be ommitted or contain null if it is
-    #   empty.
+    #   equal to [ "indentation", "payload" ].
     # - The kind field of a transition can be ommitted; by default it is
     #   assumed to be identical to the pattern kind.
     # - The next step of a transition can be ommitted; by default it is
@@ -83,7 +83,7 @@ module Codnar
     # Expand all the shorthands used in the pattern.
     def expand_pattern_shorthands(name, pattern)
       pattern.kind ||= fill_name(name, pattern, "Pattern")
-      pattern.groups ||= []
+      pattern.groups ||= [ "indentation", "payload" ]
       pattern.regexp = convert_to_regexp(name, pattern.regexp)
     end
 
@@ -184,7 +184,6 @@ module Codnar
     # Extract named groups from a match.
     def self.extracted_groups(match, groups)
       extracted = {}
-      groups ||= []
       groups.each_with_index do |group, index|
         extracted[group] = match[index + 1]
       end
