@@ -55,7 +55,6 @@ spec = Gem::Specification.new do |s|
   s.files = files["lib"] + files["bin"]
   s.test_files = files["test"]
   s.executables = files["bin"].map { |path| path.sub("bin/", "") }
-  s.default_executable = "bin/codnar"
 
   s.has_rdoc = true
   s.extra_rdoc_files = [ "README.rdoc", "LICENSE", "ChangeLog" ]

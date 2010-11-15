@@ -14,7 +14,7 @@ module Codnar
     def weave(chunk_name, template)
       chunk = self[chunk_name.to_id]
       expand_chunk_html(chunk)
-      return process_template(chunk, template)
+      process_template(chunk, template)
     end
 
   protected

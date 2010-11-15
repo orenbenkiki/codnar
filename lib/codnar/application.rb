@@ -5,14 +5,16 @@ module Codnar
 
     # Create a Codnar application.
     def initialize(is_test = nil)
+      @errors = Errors.new
       @is_test = !!is_test
+      @configuration ||= {}
     end
 
     # Run the Codnar application, returning its status.
     def run(&block)
-      @configuration = parse_options
+      parse_options
       block.call(@configuration) if block
-      return 0
+      return print_errors
     rescue ExitException => exception
       return exception.status
     end
@@ -25,7 +27,7 @@ module Codnar
       redirect_files
       print_options
       load_modules
-      return merge_configurations
+      merge_configurations
     end
 
     # Redirect standard output and error according to the parsed command line
@@ -45,7 +47,7 @@ module Codnar
     # line options.
     def print_options
       print_version if @options.version
-      print_help if @options.help
+      print_help if @options.help || ARGV == []
     end
 
     # Print the current Codnar version.
@@ -54,21 +56,35 @@ module Codnar
       exit(0)
     end
 
-    # The standard application options.
-    HELP = <<-EOF.unindent
-      -h, --help                           Print this help message and exit.
-      -v, --version                        Print the version number (#{Codnar::VERSION}) and exit.
-      -o, --output <path>|-                Redirect standard output to the <path>.
-      -e, --error <path>|-                 Redirect standard error to the <path>.
-      -I, --include <path>...              Add <path>(s) to Ruby's libs search path.
-      -r, --require <path>...              Ruby require the code in the <path>(s).
-      -c, --configuration <NAME>|<path>... Load named or disk file configuration(s).
-    EOF
-
     # Print a short help message listing the available command line options.
     def print_help(&block)
-      print(HELP)
+      print_help_before_options
+      print_standard_options
+      print_help_after_options
       exit(0)
+    end
+
+    # Print the part of the help message before the standard options.
+    def print_help_before_options
+    end
+
+    # Print the standard Codnar options.
+    def print_standard_options
+      print(<<-EOF.unindent)
+        OPTIONS:
+
+        -h, --help                           Print this help message and exit.
+        -v, --version                        Print the version number (#{Codnar::VERSION}) and exit.
+        -o, --output <path>|-                Redirect standard output to the <path>.
+        -e, --error <path>|-                 Redirect standard error to the <path>.
+        -I, --include <path>...              Add <path>(s) to Ruby's libs search path.
+        -r, --require <path>...              Ruby require the code in the <path>(s).
+        -c, --configuration <NAME>|<path>... Load named or disk file configuration(s).
+      EOF
+    end
+
+    # Print the part of the help message after the standard options.
+    def print_help_after_options
     end
 
     # Load all requested modules.
@@ -83,7 +99,8 @@ module Codnar
 
     # Merge all the specified configuration data into one mapping.
     def merge_configurations
-      return (@options.configuration || []).reduce({}) do |configuration, name_or_path|
+      configurations = @options.configuration || []
+      @configuration = configurations.reduce(@configuration) do |configuration, name_or_path|
         named_configuration = Application.load_configuration(name_or_path)
         exit(1) unless named_configuration
         configuration.deep_merge(named_configuration)
@@ -99,6 +116,14 @@ module Codnar
       rescue
         $stderr.puts("#{$0}: Configuration: #{name_or_path} is neither a disk file nor a known configuration")
       end
+    end
+
+    # Print all the collected errors.
+    def print_errors
+      @errors.each do |error|
+        $stderr.puts(error)
+      end
+      return @errors.size
     end
 
     # Exit the application, unless we are running inside a test.
