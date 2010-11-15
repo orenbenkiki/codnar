@@ -14,6 +14,7 @@ require "codnar/core_ext/string"
 require "codnar/version"
 
 require "codnar/application.rb"
+require "codnar/configuration.rb"
 require "codnar/errors"
 require "codnar/formatter"
 require "codnar/globals.rb"

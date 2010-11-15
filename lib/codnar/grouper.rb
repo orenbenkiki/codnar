@@ -6,7 +6,7 @@ module Codnar
     # Convert array of classified lines to array of classified line groups with
     # the same line kind.
     def self.lines_to_groups(lines)
-      return lines.inject([], &method(:group_next_line))
+      return lines.reduce([], &method(:group_next_line))
     end
 
   protected

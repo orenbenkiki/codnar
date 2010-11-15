@@ -30,12 +30,34 @@ module Codnar
       File.read("stdout").should == Application::HELP
     end
 
+    def test_require_configuration_module
+      # The additional_module is read by Ruby and is not captured by FakeFS.
+      File.open("additional_configuration.yaml", "w") { |file| file.puts("bar: updated_bar") }
+      status = run_with_argv(%w(-o stdout -I support -r additional_module -c ADDITIONAL additional_configuration.yaml)) do
+        run_print_configuration
+      end
+      YAML.load_file("stdout").should == { "foo" => "original_foo", "bar" => "updated_bar" }
+    end
+
+    def test_require_missing_configuration
+      status = run_with_argv(%w(-e stderr -I support -r additional_module -c ADDITIONAL no-such-configuration)) do
+        run_print_configuration
+      end
+      File.read("stderr").should == "#{$0}: Configuration: no-such-configuration is neither a disk file nor a known configuration\n"
+    end
+
   protected
 
     def run_with_argv(argv)
       return Globals.without_changes do
         ARGV.replace(argv)
         yield
+      end
+    end
+
+    def run_print_configuration
+      Application.new(true).run do |configuration|
+        puts configuration.to_yaml
       end
     end
 
