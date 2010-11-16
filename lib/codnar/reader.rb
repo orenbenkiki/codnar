@@ -8,6 +8,7 @@ module Codnar
     def initialize(errors, paths)
       @errors = errors
       @chunks = {}
+      @used = {}
       paths.each do |path|
         load_path_chunks(path)
       end
@@ -15,10 +16,19 @@ module Codnar
 
     # Fetch a chunk by its name.
     def [](name)
-      return @chunks[name.to_id] ||= (
+      id = name.to_id
+      @used[id] = true
+      return @chunks[id] ||= (
         @errors << "Missing chunk: #{name}"
         Reader.fake_chunk(name)
       )
+    end
+
+    # Collect errors for unused chunks.
+    def collect_unused_chunk_errors
+      @chunks.each do |id, chunk|
+        @errors.push("#{$0}: Unused chunk: #{chunk.name} #{Reader.locations_message(chunk)}") unless @used[id]
+      end
     end
 
   protected
@@ -69,7 +79,7 @@ module Codnar
     def self.different_chunks_error(old_chunk, new_chunk)
       old_location = Reader.locations_message(old_chunk)
       new_location = Reader.locations_message(new_chunk)
-      return "Chunk: #{old_chunk.name} is different #{new_location}, and #{old_location}"
+      return "#{$0}: Chunk: #{old_chunk.name} is different #{new_location}, and #{old_location}"
     end
 
     # Format a chunk's location for an error message.

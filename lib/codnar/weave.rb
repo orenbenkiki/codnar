@@ -20,6 +20,7 @@ module Codnar
       @configuration = Codnar::Configuration::INCLUDE if @configuration == {}
       weaver = Weaver.new(@errors, ARGV, @configuration)
       puts(weaver.weave(ARGV[0], "include"))
+      weaver.collect_unused_chunk_errors
     end
 
     # Print the part of the help message before the standard options.

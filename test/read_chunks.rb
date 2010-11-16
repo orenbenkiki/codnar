@@ -21,20 +21,28 @@ module Codnar
       Writer.write("foo.chunks", { "name" => "foo" })
       Writer.write("bar.chunks", [ { "name" => "bar" }, { "name" => "baz" } ])
       reader = Reader.new(@errors, Dir.glob("./**/*.chunks"))
-      check_read_data(reader,  "foo" => { "name" => "foo" },
-                               "bar" => { "name" => "bar" },
-                               "baz" => { "name" => "baz" })
+      check_read_data(reader, "foo" => { "name" => "foo" },
+                              "bar" => { "name" => "bar" },
+                              "baz" => { "name" => "baz" })
       @errors.should == []
     end
 
+    def test_read_unused_chunks
+      Writer.write("foo.chunks", { "name" => "foo", "locations" => [ { "file" => "a", "line" => 1 } ] })
+      Writer.write("bar.chunks", { "name" => "bar", "locations" => [ { "file" => "b", "line" => 2 } ] })
+      reader = Reader.new(@errors, Dir.glob("./**/*.chunks"))
+      check_read_data(reader, "foo" => { "name" => "foo", "locations" => [ { "file" => "a", "line" => 1 } ] })
+      @errors.should == [ "#{$0}: Unused chunk: bar in file: b at line: 2" ]
+    end
+
     def test_read_duplicate_chunks
-      Writer.write("foo.chunks", { "name" => "foo", "locations" => [ { "file" =>  "a" } ], "contained" => [ "A" ], "containers" => [ "c" ] })
+      Writer.write("foo.chunks", { "name" => "foo", "locations" => [ { "file" => "a" } ], "contained" => [ "A" ], "containers" => [ "c" ] })
       Writer.write("bar.chunks", [
         { "name" => "foo", "locations" => [ { "file" => "b" } ], "contained" => [ "a" ], "containers" => [ "d" ] },
         { "name" => "foo", "locations" => [ { "file" => "c" } ], "contained" => [ "a" ], "containers" => [] }
       ])
       reader = Reader.new(@errors, Dir.glob("./**/*.chunks"))
-      check_read_data(reader,  "foo" => {
+      check_read_data(reader, "foo" => {
         "name" => "foo",
         "locations" => [ { "file" => "a" }, { "file" => "b" }, { "file" => "c" } ],
         "contained" => [ "a" ],
@@ -51,7 +59,7 @@ module Codnar
         { "name" => "foo", "html" => "bar", "locations" => [ { "file" => "bar.chunks", "line" => 1 } ], "contained" => [ "a" ], "containers" => [] }
         )
       reader = Reader.new(@errors, Dir.glob("./**/*.chunks").sort)
-      @errors.should == [ "Chunk: foo is different in file: foo.chunks at line: 2, and in file: bar.chunks at line: 1 or in file: foo.chunks at line: 1" ]
+      @errors.should == [ "#{$0}: Chunk: foo is different in file: foo.chunks at line: 2, and in file: bar.chunks at line: 1 or in file: foo.chunks at line: 1" ]
       check_read_data(reader, "foo" => {
         "name" => "foo",
         "html" => "bar",
@@ -73,7 +81,7 @@ module Codnar
         { "name" => "FOO!!", "locations" => [ { "file" => "foo.chunks", "line" => 2 } ], "containers" => [ "2" ], "contained" => [ "C" ] }
       ])
       reader = Reader.new(@errors, Dir.glob("./**/*.chunks"))
-      check_read_data(reader,  "foo-" => {
+      check_read_data(reader, "foo-" => {
         "name" => "Foo?",
         "locations" => [ { "file" => "foo.chunks", "line" => 1 }, { "file" => "foo.chunks", "line" => 2 } ],
         "containers" => [ "1", "2" ],
@@ -87,6 +95,7 @@ module Codnar
       chunks.each do |name, chunk|
         reader[name].should == chunk
       end
+      reader.collect_unused_chunk_errors
     end
 
   end
