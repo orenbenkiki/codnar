@@ -47,7 +47,7 @@ module Codnar
     # line options.
     def print_options
       print_version if @options.version
-      print_help if @options.help || ARGV == []
+      print_help if @options.help
     end
 
     # Print the current Codnar version.
@@ -73,13 +73,13 @@ module Codnar
       print(<<-EOF.unindent)
         OPTIONS:
 
-        -h, --help                           Print this help message and exit.
-        -v, --version                        Print the version number (#{Codnar::VERSION}) and exit.
-        -o, --output <path>|-                Redirect standard output to the <path>.
-        -e, --error <path>|-                 Redirect standard error to the <path>.
-        -I, --include <path>...              Add <path>(s) to Ruby's libs search path.
-        -r, --require <path>...              Ruby require the code in the <path>(s).
-        -c, --configuration <NAME>|<path>... Load named or disk file configuration(s).
+          -h, --help                           Print this help message and exit.
+          -v, --version                        Print the version number (#{Codnar::VERSION}) and exit.
+          -o, --output <path>|-                Redirect standard output to the <path>.
+          -e, --error <path>|-                 Redirect standard error to the <path>.
+          -I, --include <path>...              Add <path>(s) to Ruby's libs search path.
+          -r, --require <path>...              Ruby require the code in the <path>(s).
+          -c, --configuration <NAME>|<path>... Load named or disk file configuration(s).
       EOF
     end
 

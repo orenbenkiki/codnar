@@ -1,12 +1,7 @@
 module Codnar
 
-  # Weave application
+  # Weave application.
   class Weave < Application
-
-    # Create a Codnar application.
-    def initialize(is_test = nil)
-      super(is_test)
-    end
 
     # Run the weaving Codnar application, returning its status.
     def run
@@ -14,6 +9,14 @@ module Codnar
     end
 
   protected
+
+    # Parse the command line options of the program.
+    def parse_options
+      super
+      return if ARGV.size > 0
+      $stderr.puts("#{$0}: No chunk files to weave")
+      exit(1)
+    end
 
     # Weave all the chunks together to a single HTML.
     def weave
@@ -38,18 +41,18 @@ module Codnar
 
         DESCRIPTION:
 
-        Weave chunks in all chunk files to a single HTML that is printed to the
-        output. The first file is expected to be the main documentation file
-        that includes all the rest of the chunks via directives of the format:
+          Weave chunks in all chunk files (from codnar-split) to a single HTML that is
+          printed to the output. The first file is the main documentation file that is
+          expected to include all the rest of the chunks via directives of the format:
 
-          <script src="chunk-name" type="x-codnar/template-name"></script>
+            <script src="chunk-name" type="x-codnar/template-name"></script>
 
-        Where the template-name is a key in the configuration, whose value is
-        an ERB template for embedding the named chunk into the documentation.
+          Where the template-name is a key in the configuration, whose value is an ERB
+          template for embedding the named chunk into the documentation.
 
-        If no configuration is specified, the INCLUDE configuration is assumed.
-        This configuration contains a single template named "include", which
-        simply includes the named chunk into the generated HTML.
+          If no configuration is specified, the INCLUDE configuration is assumed. This
+          configuration contains a single template named "include", which simply
+          includes the named chunk into the generated HTML.
       EOF
     end
 

@@ -1,0 +1,5 @@
+#!/bin/ruby -w
+
+require "codnar"
+
+exit Codnar::Split.new.run

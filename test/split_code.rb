@@ -74,7 +74,7 @@ module Codnar
       "locations" => [ "file" => "PATH", "line" => 1 ],
       "containers" => [],
       "contained" => [ "assignment" ],
-      "html" => <<-EOF.unindent,
+      "html" => <<-EOF.unindent.chomp,
         <div class='rdoc'>
         <p>
         This is <b>rdoc</b>.
@@ -89,7 +89,7 @@ module Codnar
       "containers" => [ "PATH" ],
       "contained" => [],
       "locations" => [ "file" => "PATH", "line" => 2 ],
-      "html" => <<-EOF.unindent,
+      "html" => <<-EOF.unindent.chomp,
         <pre class='highlighted_syntax'>
         local = <span class=\"Identifier\">$global</span>
         </pre>

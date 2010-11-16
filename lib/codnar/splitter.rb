@@ -23,7 +23,7 @@ module Codnar
     def chunks(path)
       lines = @scanner.lines(path)
       chunks = Merger.chunks(@errors, path, lines)
-      chunks.each { |chunk| chunk.html = @formatter.lines_to_html(chunk.delete("lines")) + "\n" }
+      chunks.each { |chunk| chunk.html = @formatter.lines_to_html(chunk.delete("lines")) }
       return chunks
     end
 
