@@ -40,7 +40,7 @@ module Codnar
     end
 
     def test_require_missing_configuration
-      status = run_with_argv(%w(-e stderr -I support -r additional_module -c ADDITIONAL no-such-configuration -- dummy)) do
+      status = run_with_argv(%w(-e stderr -I support -r additional_module -c additional no-such-configuration -- dummy)) do
         run_print_configuration
       end
       File.read("stderr").should == "#{$0}: Configuration: no-such-configuration is neither a disk file nor a known configuration\n"

@@ -13,7 +13,7 @@ module Codnar
         end
       EOF
       Codnar::GVim.syntax_to_html(ruby, "ruby").should == <<-EOF.unindent
-        <pre class='highlighted_syntax'>
+        <pre class='ruby code syntax'>
         <span class="PreProc">def</span> <span class="Identifier">foo</span>
           <span class="Statement">return</span> bar = baz
         <span class="PreProc">end</span>

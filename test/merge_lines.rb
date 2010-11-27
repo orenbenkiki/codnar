@@ -12,19 +12,21 @@ module Codnar
 
     def test_merge_no_chunks
       lines = [ { "kind" => "code", "line" => "foo", "number" => 1, "indentation" => "", "payload" => "foo" } ]
-      Merger.chunks(@errors, "path", lines).should == [ {
+      chunks = Merger.chunks(@errors, "path", lines)
+      @errors.should == []
+      chunks.should == [ {
         "name" => "path",
         "locations" => [ { "file" => "path", "line" => 1 } ],
         "containers" => [],
         "contained" => [],
         "lines" => lines
       } ]
-      @errors.should == []
     end
 
     def test_valid_merge
-      Merger.chunks(@errors, "path", VALID_LINES).should == VALID_CHUNKS
+      chunks = Merger.chunks(@errors, "path", VALID_LINES)
       @errors.should == []
+      chunks.should == VALID_CHUNKS
     end
 
     VALID_LINES = [

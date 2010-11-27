@@ -69,14 +69,14 @@ module Codnar
     # doesn't have such a formatting expression already specified.
     def missing_formatter(kind)
       @errors << "No formatter specified for lines of kind: #{kind}"
-      return "Formatter.lines_to_pre_html(lines, :class => :missing_formatter)"
+      return "Formatter.lines_to_pre_html(lines, :class => 'missing formatter error')"
     end
 
     # Format classified lines as HTML if the original specified formatting
     # expression failed.
     def failed_formatter(lines, formatter, exception)
       @errors << "Formatter: #{formatter} for lines of kind: #{lines.last.kind} failed with exception: #{exception}"
-      return Formatter.lines_to_pre_html(lines, :class => :failed_formatter)
+      return Formatter.lines_to_pre_html(lines, :class => 'failed formatter error')
     end
 
     # Merge a group of consecutive HTML classified lines into a group with a
@@ -110,22 +110,28 @@ module Codnar
       return lines.map do |line|
         (line = line.dup).kind = "html"
         chunk_name = line.payload
-        line.payload = "<pre class='nested_chunk'>\n" \
-                     + "#{line.indentation}<a href='#{chunk_name.to_id}'>#{CGI.escapeHTML(chunk_name)}</a>\n" \
+        line.payload = "<pre class='nested chunk'>\n" \
+                     + "#{line.indentation}<a class='nested chunk' href='#{chunk_name.to_id}'>#{CGI.escapeHTML(chunk_name)}</a>\n" \
                      + "</pre>"
         line
       end
     end
 
     # Convert a sequence of marked-up classified lines to HTML.
-    def self.markup_to_html(lines, klass)
-      klass = Kernel.const_get(klass) if String === klass
-      kind = (merged_line = lines[0]).kind
+    def self.markup_lines_to_html(lines, klass)
+      merged_line = lines[0]
+      merged_payload = lines.map { |line| line.payload + "\n" }.join
+      merged_line.payload = Formatter.markup_to_html(merged_payload, klass, merged_line.kind)
       merged_line.kind = "html"
-      merged_line.payload = "<div class='#{kind}'>\n" \
-                          + klass.to_html(lines.map { |line| line.payload + "\n" }.join) \
-                          + "</div>"
       return [ merged_line ]
+    end
+
+    # Convert some markup text to div-wrapped HTML.
+    def self.markup_to_html(markup, klass, kind)
+      implementation = String === klass ? Kernel.const_get(klass) : klass
+      return "<div class='#{klass.downcase} #{kind} markup'>\n" \
+           + implementation.to_html(markup) \
+           + "</div>"
     end
 
     # Cash a sequence of classified lines into a different kind without

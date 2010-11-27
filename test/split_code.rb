@@ -8,11 +8,11 @@ module Codnar
   class TestSplitCode < Test::Unit::TestCase
 
     def test_split_ruby
-      errors = Errors.new
-      splitter = Splitter.new(errors, RUBY_CONFIGURATION)
+      splitter = Splitter.new(errors = Errors.new, RUBY_CONFIGURATION)
       path = write_ruby_file
-      splitter.chunks(path).should == ruby_chunks(path)
+      chunks = splitter.chunks(path)
       errors.should == []
+      chunks.should == ruby_chunks(path)
     end
 
   protected
@@ -43,7 +43,7 @@ module Codnar
         "code" => "Formatter.cast_lines(lines, 'ruby')",
         "comment" => "Formatter.cast_lines(lines, 'rdoc')",
         "ruby" => "GVim.lines_to_html(lines, 'ruby')",
-        "rdoc" => "Formatter.markup_to_html(lines, 'RDoc')",
+        "rdoc" => "Formatter.markup_lines_to_html(lines, 'RDoc')",
         "begin_chunk" => "[]",
         "end_chunk" => "[]",
         "nested_chunk" => "Formatter.nested_chunk_lines_to_html(lines)",
@@ -75,13 +75,13 @@ module Codnar
       "containers" => [],
       "contained" => [ "assignment" ],
       "html" => <<-EOF.unindent.chomp,
-        <div class='rdoc'>
+        <div class='rdoc rdoc markup'>
         <p>
         This is <b>rdoc</b>.
         </p>
         </div>
-        <pre class='nested_chunk'>
-          <a href='assignment'>assignment</a>
+        <pre class='nested chunk'>
+          <a class='nested chunk' href='assignment'>assignment</a>
         </pre>
       EOF
     }, {
@@ -90,7 +90,7 @@ module Codnar
       "contained" => [],
       "locations" => [ "file" => "PATH", "line" => 2 ],
       "html" => <<-EOF.unindent.chomp,
-        <pre class='highlighted_syntax'>
+        <pre class='ruby code syntax'>
         local = <span class=\"Identifier\">$global</span>
         </pre>
       EOF

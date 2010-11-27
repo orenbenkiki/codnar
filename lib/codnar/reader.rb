@@ -93,7 +93,7 @@ module Codnar
       return {
         "name" => name,
         "locations" => [ { "file" => "MISSING" } ],
-        "html" => "<div class='missing'>\nMISSING\n</div>"
+        "html" => "<div class='missing chunk error'>\nMISSING\n</div>"
       }
     end
 

@@ -112,7 +112,7 @@ module Codnar
     def self.load_configuration(name_or_path)
       return YAML.load_file(name_or_path) if File.exist?(name_or_path)
       begin
-        return Codnar::Configuration.const_get(name_or_path)
+        return Codnar::Configuration.const_get(name_or_path.upcase)
       rescue
         $stderr.puts("#{$0}: Configuration: #{name_or_path} is neither a disk file nor a known configuration")
       end

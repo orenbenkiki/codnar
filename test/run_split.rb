@@ -28,7 +28,7 @@ module Codnar
       YAML.load_file("stdout").should == [ {
         "name" => "input",
         "locations" => [ { "file" => "input", "line" => 1 } ],
-        "html" => "<pre>\n&lt;foo&gt;\n</pre>",
+        "html" => "<foo>",
         "containers" => [],
         "contained" => [],
       } ]

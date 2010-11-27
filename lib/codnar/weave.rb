@@ -20,7 +20,7 @@ module Codnar
 
     # Weave all the chunks together to a single HTML.
     def weave
-      @configuration = Codnar::Configuration::INCLUDE if @configuration == {}
+      @configuration = Codnar::Configuration::WEAVE_INCLUDE if @configuration == {}
       weaver = Weaver.new(@errors, ARGV, @configuration)
       puts(weaver.weave(ARGV[0], "include"))
       weaver.collect_unused_chunk_errors
@@ -50,8 +50,8 @@ module Codnar
           Where the template-name is a key in the configuration, whose value is an ERB
           template for embedding the named chunk into the documentation.
 
-          If no configuration is specified, the INCLUDE configuration is assumed. This
-          configuration contains a single template named "include", which simply
+          If no configuration is specified, the WEAVE_INCLUDE configuration is assumed.
+          This configuration contains a single template named "include", which simply
           includes the named chunk into the generated HTML.
       EOF
     end

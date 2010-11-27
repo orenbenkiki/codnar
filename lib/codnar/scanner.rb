@@ -37,13 +37,15 @@ module Codnar
     #   assumed to be identical to the pattern kind.
     # - The next step of a transition can be ommitted; by default it is
     #   assumed to be identical to the containing state.
+    # - The start state can be ommitted; by default it is assumed to be named
+    #   "start".
     #
-    # When the Scanner is constructed, the syntax object is modified in place
-    # to expand all the above shorthands, collecting any invalid references
-    # and/or regexps errors.
+    # When the Scanner is constructed, a deep clone of the syntax object is
+    # modified in place to expand all the above shorthands, collecting any
+    # invalid references and/or regexps errors.
     def initialize(errors, syntax)
       @errors = errors
-      @syntax = syntax
+      @syntax = syntax.deep_clone
       @syntax.patterns.each { |name, pattern| expand_pattern_shorthands(name, pattern) }
       @syntax.states.each { |name, state| expand_state_shorthands(name, state) }
       @syntax.start_state = resolve_start_state
@@ -124,7 +126,7 @@ module Codnar
 
     # Resolve the start state reference.
     def resolve_start_state
-      return lookup(@syntax.states, "state", @syntax.start_state) || {
+      return lookup(@syntax.states, "state", @syntax.start_state || "start") || {
         "name" => "missing_start_state",
         "kind" => "error",
         "transitions" => []

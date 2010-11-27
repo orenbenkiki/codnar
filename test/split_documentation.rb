@@ -20,53 +20,57 @@ module Codnar
     def test_split_raw
       File.open("raw.html", "w") { |file| file.write("<foo>\nbar\n</foo>\n") }
       splitter = Splitter.new(@errors, configuration("html"))
-      splitter.chunks("raw.html").should == [ {
+      chunks = splitter.chunks("raw.html")
+      @errors.should == []
+      chunks.should == [ {
         "name" => "raw.html",
         "containers" => [],
         "contained" => [],
         "locations" => [ { "file" => "raw.html", "line" => 1 } ],
         "html" => "<foo>\nbar\n</foo>"
       } ]
-      @errors.should == []
     end
 
     def test_split_markdown
       File.open("markdown.md", "w") { |file| file.write("*foo*\nbar\n") }
       splitter = Splitter.new(@errors, configuration("markdown"))
-      splitter.chunks("markdown.md").should == [ {
+      chunks = splitter.chunks("markdown.md")
+      @errors.should == []
+      chunks.should == [ {
         "name" => "markdown.md",
         "containers" => [],
         "contained" => [],
         "locations" => [ { "file" => "markdown.md", "line" => 1 } ],
-        "html" => "<div class='markdown'>\n<p><em>foo</em>\nbar</p>\n</div>"
+        "html" => "<div class='markdown markdown markup'>\n<p><em>foo</em>\nbar</p>\n</div>"
       } ]
-      @errors.should == []
     end
 
     def test_split_rdoc
       File.open("rdoc.rdoc", "w") { |file| file.write("*foo*\nbar\n") }
       splitter = Splitter.new(@errors, configuration("rdoc"))
-      splitter.chunks("rdoc.rdoc").should == [ {
+      chunks = splitter.chunks("rdoc.rdoc")
+      @errors.should == []
+      chunks.should == [ {
         "name" => "rdoc.rdoc",
         "containers" => [],
         "contained" => [],
         "locations" => [ { "file" => "rdoc.rdoc", "line" => 1 } ],
-        "html" => "<div class='rdoc'>\n<p>\n<b>foo</b> bar\n</p>\n</div>"
+        "html" => "<div class='rdoc rdoc markup'>\n<p>\n<b>foo</b> bar\n</p>\n</div>"
       } ]
-      @errors.should == []
     end
 
     def test_split_unknown_kind
       File.open("unknown.kind", "w") { |file| file.write("foo\nbar\n") }
       splitter = Splitter.new(@errors, configuration("unknown-kind"))
-      splitter.chunks("unknown.kind").should == [ {
+      chunks = splitter.chunks("unknown.kind")
+      @errors.should == [ "#{$0}: No formatter specified for lines of kind: unknown-kind" ]
+      chunks.should == [ {
         "name" => "unknown.kind",
         "containers" => [],
         "contained" => [],
         "locations" => [ { "file" => "unknown.kind", "line" => 1 } ],
-        "html" => "<pre class='missing_formatter'>\nfoo\nbar\n</pre>"
+        "html" => "<pre class='missing formatter error'>\nfoo\nbar\n</pre>"
       } ]
-      @errors.should == [ "#{$0}: No formatter specified for lines of kind: unknown-kind" ]
     end
 
   protected
@@ -74,8 +78,8 @@ module Codnar
     def configuration(kind)
       return {
         "formatters" => {
-          "markdown" => "Formatter.markup_to_html(lines, 'Markdown')",
-          "rdoc" => "Formatter.markup_to_html(lines, 'RDoc')",
+          "markdown" => "Formatter.markup_lines_to_html(lines, 'Markdown')",
+          "rdoc" => "Formatter.markup_lines_to_html(lines, 'RDoc')",
         },
         "syntax" => {
           "start_state" => kind,

@@ -23,7 +23,7 @@ module Codnar
 
     # Split the specified input file into chunks.
     def split
-      @configuration = Codnar::Configuration::PRE if @configuration == {}
+      @configuration = Codnar::Configuration::SPLIT_HTML_DOCUMENTATION if @configuration == {}
       splitter = Splitter.new(@errors, @configuration)
       print(splitter.chunks(ARGV[0]).to_yaml)
     end
@@ -43,11 +43,11 @@ module Codnar
 
         DESCRIPTION:
 
-          Split the documentation of file into chunks that are printed in YAML format
-          to the output (to be read by codnar-weave). Many file formats can be split
+          Split the documentation of file into chunks that are printed in YAML format to
+          the output (to be read by codnar-weave). Many file formats can be split
           depending on the specified configuration. The default configuration is called
-          PRE, and it treats the whole file as a single chunk (which is rendered inside
-          an HTML pre element). This isn't very useful.
+          SPLIT_HTML_DOCUMENTATION, and it preserves the whole file as a single formatted
+          HTML documentation chunk. This isn't very useful.
 
           The configuration needs to specify a set of line classification patterns,
           parsing states and pattern-based transitions between them, the initial state,

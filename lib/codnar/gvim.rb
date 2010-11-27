@@ -13,7 +13,7 @@ module Codnar
       run_gvim(file, syntax)
       html = read_html_file(file)
       delete_temporary_files(file)
-      return clean_html(html)
+      return clean_html(html, syntax)
     end
 
     # Convert a sequence of classified code lines to HTML using GVim syntax
@@ -67,8 +67,8 @@ module Codnar
     end
 
     # Extract the clean highlighted syntax HTML from GVim's HTML output.
-    def self.clean_html(html)
-      html.sub!(/.*?<pre>/m, "<pre class='highlighted_syntax'>")
+    def self.clean_html(html, syntax)
+      html.sub!(/.*?<pre>/m, "<pre class='#{syntax} code syntax'>")
       html.sub!("</body>\n</html>\n", "")
       return html
     end
