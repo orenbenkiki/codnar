@@ -45,7 +45,7 @@ module Codnar
           printed to the output. The first file is the main documentation file that is
           expected to include all the rest of the chunks via directives of the format:
 
-            <script src="chunk-name" type="x-codnar/template-name"></script>
+            <embed src="chunk-name" type="x-codnar/template-name"></embed>
 
           Where the template-name is a key in the configuration, whose value is an ERB
           template for embedding the named chunk into the documentation.

@@ -22,10 +22,10 @@ module Codnar
     # Due to http://github.com/relevance/rcov/issues/#issue/43 the following regular expressions must be on a single line.
 
     # Detect embedded chunks (type= before src=).
-    TYPE_SRC_CHUNK = / [ ]* <script \s+ type = ['\"] x-codnar\/ (.*?) ['\"] \s+ src = ['\"] \#* (.*?) ['\"] \s* (?: \/> | > \s* <\/script> ) [ ]* /x
+    TYPE_SRC_CHUNK = / [ ]* <embed \s+ type = ['\"] x-codnar\/ (.*?) ['\"] \s+ src = ['\"] \#* (.*?) ['\"] \s* (?: \/> | > \s* <\/embed> ) [ ]* /x
 
     # Detect embedded chunks (src= before type=).
-    SRC_TYPE_CHUNK = / [ ]* <script \s+ src = ['\"] \#* (.*?) ['\"] \s+ type = ['\"] x-codnar\/ (.*?) ['\"] \s* (?: \/> | > \s* <\/script> ) [ ]* /x
+    SRC_TYPE_CHUNK = / [ ]* <embed \s+ src = ['\"] \#* (.*?) ['\"] \s+ type = ['\"] x-codnar\/ (.*?) ['\"] \s* (?: \/> | > \s* <\/embed> ) [ ]* /x
 
     # Recursively expand all embedded chunks inside a container chunk.
     def expand_chunk_html(chunk)

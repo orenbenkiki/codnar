@@ -20,7 +20,7 @@ module Codnar
     ROOT_CHUNKS = [ {
       "name" => "root",
       "locations" => [ { "file" => "root", "line" => 1 } ],
-      "html" => "Root\n<script src='included' type='x-codnar/include'></script>"
+      "html" => "Root\n<embed src='included' type='x-codnar/include'/>"
     } ]
 
     INCLUDED_CHUNKS = [ {

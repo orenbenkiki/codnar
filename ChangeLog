@@ -1,5 +1,6 @@
 2010-11-27	Oren Ben-Kiki <oren@ben-kiki.org>
 
+	* Use embed instead of script tags.
 	* Refactor common tests code.
 	* Built-in configurations.
 

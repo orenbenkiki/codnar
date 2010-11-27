@@ -91,14 +91,14 @@ module Codnar
         "locations" => [ "file" => "chunk" ], "containers" => [ "Top" ], "contained" => [ "BOTTOM" ],
         "name" => "Intermediate", "html" => <<-EOF.unindent,
           <h2>Intermediate</h2>
-          <script type='x-codnar/#{template}' src='bottom'>
-          </script>
+          <embed type='x-codnar/#{template}' src='bottom'>
+          </embed>
         EOF
       }, {
         "locations" => [ "file" => "chunk" ], "containers" => [ "Intermediate" ], "contained" => [],
         "name" => "Top", "html" => <<-EOF.unindent,
           <h1>Top</h1>
-          <script src="##INTERMEDIATE" type="x-codnar/#{template}"></script>
+          <embed src="##INTERMEDIATE" type="x-codnar/#{template}"/>
         EOF
       } ]
     end
