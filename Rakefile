@@ -16,7 +16,7 @@ task "all" => [ "verify", "rdoc", "gem" ]
 desc "Test, coverage, analyze code"
 task "verify" => [ "rcov", "reek", "roodi", "flay", "saikuro" ]
 
-patterns = { "bin" => "bin/*", "lib" => "lib/**/*.rb", "test" => "test/**/*.rb" }
+patterns = { "bin" => "bin/*", "lib" => "lib/**/*.rb", "test" => "test/*.rb", "testlib" => "test/lib/*.rb" }
 files = patterns.merge(patterns) { |key, pattern| FileList[pattern] }
 
 spec = Gem::Specification.new do |s|
@@ -53,7 +53,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency("test-spec")
 
   s.files = files["lib"] + files["bin"]
-  s.test_files = files["test"]
+  s.test_files = files["test"] + files["testlib"]
   s.executables = files["bin"].map { |path| path.sub("bin/", "") }
 
   s.has_rdoc = true
@@ -74,6 +74,7 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.add(files["bin"])
   rdoc.rdoc_files.add(files["lib"])
   rdoc.rdoc_files.add(files["test"])
+  rdoc.rdoc_files.add(files["testlib"])
   rdoc.main = "README.rdoc"
   rdoc.rdoc_dir = "rdoc"
   rdoc.options = spec.rdoc_options
@@ -91,14 +92,16 @@ end
 Rake::TestTask.new("test") do |task|
   task.test_files = files["test"]
   task.libs << "lib"
+  task.libs << "test/lib"
 end
 
 Rcov::RcovTask.new("rcov") do |task|
   task.output_dir = "rcov"
   task.test_files = files["test"]
   task.libs << "lib"
+  task.libs << "test/lib"
   task.rcov_opts << "--failure-threshold" << "100"
-  (files["lib"] + files["test"]).each do |file|
+  (files["lib"] + files["test"] + files["testlib"]).each do |file|
     task.rcov_opts << "--include-file" << file
   end
 end

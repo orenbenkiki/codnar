@@ -1,20 +1,13 @@
 require "codnar"
 require "test/spec"
-require "fakefs/safe"
+require "with_fakefs"
 
 module Codnar
 
   # Test writing chunks to files.
   class TestWriteChunks < Test::Unit::TestCase
 
-    def setup
-      FakeFS.activate!
-      FakeFS::FileSystem.clear
-    end
-
-    def teardown
-      FakeFS.deactivate!
-    end
+    include WithFakeFS
 
     def test_write_chunks
       check_writing_data([])

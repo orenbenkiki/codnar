@@ -1,11 +1,13 @@
 require "codnar"
 require "test/spec"
-require "fakefs/safe"
+require "with_tempfile"
 
 module Codnar
 
   # Test the built-in split configurations.
   class TestSplitConfigurations < Test::Unit::TestCase
+
+    include WithTempfile
 
     def test_split_html_documentation
       check_split_file(Configuration::SPLIT_HTML_DOCUMENTATION) do |path|
@@ -227,16 +229,9 @@ module Codnar
     def check_split_file(*configurations, &block)
       configuration = configurations.inject({}) { |merged_configuration, next_configuration| merged_configuration.deep_merge(next_configuration) }
       splitter = Splitter.new(errors = Errors.new, configuration)
-      chunks = splitter.chunks(path = write_ruby_file)
+      chunks = splitter.chunks(path = write_tempfile("ruby.rb", RUBY_FILE))
       errors.should == []
       chunks.should == yield(path)
-    end
-
-    def write_ruby_file
-      file = Tempfile.open("ruby.rb")
-      file.write(RUBY_FILE)
-      file.close(false)
-      return file.path
     end
 
     RUBY_FILE = <<-EOF.unindent

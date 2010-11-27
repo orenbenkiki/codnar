@@ -1,20 +1,13 @@
 require "codnar"
 require "test/spec"
-require "fakefs/safe"
+require "with_fakefs"
 
 module Codnar
 
   # Test the built-in weave configurations.
   class TestWeaveConfigurations < Test::Unit::TestCase
 
-    def setup
-      FakeFS.activate!
-      FakeFS::FileSystem.clear
-    end
-
-    def teardown
-      FakeFS.deactivate!
-    end
+    include WithFakeFS
 
     def test_weave_include
       Writer.write("chunks", chunks("include"))

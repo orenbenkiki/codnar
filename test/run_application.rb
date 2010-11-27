@@ -1,20 +1,15 @@
 require "codnar"
 require "test/spec"
-require "fakefs/safe"
+require "with_argv"
+require "with_fakefs"
 
 module Codnar
 
   # Test running a Codnar Application.
   class TestRunApplication < Test::Unit::TestCase
 
-    def setup
-      FakeFS.activate!
-      FakeFS::FileSystem.clear
-    end
-
-    def teardown
-      FakeFS.deactivate!
-    end
+    include WithArgv
+    include WithFakeFS
 
     def test_do_nothing
       run_with_argv(%w(dummy)) { Application.new(true).run }.should == 0
@@ -47,13 +42,6 @@ module Codnar
     end
 
   protected
-
-    def run_with_argv(argv)
-      return Globals.without_changes do
-        ARGV.replace(argv)
-        yield
-      end
-    end
 
     def run_print_configuration
       Application.new(true).run do |configuration|

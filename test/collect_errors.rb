@@ -1,14 +1,13 @@
 require "codnar"
 require "test/spec"
+require "with_errors"
 
 module Codnar
 
   # Test collecting errors.
   class TestCollectErrors < Test::Unit::TestCase
 
-    def setup
-      @errors = Errors.new
-    end
+    include WithErrors
 
     def test_one_error
       @errors << "Oops"

@@ -1,15 +1,19 @@
 require "codnar"
 require "test/spec"
-require "fakefs/safe"
+require "with_errors"
 
 module Codnar
 
   # Test converting classified lines to HTML.
   class TestFormatLines < Test::Unit::TestCase
 
+    include WithErrors
+
+    alias errors_setup setup
+
     def setup
+      errors_setup
       Formatter.send(:public, *Formatter.protected_instance_methods)
-      @errors = Errors.new
       @formatter = Formatter.new(@errors, "code" => "Formatter.lines_to_pre_html(lines)", "fail" => "TestFormatLines.fail")
     end
 

@@ -1,28 +1,23 @@
 require "codnar"
 require "test/spec"
-require "fakefs/safe"
+require "with_tempfile"
 
 module Codnar
 
   # Test splitting code files.
   class TestSplitCode < Test::Unit::TestCase
 
+    include WithTempfile
+
     def test_split_ruby
       splitter = Splitter.new(errors = Errors.new, RUBY_CONFIGURATION)
-      path = write_ruby_file
+      path = write_tempfile("ruby.rb", RUBY_FILE)
       chunks = splitter.chunks(path)
       errors.should == []
       chunks.should == ruby_chunks(path)
     end
 
   protected
-
-    def write_ruby_file
-      file = Tempfile.open("ruby.rb")
-      file.write(RUBY_FILE)
-      file.close(false)
-      return file.path
-    end
 
     def ruby_chunks(path)
       RUBY_CHUNKS[0].name = path
