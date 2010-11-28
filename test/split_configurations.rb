@@ -165,9 +165,11 @@ module Codnar
       This is *special*.
       {{{ assignment
       </pre>
-      <pre class='ruby code syntax'>
-      local = <span class="Identifier">$global</span>
-      </pre>
+      <div class='ruby code syntax' bgcolor="#ffffff" text="#000000">
+      <font face="monospace">
+      local =&nbsp;<font color="#00ffff">$global</font><br />
+      </font>
+      </div>
       <pre class='comment'>
       }}}
       </pre>
@@ -198,9 +200,11 @@ module Codnar
     EOF
 
     FULL_RUBY_PROCESSING_NESTED_CHUNK_HTML = <<-EOF.unindent.chomp
-      <pre class='ruby code syntax'>
-      local = <span class="Identifier">$global</span>
-      </pre>
+     <div class='ruby code syntax' bgcolor="#ffffff" text="#000000">
+     <font face="monospace">
+     local =&nbsp;<font color="#00ffff">$global</font><br />
+     </font>
+     </div>
     EOF
 
     def test_classify_shell_comments_and_highlight_ruby_code_syntax_and_format_rdoc_comments_and_chunk_by_vim_regions

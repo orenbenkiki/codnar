@@ -85,9 +85,11 @@ module Codnar
       "contained" => [],
       "locations" => [ "file" => "PATH", "line" => 2 ],
       "html" => <<-EOF.unindent.chomp,
-        <pre class='ruby code syntax'>
-        local = <span class=\"Identifier\">$global</span>
-        </pre>
+        <div class='ruby code syntax' bgcolor="#ffffff" text="#000000">
+        <font face="monospace">
+        local =&nbsp;<font color="#00ffff">$global</font><br />
+        </font>
+        </div>
       EOF
     } ]
 
