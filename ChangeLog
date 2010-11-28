@@ -1,5 +1,6 @@
 2010-11-28	Oren Ben-Kiki <oren@ben-kiki.org>
 
+	* Expand Markdown processing.
 	* Allow tweaking GVim syntax highlighting.
 
 2010-11-27	Oren Ben-Kiki <oren@ben-kiki.org>
