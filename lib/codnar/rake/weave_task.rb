@@ -1,0 +1,55 @@
+module Codnar
+
+  module Rake
+
+    # A Rake task for weaving chunks to a single HTML.
+    class WeaveTask < ::Rake::TaskLib
+
+      # Create a Rake task for weaving chunks to a single HTML. The root source
+      # file is expected to embed all the chunks into the output HTML. The
+      # chunks are loaded from the results of all the previous created
+      # SplitTask-s.
+      def initialize(root, configurations, output = "codnar.html")
+        @root = Rake.chunks_dir + "/" + root
+        @output = output
+        @configurations = configurations
+        define_tasks
+      end
+
+    protected
+
+      # Define the tasks for weaving the chunks to a single HTML.
+      def define_tasks
+        define_weave_task
+        connect_common_tasks
+      end
+
+      # Define the actual task for weaving the chunks to a single HTML.
+      def define_weave_task
+        desc "Weave chunks into HTML" unless ::Rake.application.last_comment
+        ::Rake::Task.define_task("codnar:weave" => @output)
+        ::Rake::FileTask.define_task(@output => Rake.chunk_files + Rake.configuration_files(@configurations)) do
+          run_weave_application
+        end
+      end
+
+      # Run the Weave application for a single source file.
+      def run_weave_application
+        options = Rake.application_options(@output, @configurations)
+        options << @root
+        options += Rake.chunk_files.reject { |chunk| chunk == @root }
+        Application.with_argv(options) { Weave.new.run }
+      end
+
+      # Connect the task for cleaning up after weaving (clobber:codnar) to the
+      # common task of cleaning up everything (clobber).
+      def connect_common_tasks
+        ::Rake::Task.define_task("clobber:codnar") { rm_rf(@output) }
+        ::Rake::Task.define_task(:clobber => "clobber:codnar")
+      end
+
+    end
+
+  end
+
+end

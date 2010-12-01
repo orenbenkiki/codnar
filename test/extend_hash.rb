@@ -1,10 +1,11 @@
 require "codnar"
 require "test/spec"
+require "test_case"
 
 module Codnar
 
   # Test extending the Hash class.
-  class TestExtendHash < Test::Unit::TestCase
+  class TestExtendHash < TestCase
 
     def test_read_missing_key
       {}.missing.should == nil

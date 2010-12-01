@@ -5,14 +5,12 @@ require "with_fakefs"
 module Codnar
 
   # Test the built-in weave configurations.
-  class TestWeaveConfigurations < Test::Unit::TestCase
-
-    include WithFakeFS
+  class TestWeaveConfigurations < TestWithFakeFS
 
     def test_weave_include
       Writer.write("chunks", chunks("include"))
       errors = Errors.new
-      html = Weaver.new(errors, [ "chunks" ], Configuration::WEAVE_INCLUDE).weave("top", "include")
+      html = Weaver.new(errors, [ "chunks" ], Configuration::WEAVE_INCLUDE).weave("include", "top")
       errors.should == []
       html.should == <<-EOF.unindent
         <h1>Top</h1>
@@ -36,7 +34,7 @@ module Codnar
     def test_weave_plain_chunk
       Writer.write("chunks", chunks("plain_chunk"))
       errors = Errors.new
-      html = Weaver.new(errors, [ "chunks" ], Configuration::WEAVE_PLAIN_CHUNK).weave("top", "plain_chunk")
+      html = Weaver.new(errors, [ "chunks" ], Configuration::WEAVE_PLAIN_CHUNK).weave("plain_chunk", "top")
       errors.should == []
       html.should == WOVEN_PLAIN_CHUNK
     end
@@ -77,7 +75,7 @@ module Codnar
     def test_weave_named_chunk_with_containers
       Writer.write("chunks", chunks("named_chunk_with_containers"))
       errors = Errors.new
-      html = Weaver.new(errors, [ "chunks" ], Configuration::WEAVE_NAMED_CHUNK_WITH_CONTAINERS).weave("top", "named_chunk_with_containers")
+      html = Weaver.new(errors, [ "chunks" ], Configuration::WEAVE_NAMED_CHUNK_WITH_CONTAINERS).weave("named_chunk_with_containers", "top")
       errors.should == []
       html.should == WOVEN_NAMED_CHUNK
     end

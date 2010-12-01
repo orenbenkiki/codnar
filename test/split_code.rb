@@ -1,13 +1,11 @@
 require "codnar"
 require "test/spec"
-require "with_tempfile"
+require "test_case"
 
 module Codnar
 
   # Test splitting code files.
-  class TestSplitCode < Test::Unit::TestCase
-
-    include WithTempfile
+  class TestSplitCode < TestCase
 
     def test_split_ruby
       splitter = Splitter.new(errors = Errors.new, RUBY_CONFIGURATION)

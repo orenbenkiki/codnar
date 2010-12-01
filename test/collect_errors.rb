@@ -5,9 +5,7 @@ require "with_errors"
 module Codnar
 
   # Test collecting errors.
-  class TestCollectErrors < Test::Unit::TestCase
-
-    include WithErrors
+  class TestCollectErrors < TestWithErrors
 
     def test_one_error
       @errors << "Oops"

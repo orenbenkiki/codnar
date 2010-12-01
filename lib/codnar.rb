@@ -1,6 +1,7 @@
 require "andand"
 require "cgi"
 require "erb"
+require "fileutils"
 require "getoptions"
 require "rdiscount"
 require "rdoc/markup/to_html"

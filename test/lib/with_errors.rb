@@ -1,9 +1,12 @@
+require "test_case"
+
 module Codnar
 
-  # Setup tests that collect Errors.
-  module WithErrors
+  # Tests that collect Errors.
+  class TestWithErrors < TestCase
 
     def setup
+      super
       @errors = Errors.new
     end
 

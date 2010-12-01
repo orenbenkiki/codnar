@@ -5,14 +5,10 @@ require "with_errors"
 module Codnar
 
   # Test converting classified lines to HTML.
-  class TestFormatLines < Test::Unit::TestCase
-
-    include WithErrors
-
-    alias errors_setup setup
+  class TestFormatLines < TestWithErrors
 
     def setup
-      errors_setup
+      super
       Formatter.send(:public, *Formatter.protected_instance_methods)
       @formatter = Formatter.new(@errors, "code" => "Formatter.lines_to_pre_html(lines)", "fail" => "TestFormatLines.fail")
     end

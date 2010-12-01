@@ -5,9 +5,7 @@ require "with_fakefs"
 module Codnar
 
   # Test reading chunks from files.
-  class TestReadChunks < Test::Unit::TestCase
-
-    include WithFakeFS
+  class TestReadChunks < TestWithFakeFS
 
     def test_read_chunks
       Writer.write("foo.chunks", { "name" => "foo" })

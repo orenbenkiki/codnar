@@ -1,13 +1,11 @@
 require "codnar"
 require "test/spec"
-require "with_tempfile"
+require "test_case"
 
 module Codnar
 
   # Test the built-in split configurations.
-  class TestSplitConfigurations < Test::Unit::TestCase
-
-    include WithTempfile
+  class TestSplitConfigurations < TestCase
 
     def test_split_html_documentation
       check_split_file(Configuration::SPLIT_HTML_DOCUMENTATION) do |path|

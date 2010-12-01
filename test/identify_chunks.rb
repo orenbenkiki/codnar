@@ -1,10 +1,11 @@
 require "codnar"
 require "test/spec"
+require "test_case"
 
 module Codnar
 
   # Test converting chunk names to identifiers.
-  class TestIdentifyChunks < Test::Unit::TestCase
+  class TestIdentifyChunks < TestCase
 
     def test_lower_case_to_id
       "a".to_id.should == "a"

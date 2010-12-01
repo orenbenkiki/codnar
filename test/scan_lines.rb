@@ -5,9 +5,7 @@ require "with_fakefs"
 module Codnar
 
   # Test scanning classified lines.
-  class TestScanLines < Test::Unit::TestCase
-
-    include WithFakeFS
+  class TestScanLines < TestWithFakeFS
 
     def test_scan_lines
       File.open("comments", "w") { |file| file.write(INPUT) }

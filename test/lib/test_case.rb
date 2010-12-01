@@ -1,7 +1,11 @@
 module Codnar
 
-  # Write temporary files.
-  module WithTempfile
+  # Tests with additional utilities.
+  class TestCase < Test::Unit::TestCase
+
+    def test_nothing
+      # Shuts test-spec about "no tests" in this base class.
+    end
 
   protected
 

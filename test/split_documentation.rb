@@ -5,9 +5,7 @@ require "with_fakefs"
 module Codnar
 
   # Test "splitting" documentation files.
-  class TestSplitDocumentation < Test::Unit::TestCase
-
-    include WithFakeFS
+  class TestSplitDocumentation < TestWithFakeFS
 
     def test_split_raw
       File.open("raw.html", "w") { |file| file.write("<foo>\nbar\n</foo>\n") }

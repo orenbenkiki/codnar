@@ -5,9 +5,7 @@ require "with_fakefs"
 module Codnar
 
   # Test writing chunks to files.
-  class TestWriteChunks < Test::Unit::TestCase
-
-    include WithFakeFS
+  class TestWriteChunks < TestWithFakeFS
 
     def test_write_chunks
       check_writing_data([])

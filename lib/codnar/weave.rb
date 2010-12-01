@@ -22,7 +22,7 @@ module Codnar
     def weave
       @configuration = Codnar::Configuration::WEAVE_INCLUDE if @configuration == {}
       weaver = Weaver.new(@errors, ARGV, @configuration)
-      puts(weaver.weave(ARGV[0], "include"))
+      puts(weaver.weave("include"))
       weaver.collect_unused_chunk_errors
     end
 

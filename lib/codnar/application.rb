@@ -19,6 +19,15 @@ module Codnar
       return exception.status
     end
 
+    # Execute a block with an overriden ARGV, typically for running an
+    # application.
+    def self.with_argv(argv)
+      return Globals.without_changes do
+        ARGV.replace(argv)
+        yield
+      end
+    end
+
   protected
 
     # Parse the command line options of the program.
@@ -40,6 +49,7 @@ module Codnar
     # Redirect a standard file.
     def self.redirect_file(default, file)
       return default if file.nil? || file == "-"
+      FileUtils.mkdir_p(File.dirname(File.expand_path(file)))
       return File.open(file, "w")
     end
 

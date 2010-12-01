@@ -38,6 +38,7 @@ module Codnar
       @errors.in_path(path) do
         chunks = YAML.load_file(path)
         merge_loaded_chunks(chunks)
+        @root_chunk ||= chunks[0].name
       end
     end
 
