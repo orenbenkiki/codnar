@@ -15,7 +15,11 @@ module Codnar
       "    a\n  b\n".unindent.should == "a\n  b\n"
     end
 
-    def test_explicit_unindent
+    def test_integer_unindent
+      "  a\n    b\n".unindent(1).should == " a\n   b\n"
+    end
+
+    def test_string_unindent
       "  a\n    b\n".unindent(" ").should == " a\n   b\n"
     end
 

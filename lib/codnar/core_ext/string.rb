@@ -8,8 +8,12 @@ class String
   end
 
   # Strip away common indentation from the beginning of each line in this
-  # String. By default, detects the indentation from the first line.
-  def unindent(unindentation = indentation)
+  # String. By default, detects the indentation from the first line. This can
+  # be overriden to the exact (String) indentation to strip, or to the (Fixnum)
+  # number of spaces the first line is further-indented from the rest of the
+  # text.
+  def unindent(unindentation = 0)
+    unindentation = ' ' * (indentation.length - unindentation) if Fixnum === unindentation
     return gsub(/^#{unindentation}/, "")
   end
 

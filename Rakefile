@@ -36,7 +36,7 @@ spec = Gem::Specification.new do |s|
   s.author = "Oren Ben-Kiki"
   s.email = "oren@ben-kiki.org"
 
-  s.requirements << "GVim for syntax highlighting, Pod2Html for processing POD documentation (only if these are used in your documentation)."
+  s.requirements << "GVim for syntax highlighting."
 
   s.add_dependency("andand")
   s.add_dependency("erb")

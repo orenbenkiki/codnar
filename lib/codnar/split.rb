@@ -38,8 +38,8 @@ module Codnar
 
     # Print the part of the help message after the standard options.
     def print_help_after_options
-      print(<<-EOF.unindent)
-        <path>                               Documentation or code file to split.
+      print(<<-EOF.unindent(2))
+          <path>                               Documentation or code file to split.
 
         DESCRIPTION:
 
