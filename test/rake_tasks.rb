@@ -30,8 +30,7 @@ module Codnar
       File.open("foo", "w") { |file| file.puts("foo") }
       Rake::SplitTask.new([ "foo" ], [])
       Rake::WeaveTask.new("foo", [])
-      @rake["codnar:split"].invoke
-      @rake["codnar:weave"].invoke
+      @rake["codnar"].invoke
     end
 
     def test_results

@@ -25,15 +25,15 @@ module Codnar
 
     # Compute options for invoking an application.
     def self.application_options(output, configurations)
-      options = [ '-o', output ]
-      options += [ '-c' ] + configurations if configurations.size > 0
+      options = [ "-o", output ]
+      options += [ "-c" ] + configurations.map { |configuration| configuration.to_s } + [ "--" ] if configurations.size > 0
       return options
     end
 
     # Return the list of actual configuration files (as opposed to names of
     # built-in configurations) for use as dependencies.
     def self.configuration_files(configurations)
-      return configurations.find_all { |configuration| File.exists?(configuration) }
+      return configurations.find_all { |configuration| File.exists?(configuration.to_s) }
     end
 
   end

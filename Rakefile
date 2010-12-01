@@ -1,3 +1,6 @@
+$: << File.dirname(__FILE__) + "/lib"
+
+require "codnar/rake"
 require "rake/clean"
 require "rake/gempackagetask"
 require "rake/rdoctask"
@@ -6,17 +9,25 @@ require "rcov/rcovtask"
 require "reek/rake/task"
 require "roodi"
 require "roodi_task"
-require "lib/codnar/version"
 
-task :default => "all"
+task :default => :all
 
 desc "Verify, document, package"
-task "all" => [ "verify", "rdoc", "gem" ]
+task :all => [ :verify, :doc, :gem ]
+
+desc "Generate all documentation"
+task :doc => [ :rdoc, :codnar ]
 
 desc "Test, coverage, analyze code"
-task "verify" => [ "rcov", "reek", "roodi", "flay", "saikuro" ]
+task :verify => [ :rcov, :reek, :roodi, :flay, :saikuro ]
 
-patterns = { "bin" => "bin/*", "lib" => "lib/**/*.rb", "test" => "test/*.rb", "testlib" => "test/lib/*.rb" }
+patterns = {
+  "bin" => "bin/*",
+  "lib" => "lib/**/*.rb",
+  "doc" => "doc/*",
+  "test" => "test/*.rb",
+  "testlib" => "test/lib/*.rb"
+}
 files = patterns.merge(patterns) { |key, pattern| FileList[pattern] }
 
 spec = Gem::Specification.new do |s|
@@ -52,7 +63,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency("saikuro")
   s.add_development_dependency("test-spec")
 
-  s.files = files["lib"] + files["bin"]
+  s.files = files["lib"] + files["bin"] + files["doc"]
   s.test_files = files["test"] + files["testlib"]
   s.executables = files["bin"].map { |path| path.sub("bin/", "") }
 
@@ -82,7 +93,7 @@ end
 
 Reek::Rake::Task.new do |task|
   task.reek_opts = "--quiet"
-  task.source_files = files.values.flatten
+  task.source_files = files["lib"] + files["bin"] + files["test"] + files["testlib"]
 end
 
 RoodiTask.new do |task|
@@ -125,3 +136,7 @@ task :saikuro do
     raise "Saikuro found complicated code."
   end
 end
+
+Codnar::Rake::SplitTask.new(files["doc"], [])
+Codnar::Rake::SplitTask.new([ "README.rdoc" ], [ :split_rdoc_documentation ])
+Codnar::Rake::WeaveTask.new("doc/root.html", [])

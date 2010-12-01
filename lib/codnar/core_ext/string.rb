@@ -13,7 +13,7 @@ class String
   # number of spaces the first line is further-indented from the rest of the
   # text.
   def unindent(unindentation = 0)
-    unindentation = ' ' * (indentation.length - unindentation) if Fixnum === unindentation
+    unindentation = " " * (indentation.length - unindentation) if Fixnum === unindentation
     return gsub(/^#{unindentation}/, "")
   end
 

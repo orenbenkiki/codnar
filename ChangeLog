@@ -1,5 +1,6 @@
 2010-12-01	Oren Ben-Kiki <oren@ben-kiki.org>
 
+	* Rakefile invokes Codnar.
 	* Fix help option unindentation.
 	* Add Codnar Rake tasks.
 

@@ -3,3 +3,5 @@ pkg/
 rdoc/
 rcov/
 saikuro/
+chunks/
+codnar.html

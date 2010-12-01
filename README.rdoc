@@ -10,9 +10,9 @@ narrative that describes the overall system.
 
 == Installation
 
-A simple "gem install codnar" should do the trick, assuming you have Ruby gems
-set up. If you want to use the VIM-based syntax highlighting, you also need to
-install gvim.
+A simple <tt>gem install codnar</tt> should do the trick, assuming you have
+Ruby gems set up. If you want to use the VIM-based syntax highlighting, you
+also need to install <tt>gvim</tt>.
 
 == Usage
 
@@ -21,4 +21,5 @@ The basic usage is
   codnar-split source-file > chunks-file
   codnar-weave chunks-files... > codnar.html
 
-Both programs accept a -h or --help flag to print more detailed usage messages.
+Both programs accept a <tt>-h</tt> or <tt>--help</tt> flag to print more
+detailed usage messages.

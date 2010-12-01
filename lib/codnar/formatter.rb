@@ -76,7 +76,7 @@ module Codnar
     # expression failed.
     def failed_formatter(lines, formatter, exception)
       @errors << "Formatter: #{formatter} for lines of kind: #{lines.last.kind} failed with exception: #{exception}"
-      return Formatter.lines_to_pre_html(lines, :class => 'failed formatter error')
+      return Formatter.lines_to_pre_html(lines, :class => "failed formatter error")
     end
 
     # Merge a group of consecutive HTML classified lines into a group with a

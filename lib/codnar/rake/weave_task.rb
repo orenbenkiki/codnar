@@ -27,7 +27,7 @@ module Codnar
       # Define the actual task for weaving the chunks to a single HTML.
       def define_weave_task
         desc "Weave chunks into HTML" unless ::Rake.application.last_comment
-        ::Rake::Task.define_task("codnar:weave" => @output)
+        ::Rake::Task.define_task("codnar_weave" => @output)
         ::Rake::FileTask.define_task(@output => Rake.chunk_files + Rake.configuration_files(@configurations)) do
           run_weave_application
         end
@@ -41,11 +41,14 @@ module Codnar
         Application.with_argv(options) { Weave.new.run }
       end
 
-      # Connect the task for cleaning up after weaving (clobber:codnar) to the
+      # Connect the task for cleaning up after weaving (clobber_codnar) to the
       # common task of cleaning up everything (clobber).
       def connect_common_tasks
-        ::Rake::Task.define_task("clobber:codnar") { rm_rf(@output) }
-        ::Rake::Task.define_task(:clobber => "clobber:codnar")
+        desc "Build the code narrative HTML"
+        ::Rake::Task.define_task(:codnar => "codnar_weave")
+        desc "Remove woven HTML documentation"
+        ::Rake::Task.define_task("clobber_codnar") { rm_rf(@output) }
+        ::Rake::Task.define_task(:clobber => "clobber_codnar")
       end
 
     end
