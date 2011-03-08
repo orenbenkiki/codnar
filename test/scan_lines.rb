@@ -17,9 +17,17 @@ module Codnar
     SYNTAX = {
       "start_state" => "comment",
       "patterns" => {
-        "shell" => { "regexp" => "^(\\s*)#+\\s*(.*)$", "groups" => [ "indentation", "payload" ], "kind" => "comment" },
-        "c++" => { "regexp" => /^(\s*)\/\/+\s*(.*)$/, "groups" => [ "indentation", "payload" ], "kind" => "comment" },
-        "invalid" => { "regexp" => "(" }
+        "shell" => {
+          "regexp" => "^(\\s*)#+\\s*(.*)$",
+          "groups" => [ "indentation", "payload" ],
+          "kind" => "comment",
+        },
+        "c++" => {
+          "regexp" => /^(\s*)\/\/+\s*(.*)$/,
+          "groups" => [ "indentation", "payload" ],
+          "kind" => "comment",
+        },
+        "invalid" => { "regexp" => "(" },
       },
       "states" => {
         "comment" => {
@@ -27,9 +35,9 @@ module Codnar
             { "pattern" => "shell" },
             { "pattern" => "c++" },
             { "pattern" => "no-such-pattern", "next_state" => "no-such-state" },
-          ]
-        }
-      }
+          ],
+        },
+      },
     }
 
     INPUT = <<-EOF.unindent

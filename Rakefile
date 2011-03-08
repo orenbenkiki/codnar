@@ -37,10 +37,10 @@ spec = Gem::Specification.new do |s|
 
   s.homepage = "http://codenar.rubygems.org"
 
-  s.summary = "Code narrator - a reverse literate programming tool."
+  s.summary = "Code narrator - an inverse literate programming tool."
   s.description = (<<-EOF).gsub(/^\s+/, "").chomp.gsub("\n", " ")
-    Code narrator is a reverse literate programming tool. It splits the source
-    files into "chunks" (including structured comments) and weaves them back
+    Code Narrator (Codnar) is an inverse literate programming tool. It splits the
+    source files into "chunks" (including structured comments) and weaves them back
     into a narrative that describes the overall system.
   EOF
 
@@ -56,6 +56,7 @@ spec = Gem::Specification.new do |s|
   s.add_dependency("rdiscount")
   s.add_dependency("rdoc")
 
+  s.add_development_dependency("fakefs")
   s.add_development_dependency("flay")
   s.add_development_dependency("rcov")
   s.add_development_dependency("reek")

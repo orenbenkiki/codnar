@@ -17,7 +17,9 @@ class Markdown
     markdown = Markdown.id_anchors(markdown)
     html = RDiscount.new(markdown).to_html
     html = Markdown.id_links(html)
-    return html
+    return html.gsub(/\n*<p>\n*/, "\n<p>\n") \
+               .gsub(/\n*<\/p>\n*/, "\n</p>\n") \
+               .sub(/^\n*/, "")
   end
 
 protected

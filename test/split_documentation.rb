@@ -31,7 +31,7 @@ module Codnar
         "containers" => [],
         "contained" => [],
         "locations" => [ { "file" => "markdown.md", "line" => 1 } ],
-        "html" => "<div class='markdown markdown markup'>\n<p><em>foo</em>\nbar</p>\n</div>"
+        "html" => "<div class='markdown markdown markup'>\n<p>\n<em>foo</em>\nbar\n</p>\n</div>"
       } ]
     end
 

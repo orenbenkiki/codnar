@@ -24,8 +24,8 @@ module Codnar
     # To allow for cleaner YAML files to specify the syntax, the following
     # shorthands are supported:
     #
-    # - A pattern or state reference can be presented by the string pattern or
-    #   state name.
+    # - A pattern or state reference can be presented by the string name of the
+    #   pattern or state.
     # - The name field of a state or pattern can be ommitted. If specified, it
     #   must be identical to the key in the states or patterns mapping.
     # - The kind field of a pattern can be ommitted; by default it is assumed
@@ -35,14 +35,14 @@ module Codnar
     #   equal to [ "indentation", "payload" ].
     # - The kind field of a transition can be ommitted; by default it is
     #   assumed to be identical to the pattern kind.
-    # - The next step of a transition can be ommitted; by default it is
+    # - The next state of a transition can be ommitted; by default it is
     #   assumed to be identical to the containing state.
     # - The start state can be ommitted; by default it is assumed to be named
     #   "start".
     #
     # When the Scanner is constructed, a deep clone of the syntax object is
-    # modified in place to expand all the above shorthands, collecting any
-    # invalid references and/or regexps errors.
+    # created and modified to expand all the above shorthands. Any problems
+    # detected during this process are pushed into the errors.
     def initialize(errors, syntax)
       @errors = errors
       @syntax = syntax.deep_clone
@@ -65,7 +65,8 @@ module Codnar
     # white space (which is not included in the payload).
     #
     # If at some state, a file line does not match any pattern, the scanner
-    # will collect an error message for it and classify the line as follows:
+    # will push a message into the errors. In addition it will classify the
+    # line as follows:
     #
     #   - kind: error
     #     state: <name>
@@ -81,6 +82,8 @@ module Codnar
     end
 
   protected
+
+# {{{ Scanner pattern shorthands
 
     # Expand all the shorthands used in the pattern.
     def expand_pattern_shorthands(name, pattern)
@@ -105,6 +108,10 @@ module Codnar
       @errors << "#{type}: #{name} has wrong name: #{data_name}" if data_name != name
       return data_name
     end
+
+# }}}
+
+# {{{ Scanner state shorthands
 
     # Expand all the shorthands used in the state.
     def expand_state_shorthands(name, state)
@@ -133,6 +140,10 @@ module Codnar
       }
     end
 
+# }}}
+
+# {{{ Scanner file processing
+
     # Scan a disk file.
     def scan_path
       File.open(@path, "r") do |file|
@@ -157,18 +168,9 @@ module Codnar
       unclassified_line(line, @state.name)
     end
 
-    # Handle a file line that couldn't be classified.
-    def unclassified_line(line, state_name)
-      @lines << {
-        "line" => line,
-        "indentation" => line.indentation,
-        "payload" => line.unindent,
-        "kind" => "error",
-        "state" => state_name,
-        "number" => @line_number
-      }
-      @errors << "State: #{state_name} failed to classify line: #{@lines.last.payload}"
-    end
+# }}}
+
+# {{{ Scanner line processing
 
     # Handle a file line, only if it matches the pattern.
     def classify_matching_line(line, transition)
@@ -191,6 +193,21 @@ module Codnar
       end
       return extracted
     end
+
+    # Handle a file line that couldn't be classified.
+    def unclassified_line(line, state_name)
+      @lines << {
+        "line" => line,
+        "indentation" => line.indentation,
+        "payload" => line.unindent,
+        "kind" => "error",
+        "state" => state_name,
+        "number" => @line_number
+      }
+      @errors << "State: #{state_name} failed to classify line: #{@lines.last.payload}"
+    end
+
+# }}}
 
   end
 

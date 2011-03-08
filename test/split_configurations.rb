@@ -37,9 +37,9 @@ module Codnar
       # This is <b>special</b>.
       </p>
       <pre>
-        # {{{ assignment
-        local = $global
-        # }}}
+      # {{{ assignment
+      local = $global
+      # }}}
       </pre>
       </div>
     EOF
@@ -59,10 +59,11 @@ module Codnar
     MARKDOWN_HTML = <<-EOF.unindent.chomp
       <div class='markdown doc markup'>
       <h1>This is <em>special</em>.</h1>
-
-      <p>  # {{{ assignment
+      <p>
+        # {{{ assignment
         local = $global
-        # }}}</p>
+        # }}}
+      </p>
       </div>
     EOF
 
@@ -134,14 +135,18 @@ module Codnar
 
     MARKDOWN_SHELL_COMMENTS_HTML = <<-EOF.unindent.chomp
       <div class='markdown comment markup'>
-      <p>This is <em>special</em>.
-      {{{ assignment</p>
+      <p>
+      This is <em>special</em>.
+      {{{ assignment
+      </p>
       </div>
       <pre class='code'>
       local = $global
       </pre>
       <div class='markdown comment markup'>
-      <p>}}}</p>
+      <p>
+      }}}
+      </p>
       </div>
     EOF
 

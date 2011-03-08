@@ -1,25 +1,32 @@
 = Codnar
 
-Code narrator - a reverse literate programming tool.
+Code Narrator - an inverse literate programming tool.
 
-== Description
+== TL;DR
 
-Code narrator is a reverse literate programming tool. It splits the source
-files into "chunks" (including structured comments) and weaves them back into a
-narrative that describes the overall system.
+=== Description
 
-== Installation
+Code Narrator (Codnar) is an inverse literate programming tool. It splits the
+source files into "chunks" (including structured comments) and weaves them back
+into a narrative that describes the overall system.
+
+=== Installation
 
 A simple <tt>gem install codnar</tt> should do the trick, assuming you have
 Ruby gems set up. If you want to use the VIM-based syntax highlighting, you
 also need to install <tt>gvim</tt>.
 
-== Usage
+=== Usage
 
 The basic usage is
 
-  codnar-split source-file > chunks-file
-  codnar-weave chunks-files... > codnar.html
+  codnar-split [options] source-file > chunks-file
+  codnar-weave [options] chunks-files... > codnar.html
 
 Both programs accept a <tt>-h</tt> or <tt>--help</tt> flag to print more
-detailed usage messages.
+detailed usage messages. You can also invoke Codnar from a Rakefile:
+
+  require "codnar/rake"
+
+  Codnar::Rake::SplitTask([ source-files... ], [ configurations... ])
+  Codnar::Rake::WeaveTask(root-file, [ configurations... ], output)

@@ -13,10 +13,14 @@ class Hash
     return merge(hash, &Hash::method("deep_merger"))
   end
 
+# {{{ Deep clone
+
   # Obtain a deep clone which shares nothing with this hash.
   def deep_clone
     return YAML.load(to_yaml)
   end
+
+# }}}
 
 protected
 

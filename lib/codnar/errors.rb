@@ -9,7 +9,7 @@ module Codnar
       @line = nil
     end
 
-    # Collect errors associated with a specific disk file.
+    # Associate all errors collected by a block with a specific disk file.
     def in_path(path, &block)
       prev_path, prev_line = @path, @line
       @path, @line = path, nil
@@ -17,14 +17,14 @@ module Codnar
       @path, @line = prev_path, prev_line
     end
 
-    # Set the line number for the following errors.
+    # Set the line number for any errors collected from here on.
     def at_line(line)
       @line = line
     end
 
     # Add a single error to the collection, with automatic context annotation
-    # (current file and line). Other methods (push, += etc.) do not automatically
-    # add the context annotation.
+    # (current disk file and line). Other methods (push, += etc.) do not
+    # automatically add the context annotation.
     def <<(message)
       push(annotate_error_message(message))
     end
