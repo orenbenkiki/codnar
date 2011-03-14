@@ -11,17 +11,22 @@ module Codnar
     # Weave chunks in the plainest possible way.
     WEAVE_PLAIN_CHUNK = {
       "plain_chunk" => <<-EOF.unindent,
-        <a class="plain chunk" name="<%= chunk.name.to_id %>">
+        <div class="plain chunk">
+        <a name="<%= chunk.name.to_id %>"/>
         <%= chunk.expanded_html %>
-        </a>
+        </div>
       EOF
     }
 
     # Weave chunks with their name and the list of container chunks.
     WEAVE_NAMED_CHUNK_WITH_CONTAINERS = {
       "named_chunk_with_containers" => <<-EOF.unindent,
-        <a class="named_with_containers chunk" name="<%= chunk.name.to_id %>">
-        <span class="chunk name"><%= CGI.escapeHTML(chunk.name) %></span>
+        <div class="named_with_containers chunk">
+        <div class="chunk name">
+        <a name="<%= chunk.name.to_id %>">
+        <span><%= CGI.escapeHTML(chunk.name) %></span>
+        </a>
+        </div>
         <div class="chunk html">
         <%= chunk.expanded_html %>
         </div>
@@ -30,12 +35,14 @@ module Codnar
         <span class="chunk containers header">Contained in:</span>
         <ul class="chunk containers">
         % chunk.containers.each do |container|
-        <li class="chunk container"><a class="chunk container" href="#<%= container.to_id %>"><%= CGI.escapeHTML(container) %></a></li>
+        <li class="chunk container">
+        <a class="chunk container" href="#<%= container.to_id %>"><%= CGI.escapeHTML(container) %></a>
+        </li>
         % end
         </ul>
         </div>
         % end
-        </a>
+        </div>
       EOF
     }
 
@@ -71,6 +78,7 @@ module Codnar
     SPLIT_RDOC_DOCUMENTATION = SPLIT_HTML_DOCUMENTATION.deep_merge(
       "formatters" => {
         "doc" => "Formatter.markup_lines_to_html(lines, 'RDoc')",
+        "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
       }
     )
 
@@ -78,6 +86,7 @@ module Codnar
     SPLIT_MARKDOWN_DOCUMENTATION = SPLIT_HTML_DOCUMENTATION.deep_merge(
       "formatters" => {
         "doc" => "Formatter.markup_lines_to_html(lines, 'Markdown')",
+        "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
       }
     )
 
@@ -114,6 +123,7 @@ module Codnar
     FORMAT_RDOC_COMMENTS = {
       "formatters" => {
         "comment" => "Formatter.markup_lines_to_html(lines, 'RDoc')",
+        "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
       },
     }
 
@@ -123,6 +133,7 @@ module Codnar
     FORMAT_MARKDOWN_COMMENTS = {
       "formatters" => {
         "comment" => "Formatter.markup_lines_to_html(lines, 'Markdown')",
+        "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
       },
     }
 

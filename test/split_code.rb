@@ -28,6 +28,7 @@ module Codnar
       # This is *rdoc*.
         # {{{ assignment
         local = $global
+          indented
         # }}}
     EOF
 
@@ -40,6 +41,7 @@ module Codnar
         "begin_chunk" => "[]",
         "end_chunk" => "[]",
         "nested_chunk" => "Formatter.nested_chunk_lines_to_html(lines)",
+        "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
       },
       "syntax" => {
         "start_state" => "ruby",
@@ -86,6 +88,7 @@ module Codnar
         <div class='ruby code syntax' bgcolor="#ffffff" text="#000000">
         <font face="monospace">
         local =&nbsp;<font color="#00ffff">$global</font><br />
+        &nbsp;&nbsp;indented<br />
         </font>
         </div>
       EOF

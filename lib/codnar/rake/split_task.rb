@@ -11,40 +11,32 @@ module Codnar
       def initialize(paths, configurations)
         @configurations = configurations
         paths.each do |path|
-          @path = path
-          define_tasks
+          define_tasks(path)
         end
       end
 
     protected
 
       # Define the tasks for splitting a single source file to chunks.
-      def define_tasks
-        @output = Rake.chunks_dir + "/" + @path
-        define_split_file_task
+      def define_tasks(path)
+        output = Rake.chunks_dir + "/" + path
+        define_split_file_task(path, output)
         SplitTask.define_common_tasks
-        connect_common_tasks
+        SplitTask.connect_common_tasks(output)
       end
 
       # Define the actual task for splitting the source file.
-      def define_split_file_task
-        ::Rake::FileTask.define_task(@output => [ @path ] + Rake.configuration_files(@configurations)) do
-          run_split_application
+      def define_split_file_task(path, output)
+        ::Rake::FileTask.define_task(output => [ path ] + Rake.configuration_files(@configurations)) do
+          run_split_application(path, output)
         end
       end
 
       # Run the Split application for a single source file.
-      def run_split_application
-        options = Rake.application_options(@output, @configurations)
-        options << @path
+      def run_split_application(path, output)
+        options = Rake.application_options(output, @configurations)
+        options << path
         Application.with_argv(options) { Split.new.run }
-      end
-
-      # Connect the task for splitting a single source file to the common task
-      # for splitting all source files.
-      def connect_common_tasks
-        ::Rake::Task.define_task("codnar_split" => @output)
-        Rake::chunk_files << @output
       end
 
       # Define common Rake split tasks. This method may be invoked several
@@ -62,6 +54,13 @@ module Codnar
         desc "Clean all split chunks"
         ::Rake::Task.define_task("clean_codnar") { rm_rf(Rake.chunks_dir) }
         ::Rake::Task.define_task(:clean => "clean_codnar")
+      end
+
+      # Connect the task for splitting a single source file to the common task
+      # of splitting all source files.
+      def self.connect_common_tasks(output)
+        ::Rake::Task.define_task("codnar_split" => output)
+        Rake::chunk_files << output
       end
 
     end

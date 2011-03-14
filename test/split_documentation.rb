@@ -69,6 +69,7 @@ module Codnar
       return {
         "formatters" => {
           "markdown" => "Formatter.markup_lines_to_html(lines, 'Markdown')",
+          "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
           "rdoc" => "Formatter.markup_lines_to_html(lines, 'RDoc')",
         },
         "syntax" => {

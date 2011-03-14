@@ -39,6 +39,7 @@ module Codnar
       <pre>
       # {{{ assignment
       local = $global
+        indented
       # }}}
       </pre>
       </div>
@@ -62,6 +63,10 @@ module Codnar
       <p>
         # {{{ assignment
         local = $global
+      </p>
+      <pre><code>indented
+      </code></pre>
+      <p>
         # }}}
       </p>
       </div>
@@ -82,13 +87,14 @@ module Codnar
     SHELL_COMMENTS_HTML = <<-EOF.unindent.chomp
       <pre class='comment'>
       This is *special*.
-      {{{ assignment
+        {{{ assignment
       </pre>
       <pre class='code'>
-      local = $global
+        local = $global
+          indented
       </pre>
       <pre class='comment'>
-      }}}
+        }}}
       </pre>
     EOF
 
@@ -111,13 +117,23 @@ module Codnar
       </p>
       </div>
       <pre class='code'>
-      local = $global
+        local = $global
+          indented
       </pre>
+      <table class='layout'>
+      <tr>
+      <td class='indentation'>
+      <pre>  </pre>
+      </td>
+      <td class='html'>
       <div class='rdoc comment markup'>
       <p>
       }}}
       </p>
       </div>
+      </td>
+      </tr>
+      </table>
     EOF
 
     def test_classify_shell_comments_and_format_rdoc_comments
@@ -141,13 +157,23 @@ module Codnar
       </p>
       </div>
       <pre class='code'>
-      local = $global
+        local = $global
+          indented
       </pre>
+      <table class='layout'>
+      <tr>
+      <td class='indentation'>
+      <pre>  </pre>
+      </td>
+      <td class='html'>
       <div class='markdown comment markup'>
       <p>
       }}}
       </p>
       </div>
+      </td>
+      </tr>
+      </table>
     EOF
 
     def test_classify_shell_comments_and_format_markdown_comments
@@ -166,15 +192,16 @@ module Codnar
     HIGHLIGHT_RUBY_HTML = <<-EOF.unindent.chomp
       <pre class='comment'>
       This is *special*.
-      {{{ assignment
+        {{{ assignment
       </pre>
       <div class='ruby code syntax' bgcolor="#ffffff" text="#000000">
       <font face="monospace">
-      local =&nbsp;<font color="#00ffff">$global</font><br />
+      &nbsp;&nbsp;local =&nbsp;<font color="#00ffff">$global</font><br />
+      &nbsp;&nbsp;&nbsp;&nbsp;indented<br />
       </font>
       </div>
       <pre class='comment'>
-      }}}
+        }}}
       </pre>
     EOF
 
@@ -206,6 +233,7 @@ module Codnar
      <div class='ruby code syntax' bgcolor="#ffffff" text="#000000">
      <font face="monospace">
      local =&nbsp;<font color="#00ffff">$global</font><br />
+     &nbsp;&nbsp;indented<br />
      </font>
      </div>
     EOF
@@ -245,6 +273,7 @@ module Codnar
       # This is *special*.
         # {{{ assignment
         local = $global
+          indented
         # }}}
     EOF
 

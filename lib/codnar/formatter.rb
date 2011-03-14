@@ -95,7 +95,7 @@ module Codnar
       merged_line = lines[0]
       merged_line.kind = "html"
       merged_line.payload = "<pre" + Formatter.html_attributes(attributes) + ">\n" \
-                          + lines.map { |line| CGI.escapeHTML(line.payload) + "\n" }.join \
+                          + lines.map { |line| (line.indentation || "") + CGI.escapeHTML(line.payload) + "\n" }.join \
                           + "</pre>"
       return [ merged_line ]
     end
@@ -117,13 +117,36 @@ module Codnar
       end
     end
 
-    # Convert a sequence of marked-up classified lines to HTML.
+    # Convert a sequence of marked-up classified lines to (unindented) HTML
     def self.markup_lines_to_html(lines, klass)
       merged_line = lines[0]
       merged_payload = lines.map { |line| line.payload + "\n" }.join
       merged_line.payload = Formatter.markup_to_html(merged_payload, klass, merged_line.kind)
+      merged_line.kind = "unindented_html"
+      return [ merged_line ]
+    end
+
+    # Indent arbitrary HTML lines to line up with the rest of the lines.
+    def self.unindented_lines_to_html(lines)
+      merged_line = lines[0]
+      merged_line.payload = self.indent_html(merged_line.indentation || "",
+                                             lines.map { |line| line.payload + "\n" }.join)
       merged_line.kind = "html"
       return [ merged_line ]
+    end
+
+    # Indent a chunk of HTML by some spaces. This uses a table, which is
+    # arguably the wrong way to do it.
+    def self.indent_html(indentation, html)
+      return html.chomp if indentation == ""
+      return "<table class='layout'>\n<tr>\n" \
+           + "<td class='indentation'>\n" \
+           + "<pre>#{indentation}</pre>\n" \
+           + "</td>\n" \
+           + "<td class='html'>\n" \
+           + html \
+           + "</td>\n" \
+           + "</tr>\n</table>"
     end
 
     # Convert some markup text to div-wrapped HTML.

@@ -20,15 +20,18 @@ module Codnar
     end
 
     WOVEN_PLAIN_CHUNK = <<-EOF.unindent
-      <a class="plain chunk" name="top">
+      <div class="plain chunk">
+      <a name="top"/>
       <h1>Top</h1>
-      <a class="plain chunk" name="intermediate">
+      <div class="plain chunk">
+      <a name="intermediate"/>
       <h2>Intermediate</h2>
-      <a class="plain chunk" name="bottom">
+      <div class="plain chunk">
+      <a name="bottom"/>
       <h3>Bottom</h3>
-      </a>
-      </a>
-      </a>
+      </div>
+      </div>
+      </div>
     EOF
 
     def test_weave_plain_chunk
@@ -40,36 +43,52 @@ module Codnar
     end
 
     WOVEN_NAMED_CHUNK = <<-EOF.unindent
-      <a class="named_with_containers chunk" name="top">
-      <span class="chunk name">Top</span>
+      <div class="named_with_containers chunk">
+      <div class="chunk name">
+      <a name="top">
+      <span>Top</span>
+      </a>
+      </div>
       <div class="chunk html">
       <h1>Top</h1>
-      <a class="named_with_containers chunk" name="intermediate">
-      <span class="chunk name">Intermediate</span>
+      <div class="named_with_containers chunk">
+      <div class="chunk name">
+      <a name="intermediate">
+      <span>Intermediate</span>
+      </a>
+      </div>
       <div class="chunk html">
       <h2>Intermediate</h2>
-      <a class="named_with_containers chunk" name="bottom">
-      <span class="chunk name">BOTTOM</span>
+      <div class="named_with_containers chunk">
+      <div class="chunk name">
+      <a name="bottom">
+      <span>BOTTOM</span>
+      </a>
+      </div>
       <div class="chunk html">
       <h3>Bottom</h3>
       </div>
-      </a>
+      </div>
       </div>
       <div class="chunk containers">
       <span class="chunk containers header">Contained in:</span>
       <ul class="chunk containers">
-      <li class="chunk container"><a class="chunk container" href="#top">Top</a></li>
+      <li class="chunk container">
+      <a class="chunk container" href="#top">Top</a>
+      </li>
       </ul>
       </div>
-      </a>
+      </div>
       </div>
       <div class="chunk containers">
       <span class="chunk containers header">Contained in:</span>
       <ul class="chunk containers">
-      <li class="chunk container"><a class="chunk container" href="#intermediate">Intermediate</a></li>
+      <li class="chunk container">
+      <a class="chunk container" href="#intermediate">Intermediate</a>
+      </li>
       </ul>
       </div>
-      </a>
+      </div>
     EOF
 
     def test_weave_named_chunk_with_containers

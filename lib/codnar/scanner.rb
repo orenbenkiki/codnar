@@ -83,7 +83,7 @@ module Codnar
 
   protected
 
-# {{{ Scanner pattern shorthands
+    # {{{ Scanner pattern shorthands
 
     # Expand all the shorthands used in the pattern.
     def expand_pattern_shorthands(name, pattern)
@@ -109,9 +109,9 @@ module Codnar
       return data_name
     end
 
-# }}}
+    # }}}
 
-# {{{ Scanner state shorthands
+    # {{{ Scanner state shorthands
 
     # Expand all the shorthands used in the state.
     def expand_state_shorthands(name, state)
@@ -140,9 +140,9 @@ module Codnar
       }
     end
 
-# }}}
+    # }}}
 
-# {{{ Scanner file processing
+    # {{{ Scanner file processing
 
     # Scan a disk file.
     def scan_path
@@ -168,9 +168,9 @@ module Codnar
       unclassified_line(line, @state.name)
     end
 
-# }}}
+    # }}}
 
-# {{{ Scanner line processing
+    # {{{ Scanner line processing
 
     # Handle a file line, only if it matches the pattern.
     def classify_matching_line(line, transition)
@@ -207,7 +207,7 @@ module Codnar
       @errors << "State: #{state_name} failed to classify line: #{@lines.last.payload}"
     end
 
-# }}}
+    # }}}
 
   end
 
