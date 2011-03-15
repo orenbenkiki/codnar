@@ -12,7 +12,8 @@ module Codnar
 
     # Weave the HTML for a named chunk.
     def weave(template, chunk_name = @root_chunk)
-      chunk = self[chunk_name.to_id]
+      return process_file(chunk_name) if template == "file"
+      @last_chunk = chunk = self[chunk_name.to_id]
       expand_chunk_html(chunk)
       return process_template(chunk, template)
     end
@@ -58,6 +59,16 @@ module Codnar
           chunk.erb ||= {}
         )[template_name] ||= ERB.new(template_text, nil, "%")
       ).result(binding)
+    end
+
+    # Process a disk file (invoked by the special "file" template).
+    def process_file(path)
+      begin
+        return File.read(path)
+      rescue Exception => exception
+        @errors.push("#{$0}: Reading file: #{path} exception: #{exception} #{Reader.locations_message(@last_chunk)}") if @last_chunk
+        return "FILE: #{path} EXCEPTION: #{exception}"
+      end
     end
 
   end

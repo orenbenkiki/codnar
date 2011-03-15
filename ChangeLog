@@ -1,3 +1,15 @@
+2011-03-15	Oren Ben-Kiki <oren.ben-kiki@intel.com>
+
+	* Add raw disk file inclusion
+
+2011-03-14	Oren Ben-Kiki <oren.ben-kiki@intel.com>
+
+	* Improve(?) generated HTML.
+
+2011-03-08	Oren Ben-Kiki <oren.ben-kiki@intel.com>
+
+	* Update Rdoc, better comments.
+
 2010-12-01	Oren Ben-Kiki <oren@ben-kiki.org>
 
 	* Rakefile invokes Codnar.

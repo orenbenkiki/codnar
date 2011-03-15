@@ -111,7 +111,7 @@ module Codnar
         (line = line.dup).kind = "html"
         chunk_name = line.payload
         line.payload = "<pre class='nested chunk'>\n" \
-                     + "#{line.indentation}<a class='nested chunk' href='#{chunk_name.to_id}'>#{CGI.escapeHTML(chunk_name)}</a>\n" \
+                     + "#{line.indentation}<a class='nested chunk' href='##{chunk_name.to_id}'>#{CGI.escapeHTML(chunk_name)}</a>\n" \
                      + "</pre>"
         line
       end

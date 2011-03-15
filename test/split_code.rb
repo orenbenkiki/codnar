@@ -76,7 +76,7 @@ module Codnar
         </p>
         </div>
         <pre class='nested chunk'>
-          <a class='nested chunk' href='assignment'>assignment</a>
+          <a class='nested chunk' href='#assignment'>assignment</a>
         </pre>
       EOF
     }, {

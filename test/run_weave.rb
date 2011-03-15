@@ -16,7 +16,7 @@ module Codnar
     ROOT_CHUNKS = [ {
       "name" => "root",
       "locations" => [ { "file" => "root", "line" => 1 } ],
-      "html" => "Root\n<embed src='included' type='x-codnar/include'/>"
+      "html" => "Root\n<embed src='included' type='x-codnar/include'/>\n"
     } ]
 
     INCLUDED_CHUNKS = [ {
@@ -48,6 +48,26 @@ module Codnar
     def test_run_weave_no_chunks
       Application.with_argv(%w(-e stderr)) { Weave.new(true).run }.should == 1
       File.read("stderr").should == "#{$0}: No chunk files to weave\n"
+    end
+
+    FILE_CHUNKS = [ {
+      "name" => "root",
+      "locations" => [ { "file" => "root", "line" => 1 } ],
+      "html" => "Root\n<embed src='included.file' type='x-codnar/file'/>\n"
+    } ]
+
+    def test_run_weave_missing_file
+      File.open("root", "w") { |file| file.write(FILE_CHUNKS.to_yaml) }
+      Application.with_argv(%w(-e stderr -o stdout root)) { Weave.new(true).run }.should == 1
+      File.read("stderr").should == "#{$0}: Reading file: included.file exception: No such file or directory - No such file or directory -  in file: root at line: 1\n"
+      File.read("stdout").should == "Root\nFILE: included.file EXCEPTION: No such file or directory - No such file or directory - \n"
+    end
+
+    def test_run_weave_existing_file
+      File.open("root", "w") { |file| file.write(FILE_CHUNKS.to_yaml) }
+      File.open("included.file", "w") { |file| file.write("included file\n") }
+      Application.with_argv(%w(-e stderr -o stdout root)) { Weave.new(true).run }.should == 0
+      File.read("stdout").should == "Root\nincluded file\n"
     end
 
   end
