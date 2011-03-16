@@ -110,30 +110,40 @@ module Codnar
       end
     end
 
+    INDENTATION_TABLE_PREFIX = <<-EOF.unindent.chomp
+      <table class='layout'>
+      <tr>
+      <td class='indentation'>
+      <pre>INDENTATION</pre>
+      </td>
+      <td class='html'>
+    EOF
+
+    INDENTATION_TABLE_SUFFIX = <<-EOF.unindent.chomp
+      </td>
+      </tr>
+      </table>
+    EOF
+
     RDOC_SHELL_COMMENTS_HTML = <<-EOF.unindent.chomp
+      #{INDENTATION_TABLE_PREFIX.sub("INDENTATION", "")}
       <div class='rdoc comment markup'>
       <p>
       This is <b>special</b>. {{{ assignment
       </p>
       </div>
+      #{INDENTATION_TABLE_SUFFIX}
       <pre class='code'>
         local = $global
           indented
       </pre>
-      <table class='layout'>
-      <tr>
-      <td class='indentation'>
-      <pre>  </pre>
-      </td>
-      <td class='html'>
+      #{INDENTATION_TABLE_PREFIX.sub("INDENTATION", "  ")}
       <div class='rdoc comment markup'>
       <p>
       }}}
       </p>
       </div>
-      </td>
-      </tr>
-      </table>
+      #{INDENTATION_TABLE_SUFFIX}
     EOF
 
     def test_classify_shell_comments_and_format_rdoc_comments
@@ -150,30 +160,25 @@ module Codnar
     end
 
     MARKDOWN_SHELL_COMMENTS_HTML = <<-EOF.unindent.chomp
+      #{INDENTATION_TABLE_PREFIX.sub("INDENTATION", "")}
       <div class='markdown comment markup'>
       <p>
       This is <em>special</em>.
       {{{ assignment
       </p>
       </div>
+      #{INDENTATION_TABLE_SUFFIX}
       <pre class='code'>
         local = $global
           indented
       </pre>
-      <table class='layout'>
-      <tr>
-      <td class='indentation'>
-      <pre>  </pre>
-      </td>
-      <td class='html'>
+      #{INDENTATION_TABLE_PREFIX.sub("INDENTATION", "  ")}
       <div class='markdown comment markup'>
       <p>
       }}}
       </p>
       </div>
-      </td>
-      </tr>
-      </table>
+      #{INDENTATION_TABLE_SUFFIX}
     EOF
 
     def test_classify_shell_comments_and_format_markdown_comments
@@ -219,11 +224,13 @@ module Codnar
     end
 
     FULL_RUBY_PROCESSING_TOP_CHUNK_HTML = <<-EOF.unindent.chomp
+      #{INDENTATION_TABLE_PREFIX.sub("INDENTATION", "")}
       <div class='rdoc comment markup'>
       <p>
       This is <b>special</b>.
       </p>
       </div>
+      #{INDENTATION_TABLE_SUFFIX}
       <pre class='nested chunk'>
         <a class='nested chunk' href='#assignment'>assignment</a>
       </pre>

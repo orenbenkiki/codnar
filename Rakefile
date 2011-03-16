@@ -99,6 +99,7 @@ end
 
 RoodiTask.new do |task|
   task.patterns = patterns.values
+  task.config = "roodi.config"
 end
 
 Rake::TestTask.new("test") do |task|

@@ -185,12 +185,14 @@ module Codnar
       return true
     end
 
-    # Extract named groups from a match.
+    # Extract named groups from a match. As a special case, indentation is nil
+    # if there is no payload.
     def self.extracted_groups(match, groups)
       extracted = {}
       groups.each_with_index do |group, index|
         extracted[group] = match[index + 1]
       end
+      extracted.indentation = nil if match[0] == ""
       return extracted
     end
 

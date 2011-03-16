@@ -31,7 +31,7 @@ module Codnar
     def self.lines_to_html(lines, syntax)
       merged_line = lines[0]
       merged_line.kind = "html"
-      payload = lines.map { |line| line.indentation + line.payload }.join("\n")
+      payload = lines.map { |line| (line.indentation || "") + line.payload }.join("\n")
       merged_line.payload = GVim.syntax_to_html(payload, syntax).chomp
       return [ merged_line ]
     end

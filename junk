@@ -1,0 +1,2007 @@
+--- 
+- kind: code
+  number: 1
+  line: module Codnar
+  payload: module Codnar
+  indentation: ""
+- kind: code
+  number: 2
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 3
+  line: "  # Scan a file into classified lines."
+  payload: Scan a file into classified lines.
+  indentation: "  "
+- kind: code
+  number: 4
+  line: "  class Scanner"
+  payload: class Scanner
+  indentation: "  "
+- kind: code
+  number: 5
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 6
+  line: "    # Construct a scanner based on a syntax in the following structure:"
+  payload: "Construct a scanner based on a syntax in the following structure:"
+  indentation: "    "
+- kind: comment
+  number: 7
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 8
+  line: "    #   patterns:"
+  payload: "  patterns:"
+  indentation: "    "
+- kind: comment
+  number: 9
+  line: "    #     <name>:"
+  payload: "    <name>:"
+  indentation: "    "
+- kind: comment
+  number: 10
+  line: "    #       name: <name>"
+  payload: "      name: <name>"
+  indentation: "    "
+- kind: comment
+  number: 11
+  line: "    #       kind: <kind>"
+  payload: "      kind: <kind>"
+  indentation: "    "
+- kind: comment
+  number: 12
+  line: "    #       regexp: <regexp>"
+  payload: "      regexp: <regexp>"
+  indentation: "    "
+- kind: comment
+  number: 13
+  line: "    #       groups:"
+  payload: "      groups:"
+  indentation: "    "
+- kind: comment
+  number: 14
+  line: "    #       - <name>"
+  payload: "      - <name>"
+  indentation: "    "
+- kind: comment
+  number: 15
+  line: "    #   states:"
+  payload: "  states:"
+  indentation: "    "
+- kind: comment
+  number: 16
+  line: "    #     <name>:"
+  payload: "    <name>:"
+  indentation: "    "
+- kind: comment
+  number: 17
+  line: "    #       name: <name>"
+  payload: "      name: <name>"
+  indentation: "    "
+- kind: comment
+  number: 18
+  line: "    #       transitions:"
+  payload: "      transitions:"
+  indentation: "    "
+- kind: comment
+  number: 19
+  line: "    #       - pattern: <pattern>"
+  payload: "      - pattern: <pattern>"
+  indentation: "    "
+- kind: comment
+  number: 20
+  line: "    #         kind: <kind>"
+  payload: "        kind: <kind>"
+  indentation: "    "
+- kind: comment
+  number: 21
+  line: "    #         next_state: <state>"
+  payload: "        next_state: <state>"
+  indentation: "    "
+- kind: comment
+  number: 22
+  line: "    #   start_state: <state>"
+  payload: "  start_state: <state>"
+  indentation: "    "
+- kind: comment
+  number: 23
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 24
+  line: "    # To allow for cleaner YAML files to specify the syntax, the following"
+  payload: To allow for cleaner YAML files to specify the syntax, the following
+  indentation: "    "
+- kind: comment
+  number: 25
+  line: "    # shorthands are supported:"
+  payload: "shorthands are supported:"
+  indentation: "    "
+- kind: comment
+  number: 26
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 27
+  line: "    # - A pattern or state reference can be presented by the string name of the"
+  payload: "- A pattern or state reference can be presented by the string name of the"
+  indentation: "    "
+- kind: comment
+  number: 28
+  line: "    #   pattern or state."
+  payload: "  pattern or state."
+  indentation: "    "
+- kind: comment
+  number: 29
+  line: "    # - The name field of a state or pattern can be ommitted. If specified, it"
+  payload: "- The name field of a state or pattern can be ommitted. If specified, it"
+  indentation: "    "
+- kind: comment
+  number: 30
+  line: "    #   must be identical to the key in the states or patterns mapping."
+  payload: "  must be identical to the key in the states or patterns mapping."
+  indentation: "    "
+- kind: comment
+  number: 31
+  line: "    # - The kind field of a pattern can be ommitted; by default it is assumed"
+  payload: "- The kind field of a pattern can be ommitted; by default it is assumed"
+  indentation: "    "
+- kind: comment
+  number: 32
+  line: "    #   to be identical to the pattern name."
+  payload: "  to be identical to the pattern name."
+  indentation: "    "
+- kind: comment
+  number: 33
+  line: "    # - A pattern regexp can be presented by a plain string."
+  payload: "- A pattern regexp can be presented by a plain string."
+  indentation: "    "
+- kind: comment
+  number: 34
+  line: "    # - The pattern groups field can be ommitted or contain null if it is"
+  payload: "- The pattern groups field can be ommitted or contain null if it is"
+  indentation: "    "
+- kind: comment
+  number: 35
+  line: "    #   equal to [ \"indentation\", \"payload\" ]."
+  payload: "  equal to [ \"indentation\", \"payload\" ]."
+  indentation: "    "
+- kind: comment
+  number: 36
+  line: "    # - The kind field of a transition can be ommitted; by default it is"
+  payload: "- The kind field of a transition can be ommitted; by default it is"
+  indentation: "    "
+- kind: comment
+  number: 37
+  line: "    #   assumed to be identical to the pattern kind."
+  payload: "  assumed to be identical to the pattern kind."
+  indentation: "    "
+- kind: comment
+  number: 38
+  line: "    # - The next state of a transition can be ommitted; by default it is"
+  payload: "- The next state of a transition can be ommitted; by default it is"
+  indentation: "    "
+- kind: comment
+  number: 39
+  line: "    #   assumed to be identical to the containing state."
+  payload: "  assumed to be identical to the containing state."
+  indentation: "    "
+- kind: comment
+  number: 40
+  line: "    # - The start state can be ommitted; by default it is assumed to be named"
+  payload: "- The start state can be ommitted; by default it is assumed to be named"
+  indentation: "    "
+- kind: comment
+  number: 41
+  line: "    #   \"start\"."
+  payload: "  \"start\"."
+  indentation: "    "
+- kind: comment
+  number: 42
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 43
+  line: "    # When the Scanner is constructed, a deep clone of the syntax object is"
+  payload: When the Scanner is constructed, a deep clone of the syntax object is
+  indentation: "    "
+- kind: comment
+  number: 44
+  line: "    # created and modified to expand all the above shorthands. Any problems"
+  payload: created and modified to expand all the above shorthands. Any problems
+  indentation: "    "
+- kind: comment
+  number: 45
+  line: "    # detected during this process are pushed into the errors."
+  payload: detected during this process are pushed into the errors.
+  indentation: "    "
+- kind: code
+  number: 46
+  line: "    def initialize(errors, syntax)"
+  payload: def initialize(errors, syntax)
+  indentation: "    "
+- kind: code
+  number: 47
+  line: "      @errors = errors"
+  payload: "@errors = errors"
+  indentation: "      "
+- kind: code
+  number: 48
+  line: "      @syntax = syntax.deep_clone"
+  payload: "@syntax = syntax.deep_clone"
+  indentation: "      "
+- kind: code
+  number: 49
+  line: "      @syntax.patterns.each { |name, pattern| expand_pattern_shorthands(name, pattern) }"
+  payload: "@syntax.patterns.each { |name, pattern| expand_pattern_shorthands(name, pattern) }"
+  indentation: "      "
+- kind: code
+  number: 50
+  line: "      @syntax.states.each { |name, state| expand_state_shorthands(name, state) }"
+  payload: "@syntax.states.each { |name, state| expand_state_shorthands(name, state) }"
+  indentation: "      "
+- kind: code
+  number: 51
+  line: "      @syntax.start_state = resolve_start_state"
+  payload: "@syntax.start_state = resolve_start_state"
+  indentation: "      "
+- kind: code
+  number: 52
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 53
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 54
+  line: "    # Scan a disk file into classified lines in the following format (where the"
+  payload: Scan a disk file into classified lines in the following format (where the
+  indentation: "    "
+- kind: comment
+  number: 55
+  line: "    # groups contain the text extracted by the matching pattern):"
+  payload: "groups contain the text extracted by the matching pattern):"
+  indentation: "    "
+- kind: comment
+  number: 56
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 57
+  line: "    #   - kind: <kind>"
+  payload: "  - kind: <kind>"
+  indentation: "    "
+- kind: comment
+  number: 58
+  line: "    #     line: <text>"
+  payload: "    line: <text>"
+  indentation: "    "
+- kind: comment
+  number: 59
+  line: "    #     <group>: <text>"
+  payload: "    <group>: <text>"
+  indentation: "    "
+- kind: comment
+  number: 60
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 61
+  line: "    # By convention, each classified line has a \"payload\" group that contains"
+  payload: By convention, each classified line has a "payload" group that contains
+  indentation: "    "
+- kind: comment
+  number: 62
+  line: "    # the \"main\" content of the line (chunk name for begin/end/nested chunk"
+  payload: the "main" content of the line (chunk name for begin/end/nested chunk
+  indentation: "    "
+- kind: comment
+  number: 63
+  line: "    # lines, clean comment text for comment lines, etc.). In addition, most"
+  payload: lines, clean comment text for comment lines, etc.). In addition, most
+  indentation: "    "
+- kind: comment
+  number: 64
+  line: "    # classified lines have an \"indentation\" group that contains the leading"
+  payload: classified lines have an "indentation" group that contains the leading
+  indentation: "    "
+- kind: comment
+  number: 65
+  line: "    # white space (which is not included in the payload)."
+  payload: white space (which is not included in the payload).
+  indentation: "    "
+- kind: comment
+  number: 66
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 67
+  line: "    # If at some state, a file line does not match any pattern, the scanner"
+  payload: If at some state, a file line does not match any pattern, the scanner
+  indentation: "    "
+- kind: comment
+  number: 68
+  line: "    # will push a message into the errors. In addition it will classify the"
+  payload: will push a message into the errors. In addition it will classify the
+  indentation: "    "
+- kind: comment
+  number: 69
+  line: "    # line as follows:"
+  payload: "line as follows:"
+  indentation: "    "
+- kind: comment
+  number: 70
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 71
+  line: "    #   - kind: error"
+  payload: "  - kind: error"
+  indentation: "    "
+- kind: comment
+  number: 72
+  line: "    #     state: <name>"
+  payload: "    state: <name>"
+  indentation: "    "
+- kind: comment
+  number: 73
+  line: "    #     line: <text>"
+  payload: "    line: <text>"
+  indentation: "    "
+- kind: comment
+  number: 74
+  line: "    #     indentation: <leading white space>"
+  payload: "    indentation: <leading white space>"
+  indentation: "    "
+- kind: comment
+  number: 75
+  line: "    #     payload: <line text following the indentation>"
+  payload: "    payload: <line text following the indentation>"
+  indentation: "    "
+- kind: code
+  number: 76
+  line: "    def lines(path)"
+  payload: def lines(path)
+  indentation: "    "
+- kind: code
+  number: 77
+  line: "      @path = path"
+  payload: "@path = path"
+  indentation: "      "
+- kind: code
+  number: 78
+  line: "      @lines = []"
+  payload: "@lines = []"
+  indentation: "      "
+- kind: code
+  number: 79
+  line: "      @state = @syntax.start_state"
+  payload: "@state = @syntax.start_state"
+  indentation: "      "
+- kind: code
+  number: 80
+  line: "      @errors.in_path(path) { scan_path }"
+  payload: "@errors.in_path(path) { scan_path }"
+  indentation: "      "
+- kind: code
+  number: 81
+  line: "      $stderr.puts(@lines.to_yaml) # TODO"
+  payload: "$stderr.puts(@lines.to_yaml) # TODO"
+  indentation: "      "
+- kind: code
+  number: 82
+  line: "      return @lines"
+  payload: return @lines
+  indentation: "      "
+- kind: code
+  number: 83
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 84
+  line: ""
+  payload: ""
+  indentation: 
+- kind: code
+  number: 85
+  line: "  protected"
+  payload: protected
+  indentation: "  "
+- kind: code
+  number: 86
+  line: ""
+  payload: ""
+  indentation: 
+- kind: begin_chunk
+  number: 87
+  line: "    # {{{ Scanner pattern shorthands"
+  payload: Scanner pattern shorthands
+  indentation: "    "
+- kind: code
+  number: 88
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 89
+  line: "    # Expand all the shorthands used in the pattern."
+  payload: Expand all the shorthands used in the pattern.
+  indentation: "    "
+- kind: code
+  number: 90
+  line: "    def expand_pattern_shorthands(name, pattern)"
+  payload: def expand_pattern_shorthands(name, pattern)
+  indentation: "    "
+- kind: code
+  number: 91
+  line: "      pattern.kind ||= fill_name(name, pattern, \"Pattern\")"
+  payload: pattern.kind ||= fill_name(name, pattern, "Pattern")
+  indentation: "      "
+- kind: code
+  number: 92
+  line: "      pattern.groups ||= [ \"indentation\", \"payload\" ]"
+  payload: pattern.groups ||= [ "indentation", "payload" ]
+  indentation: "      "
+- kind: code
+  number: 93
+  line: "      pattern.regexp = convert_to_regexp(name, pattern.regexp)"
+  payload: pattern.regexp = convert_to_regexp(name, pattern.regexp)
+  indentation: "      "
+- kind: code
+  number: 94
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 95
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 96
+  line: "    # Convert a string regexp to a real Regexp."
+  payload: Convert a string regexp to a real Regexp.
+  indentation: "    "
+- kind: code
+  number: 97
+  line: "    def convert_to_regexp(name, regexp)"
+  payload: def convert_to_regexp(name, regexp)
+  indentation: "    "
+- kind: code
+  number: 98
+  line: "      return regexp if Regexp == regexp"
+  payload: return regexp if Regexp == regexp
+  indentation: "      "
+- kind: code
+  number: 99
+  line: "      begin"
+  payload: begin
+  indentation: "      "
+- kind: code
+  number: 100
+  line: "        return Regexp.new(regexp)"
+  payload: return Regexp.new(regexp)
+  indentation: "        "
+- kind: code
+  number: 101
+  line: "      rescue"
+  payload: rescue
+  indentation: "      "
+- kind: code
+  number: 102
+  line: "        @errors << \"Invalid pattern: #{name} regexp: #{regexp} error: #{$!}\""
+  payload: "@errors << \"Invalid pattern: #{name} regexp: #{regexp} error: #{$!}\""
+  indentation: "        "
+- kind: code
+  number: 103
+  line: "      end"
+  payload: end
+  indentation: "      "
+- kind: code
+  number: 104
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 105
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 106
+  line: "    # Fill in the name field for state or pattern object."
+  payload: Fill in the name field for state or pattern object.
+  indentation: "    "
+- kind: code
+  number: 107
+  line: "    def fill_name(name, data, type)"
+  payload: def fill_name(name, data, type)
+  indentation: "    "
+- kind: code
+  number: 108
+  line: "      data_name = data.name ||= name"
+  payload: data_name = data.name ||= name
+  indentation: "      "
+- kind: code
+  number: 109
+  line: "      @errors << \"#{type}: #{name} has wrong name: #{data_name}\" if data_name != name"
+  payload: "@errors << \"#{type}: #{name} has wrong name: #{data_name}\" if data_name != name"
+  indentation: "      "
+- kind: code
+  number: 110
+  line: "      return data_name"
+  payload: return data_name
+  indentation: "      "
+- kind: code
+  number: 111
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 112
+  line: ""
+  payload: ""
+  indentation: 
+- kind: end_chunk
+  number: 113
+  line: "    # }}}"
+  payload: ""
+  indentation: "    "
+- kind: code
+  number: 114
+  line: ""
+  payload: ""
+  indentation: 
+- kind: begin_chunk
+  number: 115
+  line: "    # {{{ Scanner state shorthands"
+  payload: Scanner state shorthands
+  indentation: "    "
+- kind: code
+  number: 116
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 117
+  line: "    # Expand all the shorthands used in the state."
+  payload: Expand all the shorthands used in the state.
+  indentation: "    "
+- kind: code
+  number: 118
+  line: "    def expand_state_shorthands(name, state)"
+  payload: def expand_state_shorthands(name, state)
+  indentation: "    "
+- kind: code
+  number: 119
+  line: "      fill_name(name, state, \"State\")"
+  payload: fill_name(name, state, "State")
+  indentation: "      "
+- kind: code
+  number: 120
+  line: "      state.transitions.each do |transition|"
+  payload: state.transitions.each do |transition|
+  indentation: "      "
+- kind: code
+  number: 121
+  line: "        pattern = transition.pattern = lookup(@syntax.patterns, \"pattern\", transition.pattern)"
+  payload: pattern = transition.pattern = lookup(@syntax.patterns, "pattern", transition.pattern)
+  indentation: "        "
+- kind: code
+  number: 122
+  line: "        transition.kind ||= pattern.andand.kind"
+  payload: transition.kind ||= pattern.andand.kind
+  indentation: "        "
+- kind: code
+  number: 123
+  line: "        transition.next_state = lookup(@syntax.states, \"state\", transition.next_state || state)"
+  payload: transition.next_state = lookup(@syntax.states, "state", transition.next_state || state)
+  indentation: "        "
+- kind: code
+  number: 124
+  line: "      end"
+  payload: end
+  indentation: "      "
+- kind: code
+  number: 125
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 126
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 127
+  line: "    # Convert a string name to an actual data reference."
+  payload: Convert a string name to an actual data reference.
+  indentation: "    "
+- kind: code
+  number: 128
+  line: "    def lookup(mapping, type, reference)"
+  payload: def lookup(mapping, type, reference)
+  indentation: "    "
+- kind: code
+  number: 129
+  line: "      return reference unless String === reference"
+  payload: return reference unless String === reference
+  indentation: "      "
+- kind: code
+  number: 130
+  line: "      data = mapping[reference]"
+  payload: data = mapping[reference]
+  indentation: "      "
+- kind: code
+  number: 131
+  line: "      @errors << \"Reference to a missing #{type}: #{reference}\" unless data"
+  payload: "@errors << \"Reference to a missing #{type}: #{reference}\" unless data"
+  indentation: "      "
+- kind: code
+  number: 132
+  line: "      return data"
+  payload: return data
+  indentation: "      "
+- kind: code
+  number: 133
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 134
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 135
+  line: "    # Resolve the start state reference."
+  payload: Resolve the start state reference.
+  indentation: "    "
+- kind: code
+  number: 136
+  line: "    def resolve_start_state"
+  payload: def resolve_start_state
+  indentation: "    "
+- kind: code
+  number: 137
+  line: "      return lookup(@syntax.states, \"state\", @syntax.start_state || \"start\") || {"
+  payload: return lookup(@syntax.states, "state", @syntax.start_state || "start") || {
+  indentation: "      "
+- kind: code
+  number: 138
+  line: "        \"name\" => \"missing_start_state\","
+  payload: "\"name\" => \"missing_start_state\","
+  indentation: "        "
+- kind: code
+  number: 139
+  line: "        \"kind\" => \"error\","
+  payload: "\"kind\" => \"error\","
+  indentation: "        "
+- kind: code
+  number: 140
+  line: "        \"transitions\" => []"
+  payload: "\"transitions\" => []"
+  indentation: "        "
+- kind: code
+  number: 141
+  line: "      }"
+  payload: "}"
+  indentation: "      "
+- kind: code
+  number: 142
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 143
+  line: ""
+  payload: ""
+  indentation: 
+- kind: end_chunk
+  number: 144
+  line: "    # }}}"
+  payload: ""
+  indentation: "    "
+- kind: code
+  number: 145
+  line: ""
+  payload: ""
+  indentation: 
+- kind: begin_chunk
+  number: 146
+  line: "    # {{{ Scanner file processing"
+  payload: Scanner file processing
+  indentation: "    "
+- kind: code
+  number: 147
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 148
+  line: "    # Scan a disk file."
+  payload: Scan a disk file.
+  indentation: "    "
+- kind: code
+  number: 149
+  line: "    def scan_path"
+  payload: def scan_path
+  indentation: "    "
+- kind: code
+  number: 150
+  line: "      File.open(@path, \"r\") do |file|"
+  payload: File.open(@path, "r") do |file|
+  indentation: "      "
+- kind: code
+  number: 151
+  line: "        scan_file(file)"
+  payload: scan_file(file)
+  indentation: "        "
+- kind: code
+  number: 152
+  line: "      end"
+  payload: end
+  indentation: "      "
+- kind: code
+  number: 153
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 154
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 155
+  line: "    # Scan an opened file."
+  payload: Scan an opened file.
+  indentation: "    "
+- kind: code
+  number: 156
+  line: "    def scan_file(file)"
+  payload: def scan_file(file)
+  indentation: "    "
+- kind: code
+  number: 157
+  line: "      @line_number = 0"
+  payload: "@line_number = 0"
+  indentation: "      "
+- kind: code
+  number: 158
+  line: "      file.read.each_line do |line|"
+  payload: file.read.each_line do |line|
+  indentation: "      "
+- kind: code
+  number: 159
+  line: "        @errors.at_line(@line_number += 1)"
+  payload: "@errors.at_line(@line_number += 1)"
+  indentation: "        "
+- kind: code
+  number: 160
+  line: "        scan_line(line.chomp)"
+  payload: scan_line(line.chomp)
+  indentation: "        "
+- kind: code
+  number: 161
+  line: "      end"
+  payload: end
+  indentation: "      "
+- kind: code
+  number: 162
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 163
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 164
+  line: "    # Scan the next file line."
+  payload: Scan the next file line.
+  indentation: "    "
+- kind: code
+  number: 165
+  line: "    def scan_line(line)"
+  payload: def scan_line(line)
+  indentation: "    "
+- kind: code
+  number: 166
+  line: "      @state.transitions.each do |transition|"
+  payload: "@state.transitions.each do |transition|"
+  indentation: "      "
+- kind: code
+  number: 167
+  line: "        return if transition.pattern && transition.next_state && classify_matching_line(line, transition)"
+  payload: return if transition.pattern && transition.next_state && classify_matching_line(line, transition)
+  indentation: "        "
+- kind: code
+  number: 168
+  line: "      end"
+  payload: end
+  indentation: "      "
+- kind: code
+  number: 169
+  line: "      unclassified_line(line, @state.name)"
+  payload: unclassified_line(line, @state.name)
+  indentation: "      "
+- kind: code
+  number: 170
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 171
+  line: ""
+  payload: ""
+  indentation: 
+- kind: end_chunk
+  number: 172
+  line: "    # }}}"
+  payload: ""
+  indentation: "    "
+- kind: code
+  number: 173
+  line: ""
+  payload: ""
+  indentation: 
+- kind: begin_chunk
+  number: 174
+  line: "    # {{{ Scanner line processing"
+  payload: Scanner line processing
+  indentation: "    "
+- kind: code
+  number: 175
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 176
+  line: "    # Handle a file line, only if it matches the pattern."
+  payload: Handle a file line, only if it matches the pattern.
+  indentation: "    "
+- kind: code
+  number: 177
+  line: "    def classify_matching_line(line, transition)"
+  payload: def classify_matching_line(line, transition)
+  indentation: "    "
+- kind: code
+  number: 178
+  line: "      match = (pattern = transition.pattern).regexp.match(line)"
+  payload: match = (pattern = transition.pattern).regexp.match(line)
+  indentation: "      "
+- kind: code
+  number: 179
+  line: "      return false unless match"
+  payload: return false unless match
+  indentation: "      "
+- kind: code
+  number: 180
+  line: "      @lines << Scanner.extracted_groups(match, pattern.groups).update({"
+  payload: "@lines << Scanner.extracted_groups(match, pattern.groups).update({"
+  indentation: "      "
+- kind: code
+  number: 181
+  line: "        \"line\" => line,"
+  payload: "\"line\" => line,"
+  indentation: "        "
+- kind: code
+  number: 182
+  line: "        \"kind\" => transition.kind,"
+  payload: "\"kind\" => transition.kind,"
+  indentation: "        "
+- kind: code
+  number: 183
+  line: "        \"number\" => @line_number"
+  payload: "\"number\" => @line_number"
+  indentation: "        "
+- kind: code
+  number: 184
+  line: "      })"
+  payload: "})"
+  indentation: "      "
+- kind: code
+  number: 185
+  line: "      @state = transition.next_state"
+  payload: "@state = transition.next_state"
+  indentation: "      "
+- kind: code
+  number: 186
+  line: "      return true"
+  payload: return true
+  indentation: "      "
+- kind: code
+  number: 187
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 188
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 189
+  line: "    # Extract named groups from a match. As a special case, indentation is nil"
+  payload: Extract named groups from a match. As a special case, indentation is nil
+  indentation: "    "
+- kind: comment
+  number: 190
+  line: "    # if there is no payload."
+  payload: if there is no payload.
+  indentation: "    "
+- kind: code
+  number: 191
+  line: "    def self.extracted_groups(match, groups)"
+  payload: def self.extracted_groups(match, groups)
+  indentation: "    "
+- kind: code
+  number: 192
+  line: "      extracted = {}"
+  payload: extracted = {}
+  indentation: "      "
+- kind: code
+  number: 193
+  line: "      groups.each_with_index do |group, index|"
+  payload: groups.each_with_index do |group, index|
+  indentation: "      "
+- kind: code
+  number: 194
+  line: "        extracted[group] = match[index + 1]"
+  payload: extracted[group] = match[index + 1]
+  indentation: "        "
+- kind: code
+  number: 195
+  line: "      end"
+  payload: end
+  indentation: "      "
+- kind: code
+  number: 196
+  line: "      extracted.indentation = nil if match[0] == \"\""
+  payload: extracted.indentation = nil if match[0] == ""
+  indentation: "      "
+- kind: code
+  number: 197
+  line: "      return extracted"
+  payload: return extracted
+  indentation: "      "
+- kind: code
+  number: 198
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 199
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 200
+  line: "    # Handle a file line that couldn't be classified."
+  payload: Handle a file line that couldn't be classified.
+  indentation: "    "
+- kind: code
+  number: 201
+  line: "    def unclassified_line(line, state_name)"
+  payload: def unclassified_line(line, state_name)
+  indentation: "    "
+- kind: code
+  number: 202
+  line: "      @lines << {"
+  payload: "@lines << {"
+  indentation: "      "
+- kind: code
+  number: 203
+  line: "        \"line\" => line,"
+  payload: "\"line\" => line,"
+  indentation: "        "
+- kind: code
+  number: 204
+  line: "        \"indentation\" => line.indentation,"
+  payload: "\"indentation\" => line.indentation,"
+  indentation: "        "
+- kind: code
+  number: 205
+  line: "        \"payload\" => line.unindent,"
+  payload: "\"payload\" => line.unindent,"
+  indentation: "        "
+- kind: code
+  number: 206
+  line: "        \"kind\" => \"error\","
+  payload: "\"kind\" => \"error\","
+  indentation: "        "
+- kind: code
+  number: 207
+  line: "        \"state\" => state_name,"
+  payload: "\"state\" => state_name,"
+  indentation: "        "
+- kind: code
+  number: 208
+  line: "        \"number\" => @line_number"
+  payload: "\"number\" => @line_number"
+  indentation: "        "
+- kind: code
+  number: 209
+  line: "      }"
+  payload: "}"
+  indentation: "      "
+- kind: code
+  number: 210
+  line: "      @errors << \"State: #{state_name} failed to classify line: #{@lines.last.payload}\""
+  payload: "@errors << \"State: #{state_name} failed to classify line: #{@lines.last.payload}\""
+  indentation: "      "
+- kind: code
+  number: 211
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 212
+  line: ""
+  payload: ""
+  indentation: 
+- kind: end_chunk
+  number: 213
+  line: "    # }}}"
+  payload: ""
+  indentation: "    "
+- kind: code
+  number: 214
+  line: "    def foo"
+  payload: def foo
+  indentation: "    "
+- kind: code
+  number: 215
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 216
+  line: ""
+  payload: ""
+  indentation: 
+- kind: code
+  number: 217
+  line: "  end"
+  payload: end
+  indentation: "  "
+- kind: code
+  number: 218
+  line: ""
+  payload: ""
+  indentation: 
+- kind: code
+  number: 219
+  line: end
+  payload: end
+  indentation: ""
+--- 
+name: lib/codnar/scanner.rb
+lines: 
+- kind: code
+  number: 1
+  line: module Codnar
+  payload: module Codnar
+  indentation: ""
+- kind: code
+  number: 2
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 3
+  line: "  # Scan a file into classified lines."
+  payload: Scan a file into classified lines.
+  indentation: "  "
+- kind: code
+  number: 4
+  line: "  class Scanner"
+  payload: class Scanner
+  indentation: "  "
+- kind: code
+  number: 5
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 6
+  line: "    # Construct a scanner based on a syntax in the following structure:"
+  payload: "Construct a scanner based on a syntax in the following structure:"
+  indentation: "    "
+- kind: comment
+  number: 7
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 8
+  line: "    #   patterns:"
+  payload: "  patterns:"
+  indentation: "    "
+- kind: comment
+  number: 9
+  line: "    #     <name>:"
+  payload: "    <name>:"
+  indentation: "    "
+- kind: comment
+  number: 10
+  line: "    #       name: <name>"
+  payload: "      name: <name>"
+  indentation: "    "
+- kind: comment
+  number: 11
+  line: "    #       kind: <kind>"
+  payload: "      kind: <kind>"
+  indentation: "    "
+- kind: comment
+  number: 12
+  line: "    #       regexp: <regexp>"
+  payload: "      regexp: <regexp>"
+  indentation: "    "
+- kind: comment
+  number: 13
+  line: "    #       groups:"
+  payload: "      groups:"
+  indentation: "    "
+- kind: comment
+  number: 14
+  line: "    #       - <name>"
+  payload: "      - <name>"
+  indentation: "    "
+- kind: comment
+  number: 15
+  line: "    #   states:"
+  payload: "  states:"
+  indentation: "    "
+- kind: comment
+  number: 16
+  line: "    #     <name>:"
+  payload: "    <name>:"
+  indentation: "    "
+- kind: comment
+  number: 17
+  line: "    #       name: <name>"
+  payload: "      name: <name>"
+  indentation: "    "
+- kind: comment
+  number: 18
+  line: "    #       transitions:"
+  payload: "      transitions:"
+  indentation: "    "
+- kind: comment
+  number: 19
+  line: "    #       - pattern: <pattern>"
+  payload: "      - pattern: <pattern>"
+  indentation: "    "
+- kind: comment
+  number: 20
+  line: "    #         kind: <kind>"
+  payload: "        kind: <kind>"
+  indentation: "    "
+- kind: comment
+  number: 21
+  line: "    #         next_state: <state>"
+  payload: "        next_state: <state>"
+  indentation: "    "
+- kind: comment
+  number: 22
+  line: "    #   start_state: <state>"
+  payload: "  start_state: <state>"
+  indentation: "    "
+- kind: comment
+  number: 23
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 24
+  line: "    # To allow for cleaner YAML files to specify the syntax, the following"
+  payload: To allow for cleaner YAML files to specify the syntax, the following
+  indentation: "    "
+- kind: comment
+  number: 25
+  line: "    # shorthands are supported:"
+  payload: "shorthands are supported:"
+  indentation: "    "
+- kind: comment
+  number: 26
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 27
+  line: "    # - A pattern or state reference can be presented by the string name of the"
+  payload: "- A pattern or state reference can be presented by the string name of the"
+  indentation: "    "
+- kind: comment
+  number: 28
+  line: "    #   pattern or state."
+  payload: "  pattern or state."
+  indentation: "    "
+- kind: comment
+  number: 29
+  line: "    # - The name field of a state or pattern can be ommitted. If specified, it"
+  payload: "- The name field of a state or pattern can be ommitted. If specified, it"
+  indentation: "    "
+- kind: comment
+  number: 30
+  line: "    #   must be identical to the key in the states or patterns mapping."
+  payload: "  must be identical to the key in the states or patterns mapping."
+  indentation: "    "
+- kind: comment
+  number: 31
+  line: "    # - The kind field of a pattern can be ommitted; by default it is assumed"
+  payload: "- The kind field of a pattern can be ommitted; by default it is assumed"
+  indentation: "    "
+- kind: comment
+  number: 32
+  line: "    #   to be identical to the pattern name."
+  payload: "  to be identical to the pattern name."
+  indentation: "    "
+- kind: comment
+  number: 33
+  line: "    # - A pattern regexp can be presented by a plain string."
+  payload: "- A pattern regexp can be presented by a plain string."
+  indentation: "    "
+- kind: comment
+  number: 34
+  line: "    # - The pattern groups field can be ommitted or contain null if it is"
+  payload: "- The pattern groups field can be ommitted or contain null if it is"
+  indentation: "    "
+- kind: comment
+  number: 35
+  line: "    #   equal to [ \"indentation\", \"payload\" ]."
+  payload: "  equal to [ \"indentation\", \"payload\" ]."
+  indentation: "    "
+- kind: comment
+  number: 36
+  line: "    # - The kind field of a transition can be ommitted; by default it is"
+  payload: "- The kind field of a transition can be ommitted; by default it is"
+  indentation: "    "
+- kind: comment
+  number: 37
+  line: "    #   assumed to be identical to the pattern kind."
+  payload: "  assumed to be identical to the pattern kind."
+  indentation: "    "
+- kind: comment
+  number: 38
+  line: "    # - The next state of a transition can be ommitted; by default it is"
+  payload: "- The next state of a transition can be ommitted; by default it is"
+  indentation: "    "
+- kind: comment
+  number: 39
+  line: "    #   assumed to be identical to the containing state."
+  payload: "  assumed to be identical to the containing state."
+  indentation: "    "
+- kind: comment
+  number: 40
+  line: "    # - The start state can be ommitted; by default it is assumed to be named"
+  payload: "- The start state can be ommitted; by default it is assumed to be named"
+  indentation: "    "
+- kind: comment
+  number: 41
+  line: "    #   \"start\"."
+  payload: "  \"start\"."
+  indentation: "    "
+- kind: comment
+  number: 42
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 43
+  line: "    # When the Scanner is constructed, a deep clone of the syntax object is"
+  payload: When the Scanner is constructed, a deep clone of the syntax object is
+  indentation: "    "
+- kind: comment
+  number: 44
+  line: "    # created and modified to expand all the above shorthands. Any problems"
+  payload: created and modified to expand all the above shorthands. Any problems
+  indentation: "    "
+- kind: comment
+  number: 45
+  line: "    # detected during this process are pushed into the errors."
+  payload: detected during this process are pushed into the errors.
+  indentation: "    "
+- kind: code
+  number: 46
+  line: "    def initialize(errors, syntax)"
+  payload: def initialize(errors, syntax)
+  indentation: "    "
+- kind: code
+  number: 47
+  line: "      @errors = errors"
+  payload: "@errors = errors"
+  indentation: "      "
+- kind: code
+  number: 48
+  line: "      @syntax = syntax.deep_clone"
+  payload: "@syntax = syntax.deep_clone"
+  indentation: "      "
+- kind: code
+  number: 49
+  line: "      @syntax.patterns.each { |name, pattern| expand_pattern_shorthands(name, pattern) }"
+  payload: "@syntax.patterns.each { |name, pattern| expand_pattern_shorthands(name, pattern) }"
+  indentation: "      "
+- kind: code
+  number: 50
+  line: "      @syntax.states.each { |name, state| expand_state_shorthands(name, state) }"
+  payload: "@syntax.states.each { |name, state| expand_state_shorthands(name, state) }"
+  indentation: "      "
+- kind: code
+  number: 51
+  line: "      @syntax.start_state = resolve_start_state"
+  payload: "@syntax.start_state = resolve_start_state"
+  indentation: "      "
+- kind: code
+  number: 52
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 53
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 54
+  line: "    # Scan a disk file into classified lines in the following format (where the"
+  payload: Scan a disk file into classified lines in the following format (where the
+  indentation: "    "
+- kind: comment
+  number: 55
+  line: "    # groups contain the text extracted by the matching pattern):"
+  payload: "groups contain the text extracted by the matching pattern):"
+  indentation: "    "
+- kind: comment
+  number: 56
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 57
+  line: "    #   - kind: <kind>"
+  payload: "  - kind: <kind>"
+  indentation: "    "
+- kind: comment
+  number: 58
+  line: "    #     line: <text>"
+  payload: "    line: <text>"
+  indentation: "    "
+- kind: comment
+  number: 59
+  line: "    #     <group>: <text>"
+  payload: "    <group>: <text>"
+  indentation: "    "
+- kind: comment
+  number: 60
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 61
+  line: "    # By convention, each classified line has a \"payload\" group that contains"
+  payload: By convention, each classified line has a "payload" group that contains
+  indentation: "    "
+- kind: comment
+  number: 62
+  line: "    # the \"main\" content of the line (chunk name for begin/end/nested chunk"
+  payload: the "main" content of the line (chunk name for begin/end/nested chunk
+  indentation: "    "
+- kind: comment
+  number: 63
+  line: "    # lines, clean comment text for comment lines, etc.). In addition, most"
+  payload: lines, clean comment text for comment lines, etc.). In addition, most
+  indentation: "    "
+- kind: comment
+  number: 64
+  line: "    # classified lines have an \"indentation\" group that contains the leading"
+  payload: classified lines have an "indentation" group that contains the leading
+  indentation: "    "
+- kind: comment
+  number: 65
+  line: "    # white space (which is not included in the payload)."
+  payload: white space (which is not included in the payload).
+  indentation: "    "
+- kind: comment
+  number: 66
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 67
+  line: "    # If at some state, a file line does not match any pattern, the scanner"
+  payload: If at some state, a file line does not match any pattern, the scanner
+  indentation: "    "
+- kind: comment
+  number: 68
+  line: "    # will push a message into the errors. In addition it will classify the"
+  payload: will push a message into the errors. In addition it will classify the
+  indentation: "    "
+- kind: comment
+  number: 69
+  line: "    # line as follows:"
+  payload: "line as follows:"
+  indentation: "    "
+- kind: comment
+  number: 70
+  line: "    #"
+  payload: ""
+  indentation: "    "
+- kind: comment
+  number: 71
+  line: "    #   - kind: error"
+  payload: "  - kind: error"
+  indentation: "    "
+- kind: comment
+  number: 72
+  line: "    #     state: <name>"
+  payload: "    state: <name>"
+  indentation: "    "
+- kind: comment
+  number: 73
+  line: "    #     line: <text>"
+  payload: "    line: <text>"
+  indentation: "    "
+- kind: comment
+  number: 74
+  line: "    #     indentation: <leading white space>"
+  payload: "    indentation: <leading white space>"
+  indentation: "    "
+- kind: comment
+  number: 75
+  line: "    #     payload: <line text following the indentation>"
+  payload: "    payload: <line text following the indentation>"
+  indentation: "    "
+- kind: code
+  number: 76
+  line: "    def lines(path)"
+  payload: def lines(path)
+  indentation: "    "
+- kind: code
+  number: 77
+  line: "      @path = path"
+  payload: "@path = path"
+  indentation: "      "
+- kind: code
+  number: 78
+  line: "      @lines = []"
+  payload: "@lines = []"
+  indentation: "      "
+- kind: code
+  number: 79
+  line: "      @state = @syntax.start_state"
+  payload: "@state = @syntax.start_state"
+  indentation: "      "
+- kind: code
+  number: 80
+  line: "      @errors.in_path(path) { scan_path }"
+  payload: "@errors.in_path(path) { scan_path }"
+  indentation: "      "
+- kind: code
+  number: 81
+  line: "      $stderr.puts(@lines.to_yaml) # TODO"
+  payload: "$stderr.puts(@lines.to_yaml) # TODO"
+  indentation: "      "
+- kind: code
+  number: 82
+  line: "      return @lines"
+  payload: return @lines
+  indentation: "      "
+- kind: code
+  number: 83
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 84
+  line: ""
+  payload: ""
+  indentation: 
+- kind: code
+  number: 85
+  line: "  protected"
+  payload: protected
+  indentation: "  "
+- kind: code
+  number: 86
+  line: ""
+  payload: ""
+  indentation: 
+- number: 87
+  kind: nested_chunk
+  line: "    # {{{ Scanner pattern shorthands"
+  payload: Scanner pattern shorthands
+  indentation: "    "
+locations: 
+- line: 1
+  file: lib/codnar/scanner.rb
+containers: []
+
+contained: 
+- Scanner pattern shorthands
+--- 
+name: Scanner pattern shorthands
+lines: 
+- kind: begin_chunk
+  number: 87
+  line: "    # {{{ Scanner pattern shorthands"
+  payload: Scanner pattern shorthands
+  indentation: "    "
+- kind: code
+  number: 88
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 89
+  line: "    # Expand all the shorthands used in the pattern."
+  payload: Expand all the shorthands used in the pattern.
+  indentation: "    "
+- kind: code
+  number: 90
+  line: "    def expand_pattern_shorthands(name, pattern)"
+  payload: def expand_pattern_shorthands(name, pattern)
+  indentation: "    "
+- kind: code
+  number: 91
+  line: "      pattern.kind ||= fill_name(name, pattern, \"Pattern\")"
+  payload: pattern.kind ||= fill_name(name, pattern, "Pattern")
+  indentation: "      "
+- kind: code
+  number: 92
+  line: "      pattern.groups ||= [ \"indentation\", \"payload\" ]"
+  payload: pattern.groups ||= [ "indentation", "payload" ]
+  indentation: "      "
+- kind: code
+  number: 93
+  line: "      pattern.regexp = convert_to_regexp(name, pattern.regexp)"
+  payload: pattern.regexp = convert_to_regexp(name, pattern.regexp)
+  indentation: "      "
+- kind: code
+  number: 94
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 95
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 96
+  line: "    # Convert a string regexp to a real Regexp."
+  payload: Convert a string regexp to a real Regexp.
+  indentation: "    "
+- kind: code
+  number: 97
+  line: "    def convert_to_regexp(name, regexp)"
+  payload: def convert_to_regexp(name, regexp)
+  indentation: "    "
+- kind: code
+  number: 98
+  line: "      return regexp if Regexp == regexp"
+  payload: return regexp if Regexp == regexp
+  indentation: "      "
+- kind: code
+  number: 99
+  line: "      begin"
+  payload: begin
+  indentation: "      "
+- kind: code
+  number: 100
+  line: "        return Regexp.new(regexp)"
+  payload: return Regexp.new(regexp)
+  indentation: "        "
+- kind: code
+  number: 101
+  line: "      rescue"
+  payload: rescue
+  indentation: "      "
+- kind: code
+  number: 102
+  line: "        @errors << \"Invalid pattern: #{name} regexp: #{regexp} error: #{$!}\""
+  payload: "@errors << \"Invalid pattern: #{name} regexp: #{regexp} error: #{$!}\""
+  indentation: "        "
+- kind: code
+  number: 103
+  line: "      end"
+  payload: end
+  indentation: "      "
+- kind: code
+  number: 104
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 105
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 106
+  line: "    # Fill in the name field for state or pattern object."
+  payload: Fill in the name field for state or pattern object.
+  indentation: "    "
+- kind: code
+  number: 107
+  line: "    def fill_name(name, data, type)"
+  payload: def fill_name(name, data, type)
+  indentation: "    "
+- kind: code
+  number: 108
+  line: "      data_name = data.name ||= name"
+  payload: data_name = data.name ||= name
+  indentation: "      "
+- kind: code
+  number: 109
+  line: "      @errors << \"#{type}: #{name} has wrong name: #{data_name}\" if data_name != name"
+  payload: "@errors << \"#{type}: #{name} has wrong name: #{data_name}\" if data_name != name"
+  indentation: "      "
+- kind: code
+  number: 110
+  line: "      return data_name"
+  payload: return data_name
+  indentation: "      "
+- kind: code
+  number: 111
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 112
+  line: ""
+  payload: ""
+  indentation: 
+- kind: end_chunk
+  number: 113
+  line: "    # }}}"
+  payload: ""
+  indentation: "    "
+- number: 115
+  kind: nested_chunk
+  line: "    # {{{ Scanner state shorthands"
+  payload: Scanner state shorthands
+  indentation: "    "
+locations: 
+- line: 87
+  file: lib/codnar/scanner.rb
+containers: 
+- lib/codnar/scanner.rb
+contained: 
+- Scanner state shorthands
+--- 
+name: Scanner state shorthands
+lines: 
+- kind: begin_chunk
+  number: 115
+  line: "    # {{{ Scanner state shorthands"
+  payload: Scanner state shorthands
+  indentation: "    "
+- kind: code
+  number: 116
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 117
+  line: "    # Expand all the shorthands used in the state."
+  payload: Expand all the shorthands used in the state.
+  indentation: "    "
+- kind: code
+  number: 118
+  line: "    def expand_state_shorthands(name, state)"
+  payload: def expand_state_shorthands(name, state)
+  indentation: "    "
+- kind: code
+  number: 119
+  line: "      fill_name(name, state, \"State\")"
+  payload: fill_name(name, state, "State")
+  indentation: "      "
+- kind: code
+  number: 120
+  line: "      state.transitions.each do |transition|"
+  payload: state.transitions.each do |transition|
+  indentation: "      "
+- kind: code
+  number: 121
+  line: "        pattern = transition.pattern = lookup(@syntax.patterns, \"pattern\", transition.pattern)"
+  payload: pattern = transition.pattern = lookup(@syntax.patterns, "pattern", transition.pattern)
+  indentation: "        "
+- kind: code
+  number: 122
+  line: "        transition.kind ||= pattern.andand.kind"
+  payload: transition.kind ||= pattern.andand.kind
+  indentation: "        "
+- kind: code
+  number: 123
+  line: "        transition.next_state = lookup(@syntax.states, \"state\", transition.next_state || state)"
+  payload: transition.next_state = lookup(@syntax.states, "state", transition.next_state || state)
+  indentation: "        "
+- kind: code
+  number: 124
+  line: "      end"
+  payload: end
+  indentation: "      "
+- kind: code
+  number: 125
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 126
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 127
+  line: "    # Convert a string name to an actual data reference."
+  payload: Convert a string name to an actual data reference.
+  indentation: "    "
+- kind: code
+  number: 128
+  line: "    def lookup(mapping, type, reference)"
+  payload: def lookup(mapping, type, reference)
+  indentation: "    "
+- kind: code
+  number: 129
+  line: "      return reference unless String === reference"
+  payload: return reference unless String === reference
+  indentation: "      "
+- kind: code
+  number: 130
+  line: "      data = mapping[reference]"
+  payload: data = mapping[reference]
+  indentation: "      "
+- kind: code
+  number: 131
+  line: "      @errors << \"Reference to a missing #{type}: #{reference}\" unless data"
+  payload: "@errors << \"Reference to a missing #{type}: #{reference}\" unless data"
+  indentation: "      "
+- kind: code
+  number: 132
+  line: "      return data"
+  payload: return data
+  indentation: "      "
+- kind: code
+  number: 133
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 134
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 135
+  line: "    # Resolve the start state reference."
+  payload: Resolve the start state reference.
+  indentation: "    "
+- kind: code
+  number: 136
+  line: "    def resolve_start_state"
+  payload: def resolve_start_state
+  indentation: "    "
+- kind: code
+  number: 137
+  line: "      return lookup(@syntax.states, \"state\", @syntax.start_state || \"start\") || {"
+  payload: return lookup(@syntax.states, "state", @syntax.start_state || "start") || {
+  indentation: "      "
+- kind: code
+  number: 138
+  line: "        \"name\" => \"missing_start_state\","
+  payload: "\"name\" => \"missing_start_state\","
+  indentation: "        "
+- kind: code
+  number: 139
+  line: "        \"kind\" => \"error\","
+  payload: "\"kind\" => \"error\","
+  indentation: "        "
+- kind: code
+  number: 140
+  line: "        \"transitions\" => []"
+  payload: "\"transitions\" => []"
+  indentation: "        "
+- kind: code
+  number: 141
+  line: "      }"
+  payload: "}"
+  indentation: "      "
+- kind: code
+  number: 142
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 143
+  line: ""
+  payload: ""
+  indentation: 
+- kind: end_chunk
+  number: 144
+  line: "    # }}}"
+  payload: ""
+  indentation: "    "
+- number: 146
+  kind: nested_chunk
+  line: "    # {{{ Scanner file processing"
+  payload: Scanner file processing
+  indentation: "    "
+locations: 
+- line: 115
+  file: lib/codnar/scanner.rb
+containers: 
+- Scanner pattern shorthands
+contained: 
+- Scanner file processing
+--- 
+name: Scanner file processing
+lines: 
+- kind: begin_chunk
+  number: 146
+  line: "    # {{{ Scanner file processing"
+  payload: Scanner file processing
+  indentation: "    "
+- kind: code
+  number: 147
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 148
+  line: "    # Scan a disk file."
+  payload: Scan a disk file.
+  indentation: "    "
+- kind: code
+  number: 149
+  line: "    def scan_path"
+  payload: def scan_path
+  indentation: "    "
+- kind: code
+  number: 150
+  line: "      File.open(@path, \"r\") do |file|"
+  payload: File.open(@path, "r") do |file|
+  indentation: "      "
+- kind: code
+  number: 151
+  line: "        scan_file(file)"
+  payload: scan_file(file)
+  indentation: "        "
+- kind: code
+  number: 152
+  line: "      end"
+  payload: end
+  indentation: "      "
+- kind: code
+  number: 153
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 154
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 155
+  line: "    # Scan an opened file."
+  payload: Scan an opened file.
+  indentation: "    "
+- kind: code
+  number: 156
+  line: "    def scan_file(file)"
+  payload: def scan_file(file)
+  indentation: "    "
+- kind: code
+  number: 157
+  line: "      @line_number = 0"
+  payload: "@line_number = 0"
+  indentation: "      "
+- kind: code
+  number: 158
+  line: "      file.read.each_line do |line|"
+  payload: file.read.each_line do |line|
+  indentation: "      "
+- kind: code
+  number: 159
+  line: "        @errors.at_line(@line_number += 1)"
+  payload: "@errors.at_line(@line_number += 1)"
+  indentation: "        "
+- kind: code
+  number: 160
+  line: "        scan_line(line.chomp)"
+  payload: scan_line(line.chomp)
+  indentation: "        "
+- kind: code
+  number: 161
+  line: "      end"
+  payload: end
+  indentation: "      "
+- kind: code
+  number: 162
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 163
+  line: ""
+  payload: ""
+  indentation: 
+- kind: comment
+  number: 164
+  line: "    # Scan the next file line."
+  payload: Scan the next file line.
+  indentation: "    "
+- kind: code
+  number: 165
+  line: "    def scan_line(line)"
+  payload: def scan_line(line)
+  indentation: "    "
+- kind: code
+  number: 166
+  line: "      @state.transitions.each do |transition|"
+  payload: "@state.transitions.each do |transition|"
+  indentation: "      "
+- kind: code
+  number: 167
+  line: "        return if transition.pattern && transition.next_state && classify_matching_line(line, transition)"
+  payload: return if transition.pattern && transition.next_state && classify_matching_line(line, transition)
+  indentation: "        "
+- kind: code
+  number: 168
+  line: "      end"
+  payload: end
+  indentation: "      "
+- kind: code
+  number: 169
+  line: "      unclassified_line(line, @state.name)"
+  payload: unclassified_line(line, @state.name)
+  indentation: "      "
+- kind: code
+  number: 170
+  line: "    end"
+  payload: end
+  indentation: "    "
+- kind: code
+  number: 171
+  line: ""
+  payload: ""
+  indentation: 
+- kind: end_chunk
+  number: 172
+  line: "    # }}}"
+  payload: ""
+  indentation: "    "
+- number: 174
+  kind: nested_chunk
+  line: "    # {{{ Scanner line processing"
+  payload: Scanner line processing
+  indentation: "    "
+locations: 
+- line: 146
+  file: lib/codnar/scanner.rb
+containers: 
+- Scanner state shorthands
+contained: 
+- Scanner line processing
+(in /cygdrive/c/Users/obenkiki/Documents/Home/codnar)

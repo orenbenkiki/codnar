@@ -70,11 +70,20 @@ module Codnar
       "containers" => [],
       "contained" => [ "assignment" ],
       "html" => <<-EOF.unindent.chomp,
+        <table class='layout'>
+        <tr>
+        <td class='indentation'>
+        <pre></pre>
+        </td>
+        <td class='html'>
         <div class='rdoc rdoc markup'>
         <p>
         This is <b>rdoc</b>.
         </p>
         </div>
+        </td>
+        </tr>
+        </table>
         <pre class='nested chunk'>
           <a class='nested chunk' href='#assignment'>assignment</a>
         </pre>

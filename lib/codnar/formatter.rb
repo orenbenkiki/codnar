@@ -129,8 +129,8 @@ module Codnar
     # Indent arbitrary HTML lines to line up with the rest of the lines.
     def self.unindented_lines_to_html(lines)
       merged_line = lines[0]
-      merged_line.payload = self.indent_html(merged_line.indentation || "",
-                                             lines.map { |line| line.payload + "\n" }.join)
+      html = lines.map { |line| line.payload + "\n" }.join
+      merged_line.payload = self.indent_html(merged_line.indentation, html)
       merged_line.kind = "html"
       return [ merged_line ]
     end
@@ -138,7 +138,7 @@ module Codnar
     # Indent a chunk of HTML by some spaces. This uses a table, which is
     # arguably the wrong way to do it.
     def self.indent_html(indentation, html)
-      return html.chomp if indentation == ""
+      return html.chomp if indentation.nil?
       return "<table class='layout'>\n<tr>\n" \
            + "<td class='indentation'>\n" \
            + "<pre>#{indentation}</pre>\n" \

@@ -70,7 +70,7 @@ module Codnar
 
     # Merge a classified line that starts a new chunk.
     def begin_chunk_line(line)
-      chunk = contained_chunk(container = @chunks.last, line)
+      chunk = contained_chunk(container = @stack.last, line)
       container.contained << chunk.name
       container.lines << line.merge("kind" => "nested_chunk")
       @chunks << chunk

@@ -1,3 +1,7 @@
+2011-03-17	Oren Ben-Kiki <oren.ben-kiki@intel.com>
+
+	* Fix empty/nil indentation handling.
+
 2011-03-15	Oren Ben-Kiki <oren.ben-kiki@intel.com>
 
 	* Add raw disk file inclusion
