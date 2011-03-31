@@ -1,28 +1,22 @@
 #!/usr/bin/ruby
  
-cmd=`git log --pretty='format:%ci::%an <%ae>::%s'`
+subjects_by_id = {}
+sorted_ids = []
  
-list = {}
-list_order = []
- 
-cmd.each do |l|
-  date, author, subject = l.chomp.split("::")
+log_lines = `git log --pretty='format:%ci::%an <%ae>::%s'`
+
+log_lines.each do |log_line|
+  date, author, subject = log_line.chomp.split("::")
   date, time, zone = date.split(" ")
- 
   id = "#{date}\t#{author}"
-  if not list[id]
-    list[id] = []
-    list_order << {:id => id, :value => list[id]}
-  end
-  list[id] << subject
+  sorted_ids << id
+  subjects_by_id[id] ||= []
+  subjects_by_id[id] << subject
 end
  
-# list.each do |id, value|
-list_order.each do |i|
-  id = i[:id]
-  value = i[:value]
- 
+sorted_ids.uniq.each do |id|
+  subjects = subjects_by_id[id]
   puts "#{id}\n\n"
-  puts value.map { |e| "\t* #{e}" }.join("\n")
+  puts subjects.map { |subject| "\t* #{subject}" }.join("\n")
   puts "\n"
 end

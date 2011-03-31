@@ -1,0 +1,100 @@
+/* Margin & Padding */
+
+div.chunk.name,
+div.chunk.html,
+div.chunk.containers,
+div.chunk table,
+div.chunk td,
+div.chunk pre {
+  margin: 0;
+  padding: 0;
+}
+div.chunk *:last-child {
+  margin-bottom: 0;
+}
+h4, h5, h6,
+div.chunk,
+div.comment pre {
+  margin: 1em 0;
+}
+pre,
+div.comment,
+div.chunk.html {
+  padding: 0.33em;
+}
+
+/* Table of content */
+
+div#contents ul {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+div#contents li {
+  list-style-type: none;
+}
+
+/* Lists */
+
+ul.chunk.containers {
+  padding: 0;
+  margin: 0;
+  display: inline;
+}
+ul.chunk.containers li {
+  display: inline;
+  list-style-type: none;
+}
+
+/* Borders */
+
+table.layout td.indentation {
+  border: none;
+}
+pre,
+div.chunk.html {
+  border: 1px solid #000;
+}
+div.chunk pre {
+  border: none;
+}
+
+/* Colors */
+
+table.layout td.html {
+  background-color: Beige;
+}
+span.Constant {
+  color: Crimson;
+}
+span.Identifier {
+  color: Teal;
+}
+span.PreProc {
+  color: Indigo;
+}
+span.Special {
+  color: Navy;
+}
+span.Statement {
+  color: Maroon;
+}
+span.Type {
+  color: Green;
+}
+span.Comment {
+  color: Purple;
+}
+
+/* Fonts */
+
+body {
+  font-family: Sans-Serif;
+}
+pre {
+  font-family: Consolas, Monospace;
+}
+div.chunk.name {
+  font-weight: bold;
+}

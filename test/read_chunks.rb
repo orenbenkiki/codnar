@@ -45,11 +45,13 @@ module Codnar
         { "name" => "foo", "html" => "bar", "locations" => [ { "file" => "foo.chunks", "line" => 1 } ], "contained" => [ "a" ], "containers" => [] },
         { "name" => "foo", "html" => "baz", "locations" => [ { "file" => "foo.chunks", "line" => 2 } ], "contained" => [ "A" ], "containers" => [] }
       ])
-      Writer.write("bar.chunks",
+      Writer.write("bar.chunks", [
         { "name" => "foo", "html" => "bar", "locations" => [ { "file" => "bar.chunks", "line" => 1 } ], "contained" => [ "a" ], "containers" => [] }
-        )
+      ])
       reader = Reader.new(@errors, Dir.glob("./**/*.chunks").sort)
-      @errors.should == [ "#{$0}: Chunk: foo is different in file: foo.chunks at line: 2, and in file: bar.chunks at line: 1 or in file: foo.chunks at line: 1" ]
+      @errors.should == [
+        "#{$0}: Chunk: foo is different in file: foo.chunks at line: 2, and in file: bar.chunks at line: 1 or in file: foo.chunks at line: 1"
+      ]
       check_read_data(reader, "foo" => {
         "name" => "foo",
         "html" => "bar",

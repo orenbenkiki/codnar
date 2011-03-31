@@ -79,6 +79,8 @@ module Codnar
       return Formatter.lines_to_pre_html(lines, :class => "failed formatter error")
     end
 
+    # {{{ Basic formatters
+
     # Merge a group of consecutive HTML classified lines into a group with a
     # single HTML classified "line". This is the default formatting expression
     # for HTML lines.
@@ -117,15 +119,6 @@ module Codnar
       end
     end
 
-    # Convert a sequence of marked-up classified lines to (unindented) HTML
-    def self.markup_lines_to_html(lines, klass)
-      merged_line = lines[0]
-      merged_payload = lines.map { |line| line.payload + "\n" }.join
-      merged_line.payload = Formatter.markup_to_html(merged_payload, klass, merged_line.kind)
-      merged_line.kind = "unindented_html"
-      return [ merged_line ]
-    end
-
     # Indent arbitrary HTML lines to line up with the rest of the lines.
     def self.unindented_lines_to_html(lines)
       merged_line = lines[0]
@@ -149,6 +142,23 @@ module Codnar
            + "</tr>\n</table>"
     end
 
+    # Cast a sequence of classified lines into a different kind without
+    # any processing.
+    def self.cast_lines(lines, kind)
+      lines = lines.dup
+      lines.each { |line| line.kind = kind }
+      return lines
+    end
+
+    # Convert a sequence of marked-up classified lines to (unindented) HTML
+    def self.markup_lines_to_html(lines, klass)
+      merged_line = lines[0]
+      merged_payload = lines.map { |line| line.payload + "\n" }.join
+      merged_line.payload = Formatter.markup_to_html(merged_payload, klass, merged_line.kind)
+      merged_line.kind = "unindented_html"
+      return [ merged_line ]
+    end
+
     # Convert some markup text to div-wrapped HTML.
     def self.markup_to_html(markup, klass, kind)
       implementation = String === klass ? Kernel.const_get(klass) : klass
@@ -157,13 +167,7 @@ module Codnar
            + "</div>"
     end
 
-    # Cash a sequence of classified lines into a different kind without
-    # any processing.
-    def self.cast_lines(lines, kind)
-      lines = lines.dup
-      lines.each { |line| line.kind = kind }
-      return lines
-    end
+    # }}}
 
   end
 

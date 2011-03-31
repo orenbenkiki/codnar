@@ -1,17 +1,17 @@
 require "codnar"
 require "test/spec"
-require "test_case"
+require "with_errors"
 
 module Codnar
 
   # Test splitting code files.
-  class TestSplitCode < TestCase
+  class TestSplitCode < TestWithErrors
 
     def test_split_ruby
-      splitter = Splitter.new(errors = Errors.new, RUBY_CONFIGURATION)
+      splitter = Splitter.new(@errors, RUBY_CONFIGURATION)
       path = write_tempfile("ruby.rb", RUBY_FILE)
       chunks = splitter.chunks(path)
-      errors.should == []
+      @errors.should == []
       chunks.should == ruby_chunks(path)
     end
 
@@ -24,12 +24,12 @@ module Codnar
       return RUBY_CHUNKS
     end
 
-    RUBY_FILE = <<-EOF.unindent
-      # This is *rdoc*.
-        # {{{ assignment
+    RUBY_FILE = <<-EOF.unindent.gsub("#!", "#")
+      #! This is *rdoc*.
+        #! {{{ assignment
         local = $global
           indented
-        # }}}
+        #! }}}
     EOF
 
     RUBY_CONFIGURATION = {

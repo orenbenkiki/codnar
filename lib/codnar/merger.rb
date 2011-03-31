@@ -39,13 +39,7 @@ module Codnar
       }
     end
 
-    # End all chunks missing a terminating end chunk classified line.
-    def end_unterminated_chunks
-      @stack.shift
-      @stack.each do |chunk|
-        @errors << "Missing end line for chunk: #{chunk.name}"
-      end
-    end
+    # {{{ Merging nested chunk lines
 
     # Merge all the classified lines into chunks
     def merge_lines
@@ -54,6 +48,14 @@ module Codnar
         merge_line(line)
       end
       end_unterminated_chunks
+    end
+
+    # End all chunks missing a terminating end chunk classified line.
+    def end_unterminated_chunks
+      @stack.shift
+      @stack.each do |chunk|
+        @errors << "Missing end line for chunk: #{chunk.name}"
+      end
     end
 
     # Merge the next classified line.
@@ -99,7 +101,8 @@ module Codnar
     def end_chunk_line(line)
       return missing_begin_chunk_line(line) if @stack.size == 1
       chunk = @stack.last
-      @errors << "End line for chunk: #{line.payload} mismatches begin line for chunk: #{chunk.name}" unless Merger.matching_end_chunk_line?(chunk, line)
+      @errors << "End line for chunk: #{line.payload} mismatches begin line for chunk: #{chunk.name}" \
+        unless Merger.matching_end_chunk_line?(chunk, line)
       chunk.lines << line
       @stack.pop
     end
@@ -110,6 +113,10 @@ module Codnar
       line_name = line.payload
       return line_name.to_s == "" || line_name.to_id == chunk.name.to_id
     end
+
+    # }}}
+
+    # {{{ Unindenting chunk lines
 
     # Remove the common indentation from a sequence of classified lines.
     def self.unindent_lines(lines)
@@ -123,6 +130,8 @@ module Codnar
     def self.minimal_indentation(lines)
       return lines.map { |line| line.indentation }.compact.min
     end
+
+    # }}}
 
   end
 

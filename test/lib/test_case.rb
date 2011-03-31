@@ -9,6 +9,8 @@ module Codnar
 
   protected
 
+    # Create a temporary file on the disk. There's no need to clean it up since
+    # most times we'll be using FakeFS.
     def write_tempfile(path, content)
       file = Tempfile.open(path)
       file.write(content)

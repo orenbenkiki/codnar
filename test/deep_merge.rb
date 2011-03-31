@@ -4,18 +4,8 @@ require "test_case"
 
 module Codnar
 
-  # Test extending the Hash class.
-  class TestExtendHash < TestCase
-
-    def test_read_missing_key
-      {}.missing.should == nil
-    end
-
-    def test_set_missing_key
-      hash = {}
-      hash.missing = "value"
-      hash.missing.should == "value"
-    end
+  # Test deep-merging complex structures.
+  class TestDeepMerge < TestCase
 
     def test_deep_merge
       default = {

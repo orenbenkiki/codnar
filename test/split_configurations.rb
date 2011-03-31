@@ -1,11 +1,11 @@
 require "codnar"
 require "test/spec"
-require "test_case"
+require "with_errors"
 
 module Codnar
 
   # Test the built-in split configurations.
-  class TestSplitConfigurations < TestCase
+  class TestSplitConfigurations < TestWithErrors
 
     def test_split_html_documentation
       check_split_file(Configuration::SPLIT_HTML_DOCUMENTATION) do |path|
@@ -31,16 +31,16 @@ module Codnar
       end
     end
 
-    RDOC_HTML = <<-EOF.unindent.chomp
+    RDOC_HTML = <<-EOF.unindent.gsub("#!", "#").chomp
       <div class='rdoc doc markup'>
       <p>
-      # This is <b>special</b>.
+      #! This is <b>special</b>.
       </p>
       <pre>
-      # {{{ assignment
+      #! {{{ assignment
       local = $global
         indented
-      # }}}
+      #! }}}
       </pre>
       </div>
     EOF
@@ -57,17 +57,19 @@ module Codnar
       end
     end
 
-    MARKDOWN_HTML = <<-EOF.unindent.chomp
+    MARKDOWN_HTML = <<-EOF.unindent.gsub("#!", "#").chomp
       <div class='markdown doc markup'>
       <h1>This is <em>special</em>.</h1>
       <p>
-        # {{{ assignment
+        #! {{{ assignment
         local = $global
       </p>
-      <pre><code>indented
-      </code></pre>
+      <pre>
+      <code>indented
+      </code>
+      </pre>
       <p>
-        # }}}
+        #! }}}
       </p>
       </div>
     EOF
@@ -212,7 +214,7 @@ module Codnar
 
     def test_classify_shell_comments_and_highlight_ruby_code_syntax
       check_split_file(Configuration::CLASSIFY_SHELL_COMMENTS,
-                       Configuration::HIGHLIGHT_RUBY_CODE_SYNTAX) do |path|
+                       Configuration::HIGHLIGHT_CODE_SYNTAX.call('ruby')) do |path|
         [ {
           "name" => path,
           "locations" => [ { "file" => path, "line" => 1 } ],
@@ -237,17 +239,15 @@ module Codnar
     EOF
 
     FULL_RUBY_PROCESSING_NESTED_CHUNK_HTML = <<-EOF.unindent.chomp
-     <div class='ruby code syntax' bgcolor="#ffffff" text="#000000">
-     <font face="monospace">
-     local =&nbsp;<font color="#00ffff">$global</font><br />
-     &nbsp;&nbsp;indented<br />
-     </font>
-     </div>
+     <pre class='ruby code syntax'>
+     local = <span class="Identifier">$global</span>
+       indented
+     </pre>
     EOF
 
-    def test_classify_shell_comments_and_highlight_ruby_code_syntax_and_format_rdoc_comments_and_chunk_by_vim_regions
+    def test_classify_shell_comments_and_css_ruby_code_syntax_and_format_rdoc_comments_and_chunk_by_vim_regions
       check_split_file(Configuration::CLASSIFY_SHELL_COMMENTS,
-                       Configuration::HIGHLIGHT_RUBY_CODE_SYNTAX,
+                       Configuration::CSS_CODE_SYNTAX.call('ruby'),
                        Configuration::FORMAT_RDOC_COMMENTS,
                        Configuration::CHUNK_BY_VIM_REGIONS) do |path|
         [ {
@@ -270,18 +270,18 @@ module Codnar
 
     def check_split_file(*configurations, &block)
       configuration = configurations.inject({}) { |merged_configuration, next_configuration| merged_configuration.deep_merge(next_configuration) }
-      splitter = Splitter.new(errors = Errors.new, configuration)
+      splitter = Splitter.new(@errors, configuration)
       chunks = splitter.chunks(path = write_tempfile("ruby.rb", RUBY_FILE))
-      errors.should == []
+      @errors.should == []
       chunks.should == yield(path)
     end
 
-    RUBY_FILE = <<-EOF.unindent
-      # This is *special*.
-        # {{{ assignment
+    RUBY_FILE = <<-EOF.unindent.gsub("#!", "#")
+      #! This is *special*.
+        #! {{{ assignment
         local = $global
           indented
-        # }}}
+        #! }}}
     EOF
 
   end

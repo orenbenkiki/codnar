@@ -32,10 +32,10 @@ module Codnar
     def expand_chunk_html(chunk)
       html = chunk.html
       @errors.push("No HTML in chunk: #{chunk.name} #{Weaver.locations_message(chunk)}") unless html
-      # TRICKY: All "container" chunks are assumed to be whole-file chunks with
-      # a single location. Which makes sense as these are documentation and not
-      # code chunks. TODO: It would be nice to know the exact line number of
-      # the chunk embedding directive for better pinpointing of any error.
+      #! TRICKY: All "container" chunks are assumed to be whole-file chunks with
+      #! a single location. Which makes sense as these are documentation and not
+      #! code chunks. TODO: It would be nice to know the exact line number of
+      #! the chunk embedding directive for better pinpointing of any error.
       @errors.in_path(chunk.locations[0].file) do
         chunk.expanded_html ||= expand_embedded_chunks(html || "").chomp
       end

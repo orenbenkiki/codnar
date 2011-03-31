@@ -18,7 +18,7 @@ also need to install <tt>gvim</tt>.
 
 === Usage
 
-The basic usage is
+The basic usage is:
 
   codnar-split [options] source-file > chunks-file
   codnar-weave [options] chunks-files... > codnar.html

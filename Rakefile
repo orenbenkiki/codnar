@@ -10,6 +10,8 @@ require "reek/rake/task"
 require "roodi"
 require "roodi_task"
 
+# Overall tasks
+
 task :default => :all
 
 desc "Verify, document, package"
@@ -21,21 +23,29 @@ task :doc => [ :rdoc, :codnar ]
 desc "Test, coverage, analyze code"
 task :verify => [ :rcov, :reek, :roodi, :flay, :saikuro ]
 
+# Source file lists
+
 patterns = {
   "bin" => "bin/*",
-  "lib" => "lib/**/*.rb",
+  "css" => "doc/*.css",
   "doc" => "doc/*",
+  "javascript" => "doc/*.js",
+  "lib" => "lib/**/*.rb",
   "test" => "test/*.rb",
-  "testlib" => "test/lib/*.rb"
+  "testlib" => "test/lib/*.rb",
+  "tools" => "tools/*",
 }
 files = patterns.merge(patterns) { |key, pattern| FileList[pattern] }
 
+
+# Gem specification and packaging
+
 spec = Gem::Specification.new do |s|
 
-  s.name = "codenar"
+  s.name = "codnar"
   s.version = Codnar::VERSION
 
-  s.homepage = "http://codenar.rubygems.org"
+  s.homepage = "http://codnar.rubygems.org"
 
   s.summary = "Code narrator - an inverse literate programming tool."
   s.description = (<<-EOF).gsub(/^\s+/, "").chomp.gsub("\n", " ")
@@ -45,12 +55,11 @@ spec = Gem::Specification.new do |s|
   EOF
 
   s.author = "Oren Ben-Kiki"
-  s.email = "oren@ben-kiki.org"
+  s.email = "rubygems-oren@ben-kiki.org"
 
   s.requirements << "GVim for syntax highlighting."
 
   s.add_dependency("andand")
-  s.add_dependency("erb")
   s.add_dependency("getoptions")
   s.add_dependency("rake")
   s.add_dependency("rdiscount")
@@ -61,7 +70,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency("rcov")
   s.add_development_dependency("reek")
   s.add_development_dependency("roodi")
-  s.add_development_dependency("saikuro")
+  s.add_development_dependency("Saikuro")
   s.add_development_dependency("test-spec")
 
   s.files = files["lib"] + files["bin"] + files["doc"]
@@ -80,20 +89,22 @@ end
 
 Rake::GemPackageTask.new(spec) { |package| }
 
-Rake::RDocTask.new do |rdoc|
-  rdoc.rdoc_files.add("LICENSE")
-  rdoc.rdoc_files.add("README.rdoc")
-  rdoc.rdoc_files.add(files["bin"])
-  rdoc.rdoc_files.add(files["lib"])
-  rdoc.rdoc_files.add(files["test"])
-  rdoc.rdoc_files.add(files["testlib"])
-  rdoc.main = "README.rdoc"
-  rdoc.rdoc_dir = "rdoc"
-  rdoc.options = spec.rdoc_options
+# Unit tests
+
+Rcov::RcovTask.new("rcov") do |task|
+  task.output_dir = "rcov"
+  task.test_files = files["test"]
+  task.libs << "lib" << "test/lib"
+  task.rcov_opts << "--failure-threshold" << "100"
+  (files["lib"] + files["test"] + files["testlib"]).each do |file|
+    task.rcov_opts << "--include-file" << file
+  end
 end
 
+# Code analysis
+
 Reek::Rake::Task.new do |task|
-  task.reek_opts = "--quiet"
+  task.reek_opts << "--quiet"
   task.source_files = files["lib"] + files["bin"] + files["test"] + files["testlib"]
 end
 
@@ -104,19 +115,7 @@ end
 
 Rake::TestTask.new("test") do |task|
   task.test_files = files["test"]
-  task.libs << "lib"
-  task.libs << "test/lib"
-end
-
-Rcov::RcovTask.new("rcov") do |task|
-  task.output_dir = "rcov"
-  task.test_files = files["test"]
-  task.libs << "lib"
-  task.libs << "test/lib"
-  task.rcov_opts << "--failure-threshold" << "100"
-  (files["lib"] + files["test"] + files["testlib"]).each do |file|
-    task.rcov_opts << "--include-file" << file
-  end
+  task.libs << "lib" << "test/lib"
 end
 
 desc "Check for duplicated code with Flay"
@@ -139,6 +138,23 @@ task :saikuro do
   end
 end
 
-Codnar::Rake::SplitTask.new(files["doc"], [])
-Codnar::Rake::SplitTask.new([ "README.rdoc" ], [ :split_rdoc_documentation ])
-Codnar::Rake::WeaveTask.new("doc/root.html", [])
+# Documentation
+
+Rake::RDocTask.new do |rdoc|
+  rdoc.rdoc_files << "LICENSE" << "README.rdoc"
+  rdoc.rdoc_files += files["bin"] + files["lib"] + files["test"] + files["testlib"]
+  rdoc.main = "README.rdoc"
+  rdoc.rdoc_dir = "rdoc"
+  rdoc.options = spec.rdoc_options
+end
+
+codnar_configurations = [ :classify_shell_comments, :format_rdoc_comments ]
+Codnar::Rake::SplitTask.new(files["bin"] + files["lib"] + files["testlib"] + [ "Rakefile", "tools/codnar-changelog" ],
+                            codnar_configurations + [ :chunk_by_vim_regions, "css_code_syntax:ruby" ])
+Codnar::Rake::SplitTask.new(files["javascript"], codnar_configurations + [ "css_code_syntax:javascript" ])
+Codnar::Rake::SplitTask.new(files["css"], codnar_configurations + [ "css_code_syntax:css" ])
+Codnar::Rake::SplitTask.new(files["test"] + files["tools"] - [ "tools/codnar-changelog" ], codnar_configurations)
+Codnar::Rake::SplitTask.new(spec.files.find_all { |file| file.end_with?(".html") }, [ :split_html_documentation ])
+Codnar::Rake::SplitTask.new(spec.files.find_all { |file| file.end_with?(".rdoc") }, [ :split_rdoc_documentation ])
+Codnar::Rake::SplitTask.new(spec.files.find_all { |file| file.end_with?(".markdown") }, [ :split_markdown_documentation ])
+Codnar::Rake::WeaveTask.new("doc/root.html", [ :weave_include, :weave_named_chunk_with_containers ])

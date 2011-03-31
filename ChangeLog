@@ -1,3 +1,7 @@
+2011-04-04	Oren Ben-Kiki <oren.ben-kiki@intel.com>
+
+	* Apply Codnar to itself.
+
 2011-03-17	Oren Ben-Kiki <oren.ben-kiki@intel.com>
 
 	* Fix empty/nil indentation handling.

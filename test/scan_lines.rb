@@ -40,8 +40,8 @@ module Codnar
       },
     }
 
-    INPUT = <<-EOF.unindent
-      # foo
+    INPUT = <<-EOF.unindent.gsub("#!", "#")
+      #! foo
        // bar
         baz
     EOF

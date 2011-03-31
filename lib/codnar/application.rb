@@ -111,21 +111,31 @@ module Codnar
     def merge_configurations
       configurations = @options.configuration || []
       @configuration = configurations.reduce(@configuration) do |configuration, name_or_path|
-        named_configuration = Application.load_configuration(name_or_path)
-        exit(1) unless named_configuration
+        named_configuration = load_configuration(name_or_path)
         configuration.deep_merge(named_configuration)
       end
     end
 
     # Load a configuration either from the available builtin data or from a
     # disk file.
-    def self.load_configuration(name_or_path)
+    def load_configuration(name_or_path)
       return YAML.load_file(name_or_path) if File.exist?(name_or_path)
+      name, arguments = name_or_path.split(':')
+      value = configuration_value(name, arguments)
+      value = value.call(*arguments) unless Hash === value
+      return value
+    end
+
+    # Compute the value of a named built-in configuration.
+    def configuration_value(name, arguments)
       begin
-        return Codnar::Configuration.const_get(name_or_path.upcase)
+        value = Codnar::Configuration.const_get(name.upcase)
+        return value if value
       rescue
-        $stderr.puts("#{$0}: Configuration: #{name_or_path} is neither a disk file nor a known configuration")
+        value = nil
       end
+      $stderr.puts("#{$0}: Configuration: #{name} is neither a disk file nor a known configuration")
+      exit(1)
     end
 
     # Print all the collected errors.

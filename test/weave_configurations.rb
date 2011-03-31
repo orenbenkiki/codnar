@@ -7,11 +7,27 @@ module Codnar
   # Test the built-in weave configurations.
   class TestWeaveConfigurations < TestWithFakeFS
 
+    def test_weave_file
+      Writer.write("chunks", {
+        "locations" => [ "file" => "chunk" ], "containers" => [], "contained" => [],
+        "name" => "Top", "html" => <<-EOF.unindent,
+          <h1>Top</h1>
+          <embed src="path" type="x-codnar/file"/>
+        EOF
+      })
+      File.open("path", "w") { |file| file.puts("<h2>File</h2>") }
+      html = Weaver.new(@errors, [ "chunks" ], Configuration::WEAVE_INCLUDE).weave("include", "top")
+      @errors.should == []
+      html.should == <<-EOF.unindent
+        <h1>Top</h1>
+        <h2>File</h2>
+      EOF
+    end
+
     def test_weave_include
       Writer.write("chunks", chunks("include"))
-      errors = Errors.new
-      html = Weaver.new(errors, [ "chunks" ], Configuration::WEAVE_INCLUDE).weave("include", "top")
-      errors.should == []
+      html = Weaver.new(@errors, [ "chunks" ], Configuration::WEAVE_INCLUDE).weave("include", "top")
+      @errors.should == []
       html.should == <<-EOF.unindent
         <h1>Top</h1>
         <h2>Intermediate</h2>
@@ -36,12 +52,13 @@ module Codnar
 
     def test_weave_plain_chunk
       Writer.write("chunks", chunks("plain_chunk"))
-      errors = Errors.new
-      html = Weaver.new(errors, [ "chunks" ], Configuration::WEAVE_PLAIN_CHUNK).weave("plain_chunk", "top")
-      errors.should == []
+      html = Weaver.new(@errors, [ "chunks" ], Configuration::WEAVE_PLAIN_CHUNK).weave("plain_chunk", "top")
+      @errors.should == []
       html.should == WOVEN_PLAIN_CHUNK
     end
 
+    # Normally, one does not nest named_chunk_with_containers chunks this
+    # way, but it serves as a test.
     WOVEN_NAMED_CHUNK = <<-EOF.unindent
       <div class="named_with_containers chunk">
       <div class="chunk name">
@@ -68,6 +85,14 @@ module Codnar
       <div class="chunk html">
       <h3>Bottom</h3>
       </div>
+      <div class="chunk containers">
+      <span class="chunk containers header">Contained in:</span>
+      <ul class="chunk containers">
+      <li class="chunk container">
+      <a class="chunk container" href="#intermediate">Intermediate</a>
+      </li>
+      </ul>
+      </div>
       </div>
       </div>
       <div class="chunk containers">
@@ -80,22 +105,13 @@ module Codnar
       </div>
       </div>
       </div>
-      <div class="chunk containers">
-      <span class="chunk containers header">Contained in:</span>
-      <ul class="chunk containers">
-      <li class="chunk container">
-      <a class="chunk container" href="#intermediate">Intermediate</a>
-      </li>
-      </ul>
-      </div>
       </div>
     EOF
 
     def test_weave_named_chunk_with_containers
       Writer.write("chunks", chunks("named_chunk_with_containers"))
-      errors = Errors.new
-      html = Weaver.new(errors, [ "chunks" ], Configuration::WEAVE_NAMED_CHUNK_WITH_CONTAINERS).weave("named_chunk_with_containers", "top")
-      errors.should == []
+      html = Weaver.new(@errors, [ "chunks" ], Configuration::WEAVE_NAMED_CHUNK_WITH_CONTAINERS).weave("named_chunk_with_containers", "top")
+      @errors.should == []
       html.should == WOVEN_NAMED_CHUNK
     end
 
@@ -103,7 +119,7 @@ module Codnar
 
     def chunks(template)
       return [ {
-        "locations" => [ "file" => "chunk" ], "containers" => [], "contained" => [ "Intermediate" ], "name" => "BOTTOM", "html" => "<h3>Bottom</h3>\n",
+        "locations" => [ "file" => "chunk" ], "containers" => [ "Intermediate" ], "contained" => [], "name" => "BOTTOM", "html" => "<h3>Bottom</h3>\n",
       }, {
         "locations" => [ "file" => "chunk" ], "containers" => [ "Top" ], "contained" => [ "BOTTOM" ],
         "name" => "Intermediate", "html" => <<-EOF.unindent,
@@ -112,7 +128,7 @@ module Codnar
           </embed>
         EOF
       }, {
-        "locations" => [ "file" => "chunk" ], "containers" => [ "Intermediate" ], "contained" => [],
+        "locations" => [ "file" => "chunk" ], "containers" => [], "contained" => [ "Intermediate" ],
         "name" => "Top", "html" => <<-EOF.unindent,
           <h1>Top</h1>
           <embed src="##INTERMEDIATE" type="x-codnar/#{template}"/>

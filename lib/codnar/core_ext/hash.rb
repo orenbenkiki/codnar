@@ -1,26 +1,28 @@
 # Extend the core Hash class.
 class Hash
 
-  # Provide OStruct/JavaScript-like implicit .key and .key= methods.
+  # Provide OpenStruct/JavaScript-like implicit .key and .key= methods.
   def method_missing(method, *arguments)
     method = method.to_s
     key = method.chomp("=")
     return method == key ? self[key] : self[key] = arguments[0]
   end
 
-  # Perform a deep merge with another hash.
-  def deep_merge(hash)
-    return merge(hash, &Hash::method("deep_merger"))
-  end
-
-# {{{ Deep clone
+  # {{{ Deep clone
 
   # Obtain a deep clone which shares nothing with this hash.
   def deep_clone
     return YAML.load(to_yaml)
   end
 
-# }}}
+  # }}}
+
+  # {{{ Deep merge
+
+  # Perform a deep merge with another hash.
+  def deep_merge(hash)
+    return merge(hash, &Hash::method("deep_merger"))
+  end
 
 protected
 
@@ -35,7 +37,7 @@ protected
     end
   end
 
-  # If the override has a nil element, it is replaced by the default it is
+  # If the override has a [] element, it is replaced by the default it is
   # overriding.
   def self.deep_merge_arrays(default, override)
     embed_index = override.find_index([])
@@ -44,5 +46,7 @@ protected
     override[embed_index..embed_index] = default
     return override
   end
+
+  # }}}
 
 end

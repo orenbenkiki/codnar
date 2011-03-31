@@ -27,12 +27,13 @@ module Codnar
     end
 
     # Convert a sequence of classified code lines to HTML using GVim syntax
-    # highlighting.
-    def self.lines_to_html(lines, syntax)
+    # highlighting. The commands array allows configuring the way that GVim
+    # will format the output (see the `syntax_to_html` method for details).
+    def self.lines_to_html(lines, syntax, commands = [])
       merged_line = lines[0]
       merged_line.kind = "html"
-      payload = lines.map { |line| (line.indentation || "") + line.payload }.join("\n")
-      merged_line.payload = GVim.syntax_to_html(payload, syntax).chomp
+      payload = lines.map { |line| (line.indentation || "") + line.payload + "\n" }.join
+      merged_line.payload = GVim.syntax_to_html(payload, syntax, commands).chomp
       return [ merged_line ]
     end
 
@@ -51,20 +52,24 @@ module Codnar
     # using only command-line arguments.
     def self.run_gvim(file, syntax, commands)
       path = file.path
-      ENV["DISPLAY"] = "no-such-display" # Prevent GVim from flashing a GUI window.
-      gvim = IO.popen("'" + [ "gvim", "-f",
-             "+:let html_ignore_folding=1",
-             "+:let use_xhtml=1",
-             "+:let html_use_css=0",
-             "+:syn on",
-             "+:set syntax=#{syntax}",
-             commands,
-             "+run! syntax/2html.vim",
-             "+:f #{path}",
-             "+:wq", "+:q",
-             path ].flatten.join("' '") + "' > /dev/null 2>&1", "w")
-      gvim.puts # Force GVim to continue without a GUI window.
-      gvim.close
+      ENV["DISPLAY"] = "none" # Otherwise the X11 server *does* affect the result.
+      command = [
+        "gvim",
+        "-f", "-X",
+        "-u", "none",
+        "-U", "none",
+        "+:let html_ignore_folding=1",
+        "+:let use_xhtml=1",
+        "+:let html_use_css=0",
+        "+:syn on",
+        "+:set syntax=#{syntax}",
+        commands,
+        "+run! syntax/2html.vim",
+        "+:f #{path}",
+        "+:wq", "+:q",
+        path
+      ]
+      system("echo '\n' | '#{command.flatten.join("' '")}' > /dev/null 2>&1")
     end
 
     # Read the HTML with the syntax highlighting written out by GVim.
