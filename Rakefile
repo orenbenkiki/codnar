@@ -77,7 +77,6 @@ spec = Gem::Specification.new do |s|
   s.test_files = files.test + files.testlib
   s.executables = files.bin.map { |path| path.sub("bin/", "") }
 
-  s.has_rdoc = true
   s.extra_rdoc_files = [ "README.rdoc", "LICENSE", "ChangeLog" ]
   s.rdoc_options << "--title" << "Code narrator #{s.version}"
   s.rdoc_options << "--main" << "README.rdoc"
