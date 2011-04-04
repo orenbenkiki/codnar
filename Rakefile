@@ -73,9 +73,9 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency("Saikuro")
   s.add_development_dependency("test-spec")
 
-  s.files = files["lib"] + files["bin"] + files["doc"]
-  s.test_files = files["test"] + files["testlib"]
-  s.executables = files["bin"].map { |path| path.sub("bin/", "") }
+  s.files = files.lib + files.bin + files.doc
+  s.test_files = files.test + files.testlib
+  s.executables = files.bin.map { |path| path.sub("bin/", "") }
 
   s.has_rdoc = true
   s.extra_rdoc_files = [ "README.rdoc", "LICENSE", "ChangeLog" ]
@@ -93,10 +93,10 @@ Rake::GemPackageTask.new(spec) { |package| }
 
 Rcov::RcovTask.new("rcov") do |task|
   task.output_dir = "rcov"
-  task.test_files = files["test"]
+  task.test_files = files.test
   task.libs << "lib" << "test/lib"
   task.rcov_opts << "--failure-threshold" << "100"
-  (files["lib"] + files["test"] + files["testlib"]).each do |file|
+  (files.lib + files.test + files.testlib).each do |file|
     task.rcov_opts << "--include-file" << file
   end
 end
@@ -105,7 +105,7 @@ end
 
 Reek::Rake::Task.new do |task|
   task.reek_opts << "--quiet"
-  task.source_files = files["lib"] + files["bin"] + files["test"] + files["testlib"]
+  task.source_files = files.lib + files.bin + files.test + files.testlib
 end
 
 RoodiTask.new do |task|
@@ -114,7 +114,7 @@ RoodiTask.new do |task|
 end
 
 Rake::TestTask.new("test") do |task|
-  task.test_files = files["test"]
+  task.test_files = files.test
   task.libs << "lib" << "test/lib"
 end
 
@@ -142,18 +142,18 @@ end
 
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files << "LICENSE" << "README.rdoc"
-  rdoc.rdoc_files += files["bin"] + files["lib"] + files["test"] + files["testlib"]
+  rdoc.rdoc_files += files.bin + files.lib + files.test + files.testlib
   rdoc.main = "README.rdoc"
   rdoc.rdoc_dir = "rdoc"
   rdoc.options = spec.rdoc_options
 end
 
 codnar_configurations = [ :classify_shell_comments, :format_rdoc_comments ]
-Codnar::Rake::SplitTask.new(files["bin"] + files["lib"] + files["testlib"] + [ "Rakefile", "tools/codnar-changelog" ],
+Codnar::Rake::SplitTask.new(files.bin + files.lib + files.testlib + [ "Rakefile", "tools/codnar-changelog" ],
                             codnar_configurations + [ :chunk_by_vim_regions, "css_code_syntax:ruby" ])
-Codnar::Rake::SplitTask.new(files["javascript"], codnar_configurations + [ "css_code_syntax:javascript" ])
-Codnar::Rake::SplitTask.new(files["css"], codnar_configurations + [ "css_code_syntax:css" ])
-Codnar::Rake::SplitTask.new(files["test"] + files["tools"] - [ "tools/codnar-changelog" ], codnar_configurations)
+Codnar::Rake::SplitTask.new(files.javascript, codnar_configurations + [ "css_code_syntax:javascript" ])
+Codnar::Rake::SplitTask.new(files.css, codnar_configurations + [ "css_code_syntax:css" ])
+Codnar::Rake::SplitTask.new(files.test + files.tools - [ "tools/codnar-changelog" ], codnar_configurations)
 Codnar::Rake::SplitTask.new(spec.files.find_all { |file| file.end_with?(".html") }, [ :split_html_documentation ])
 Codnar::Rake::SplitTask.new(spec.files.find_all { |file| file.end_with?(".rdoc") }, [ :split_rdoc_documentation ])
 Codnar::Rake::SplitTask.new(spec.files.find_all { |file| file.end_with?(".markdown") }, [ :split_markdown_documentation ])
