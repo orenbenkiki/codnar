@@ -8,5 +8,5 @@ true \
 && git add lib/codnar/version.rb \
 && tools/codnar-changelog > ChangeLog \
 && git add ChangeLog \
-&& rake all \
+&& rake verify gem \
 && git commit --amend

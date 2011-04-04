@@ -2,7 +2,7 @@
 
 # Major and minor revision numbers.
 export MAJOR=0
-export MINOR=0
+export MINOR=1
 
 # This is only reliable as long as one developer is doing commits on one
 # machine. Which, so far, is the case.
