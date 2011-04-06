@@ -28,14 +28,15 @@ module Codnar
       Writer.write("chunks", chunks("include"))
       html = Weaver.new(@errors, [ "chunks" ], Configuration::WEAVE_INCLUDE).weave("include", "top")
       @errors.should == []
-      html.should == <<-EOF.unindent
+      html.should == <<-EOF.unindent #! ((( html
         <h1>Top</h1>
         <h2>Intermediate</h2>
         <h3>Bottom</h3>
       EOF
+      #! ))) html
     end
 
-    WOVEN_PLAIN_CHUNK = <<-EOF.unindent
+    WOVEN_PLAIN_CHUNK = <<-EOF.unindent #! ((( html
       <div class="plain chunk">
       <a name="top"/>
       <h1>Top</h1>
@@ -49,6 +50,7 @@ module Codnar
       </div>
       </div>
     EOF
+    #! ))) html
 
     def test_weave_plain_chunk
       Writer.write("chunks", chunks("plain_chunk"))
@@ -59,7 +61,7 @@ module Codnar
 
     # Normally, one does not nest named_chunk_with_containers chunks this
     # way, but it serves as a test.
-    WOVEN_NAMED_CHUNK = <<-EOF.unindent
+    WOVEN_NAMED_CHUNK = <<-EOF.unindent #! ((( html
       <div class="named_with_containers chunk">
       <div class="chunk name">
       <a name="top">
@@ -107,6 +109,7 @@ module Codnar
       </div>
       </div>
     EOF
+    #! ))) html
 
     def test_weave_named_chunk_with_containers
       Writer.write("chunks", chunks("named_chunk_with_containers"))
@@ -122,17 +125,19 @@ module Codnar
         "locations" => [ "file" => "chunk" ], "containers" => [ "Intermediate" ], "contained" => [], "name" => "BOTTOM", "html" => "<h3>Bottom</h3>\n",
       }, {
         "locations" => [ "file" => "chunk" ], "containers" => [ "Top" ], "contained" => [ "BOTTOM" ],
-        "name" => "Intermediate", "html" => <<-EOF.unindent,
+        "name" => "Intermediate", "html" => <<-EOF.unindent, #! ((( html
           <h2>Intermediate</h2>
           <embed type='x-codnar/#{template}' src='bottom'>
           </embed>
         EOF
+        #! ))) html
       }, {
         "locations" => [ "file" => "chunk" ], "containers" => [], "contained" => [ "Intermediate" ],
-        "name" => "Top", "html" => <<-EOF.unindent,
+        "name" => "Top", "html" => <<-EOF.unindent, #! ((( html
           <h1>Top</h1>
           <embed src="##INTERMEDIATE" type="x-codnar/#{template}"/>
         EOF
+        #! ))) html
       } ]
     end
 

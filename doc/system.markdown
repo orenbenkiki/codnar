@@ -334,6 +334,11 @@ is very easy using GVim for syntax highlighting, as demonstrated here:
 
 [[Built-in syntax highlighting configurations|named_chunk_with_containers]]
 
+Sometimes, a code in one syntax contains nested "islands" of code in another
+syntax. Here is a simple configuration to support that:
+
+[[Nested foreign syntax code islands configurations|named_chunk_with_containers]]
+
 #### Combining configurations ####
 
 The above configurations can be used in combination with each other, as
@@ -341,7 +346,7 @@ demonstrated by the following tests:
 
 [[test/split-configurations.rb|named_chunk_with_containers]]
 
-Combining configurations rquires deep-merging. This allows complex nested
+Combining configurations requires deep-merging. This allows complex nested
 structures to be merged. There is even a way for arrays to append elements
 before/after the array they are merged with. Here is a simple test that
 demonstrates deep-merging complex structures:

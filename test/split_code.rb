@@ -69,7 +69,7 @@ module Codnar
       "locations" => [ "file" => "PATH", "line" => 1 ],
       "containers" => [],
       "contained" => [ "assignment" ],
-      "html" => <<-EOF.unindent.chomp,
+      "html" => <<-EOF.unindent.chomp, #! ((( html
         <table class='layout'>
         <tr>
         <td class='indentation'>
@@ -88,12 +88,13 @@ module Codnar
           <a class='nested chunk' href='#assignment'>assignment</a>
         </pre>
       EOF
+      #! ))) html
     }, {
       "name" => "assignment",
       "containers" => [ "PATH" ],
       "contained" => [],
       "locations" => [ "file" => "PATH", "line" => 2 ],
-      "html" => <<-EOF.unindent.chomp,
+      "html" => <<-EOF.unindent.chomp, #! ((( html
         <div class='ruby code syntax' bgcolor="#ffffff" text="#000000">
         <font face="monospace">
         local =&nbsp;<font color="#00ffff">$global</font><br />
@@ -101,6 +102,7 @@ module Codnar
         </font>
         </div>
       EOF
+      #! ))) html
     } ]
 
   end

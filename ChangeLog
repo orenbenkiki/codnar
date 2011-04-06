@@ -1,8 +1,13 @@
-<<<<<<< HEAD
+2011-04-06	Oren Ben-Kiki <github-oren@ben-kiki.org>
+
+	* Support nested foreign code islands.
+
 2011-04-05	Oren Ben-Kiki <github-oren@ben-kiki.org>
-=======
+
+	* Merge branch 'master' of github.com:orenbenkiki/codnar
+	* Push to GitHub
+
 2011-04-04	Oren Ben-Kiki <github-oren@ben-kiki.org>
->>>>>>> de73441a039ea0e2fa8cc493806617fd89ab98c5
 
 	* Push to GitHub
 

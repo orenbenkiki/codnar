@@ -13,7 +13,7 @@ module Codnar
           return bar = baz
         end
       EOF
-      Codnar::GVim.syntax_to_html(ruby, "ruby").should == <<-EOF.unindent
+      Codnar::GVim.syntax_to_html(ruby, "ruby").should == <<-EOF.unindent #! ((( html
         <div class='ruby code syntax' bgcolor="#ffffff" text="#000000">
         <font face="monospace">
         <font color="#ff40ff">def</font>&nbsp;<font color="#00ffff">foo</font><br />
@@ -22,6 +22,7 @@ module Codnar
         </font>
         </div>
       EOF
+      #! ))) html
     end
 
     def test_ruby_css
@@ -30,13 +31,14 @@ module Codnar
           return bar = baz
         end
       EOF
-      Codnar::GVim.syntax_to_html(ruby, "ruby", [ "+:let html_use_css=1" ]).should == <<-EOF.unindent
+      Codnar::GVim.syntax_to_html(ruby, "ruby", [ "+:let html_use_css=1" ]).should == <<-EOF.unindent #! ((( html
         <pre class='ruby code syntax'>
         <span class="PreProc">def</span> <span class="Identifier">foo</span>
           <span class="Statement">return</span> bar = baz
         <span class="PreProc">end</span>
         </pre>
       EOF
+      #! ))) html
     end
 
   end

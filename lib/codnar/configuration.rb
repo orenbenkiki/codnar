@@ -146,20 +146,58 @@ module Codnar
     # Format code using GVim's Ruby syntax highlighting. Assumes some previous
     # configuration already classifies the code lines.
     HIGHLIGHT_CODE_SYNTAX = lambda do |syntax|
-      {
-        "formatters" => {
-          "code" => "GVim.lines_to_html(lines, '#{syntax}')",
-        },
-      }
+      return Configuration.gvim_code_syntax(syntax)
     end
 
     # Format code using GVim's Ruby syntax highlighting, using CSS classes
     # instead of explicit font and color styles. Assumes some previous
     # configuration already classifies the code lines.
     CSS_CODE_SYNTAX = lambda do |syntax|
-      {
+      return Configuration.gvim_code_syntax(syntax, "'+:let html_use_css=1'")
+    end
+
+    # Return a configuration for highlighting a specific syntax using GVim.
+    def self.gvim_code_syntax(syntax, extra_commands = "")
+      return {
         "formatters" => {
-          "code" => "GVim.lines_to_html(lines, '#{syntax}', [ '+:let html_use_css=1' ])",
+          "code" => "Formatter.cast_lines(lines, '#{syntax}_code')",
+          "#{syntax}_code" => "GVim.lines_to_html(lines, '#{syntax}', [ #{extra_commands} ])",
+        },
+      }
+    end
+
+    # }}}
+
+    # {{{ Nested foreign syntax code islands configurations
+
+    # Allow for comments containing "((( <syntax>" and "))) <syntax>" to
+    # designate nested islands of foreign syntax inside the normal code. The
+    # designator comment lines are always treated as part of the surrounding
+    # code, not as part of the nested foreign syntax code. There is no further
+    # classification of the nested foreign syntax code. Therefore, the nested
+    # code is not examined for begin/end chunk markers. Likewise, the nested
+    # code may not contain deeper nested code using a third syntax.
+    NESTED_CODE_SYNTAX = lambda do |syntax|
+      {
+        "syntax" => {
+          "patterns" => {
+            "start_nested_#{syntax}" => { "regexp" => "^(\\s*)(.*\\(\\(\\(\\s*#{syntax}.*)$" },
+            "end_nested_#{syntax}" => { "regexp" => "^(\\s*)(.*\\)\\)\\)\\s*#{syntax}.*)$" },
+          },
+          "states" => {
+            "start" => {
+              "transitions" => [
+                { "pattern" => "start_nested_#{syntax}", "kind" => "code", "next_state" => syntax },
+                [],
+              ],
+            },
+            syntax => {
+              "transitions" => [
+                { "pattern" => "end_nested_#{syntax}", "kind" => "code", "next_state" => "start" },
+                { "pattern" => "code", "kind" => "#{syntax}_code" },
+              ],
+            },
+          },
         },
       }
     end
@@ -173,17 +211,17 @@ module Codnar
 
     # Weave chunks in the plainest possible way.
     WEAVE_PLAIN_CHUNK = {
-      "plain_chunk" => <<-EOF.unindent,
+      "plain_chunk" => <<-EOF.unindent, #! ((( html
         <div class="plain chunk">
         <a name="<%= chunk.name.to_id %>"/>
         <%= chunk.expanded_html %>
         </div>
       EOF
-    }
+    } #! ))) html
 
     # Weave chunks with their name and the list of container chunks.
     WEAVE_NAMED_CHUNK_WITH_CONTAINERS = {
-      "named_chunk_with_containers" => <<-EOF.unindent,
+      "named_chunk_with_containers" => <<-EOF.unindent, #! ((( html
         <div class="named_with_containers chunk">
         <div class="chunk name">
         <a name="<%= chunk.name.to_id %>">
@@ -207,7 +245,7 @@ module Codnar
         % end
         </div>
       EOF
-    }
+    } #! ))) html
 
     # }}}
 
