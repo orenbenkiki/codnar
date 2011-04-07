@@ -27,19 +27,32 @@ module Codnar
     end
 
     VALID_LINES = [
-      { "kind" => "code",        "line" => "before top",               "number" => 1,  "indentation" => "",    "payload" => "before top"          },
-      { "kind" => "begin_chunk", "line" => " {{{ top chunk",           "number" => 2,  "indentation" => " ",   "payload" => "top chunk"           },
-      { "kind" => "code",        "line" => " before intermediate",     "number" => 3,  "indentation" => " ",   "payload" => "before intermediate" },
-      { "kind" => "begin_chunk", "line" => "  {{{ intermediate chunk", "number" => 4,  "indentation" => "  ",  "payload" => "intermediate chunk"  },
-      { "kind" => "code",        "line" => "  before inner",           "number" => 5,  "indentation" => "  ",  "payload" => "before inner"        },
-      { "kind" => "begin_chunk", "line" => "   {{{ inner chunk",       "number" => 6,  "indentation" => "   ", "payload" => "inner chunk"         },
-      { "kind" => "code",        "line" => "   inner line",            "number" => 7,  "indentation" => "   ", "payload" => "inner line"          },
-      { "kind" => "end_chunk",   "line" => "   }}} inner chunk",       "number" => 8,  "indentation" => "   ", "payload" => "inner chunk"         },
-      { "kind" => "code",        "line" => "  after inner",            "number" => 9,  "indentation" => "  "                                      },
-      { "kind" => "end_chunk",   "line" => "  }}}",                    "number" => 10, "indentation" => "  ",  "payload" => ""                    },
-      { "kind" => "code",        "line" => " after intermediate",      "number" => 11, "indentation" => " ",   "payload" => "after intermediate"  },
-      { "kind" => "end_chunk",   "line" => " }}} TOP CHUNK",           "number" => 12, "indentation" => " ",   "payload" => "TOP CHUNK"           },
-      { "kind" => "code",        "line" => "after top",                "number" => 13, "indentation" => "",    "payload" => "after top"           }
+      { "kind" => "code",        "number" => 1,  "line" => "before top",
+        "indentation" => "",     "payload" => "before top"          },
+      { "kind" => "begin_chunk", "number" => 2, "line" => " {{{ top chunk",
+        "indentation" => " ",    "payload" => "top chunk"           },
+      { "kind" => "code",         "number" => 3, "line" => " before intermediate",
+        "indentation" => " ",    "payload" => "before intermediate" },
+      { "kind" => "begin_chunk", "number" => 4,  "line" => "  {{{ intermediate chunk",
+        "indentation" => "  ",   "payload" => "intermediate chunk"  },
+      { "kind" => "code",        "number" => 5,  "line" => "  before inner",
+        "indentation" => "  ",   "payload" => "before inner"        },
+      { "kind" => "begin_chunk", "number" => 6,  "line" => "   {{{ inner chunk",
+        "indentation" => "   ",  "payload" => "inner chunk"         },
+      { "kind" => "code",        "number" => 7,  "line" => "   inner line",
+        "indentation" => "   ",  "payload" => "inner line"          },
+      { "kind" => "end_chunk",   "number" => 8,  "line" => "   }}} inner chunk",
+        "indentation" => "   ",  "payload" => "inner chunk"         },
+      { "kind" => "code",        "number" => 9,  "line" => "  after inner",
+        "indentation" => "  ",   "payload" => "after inner"         },
+      { "kind" => "end_chunk",   "number" => 10, "line" => "  }}}",
+        "indentation" => "  ",   "payload" => ""                    },
+      { "kind" => "code",        "number" => 11, "line" => " after intermediate",
+        "indentation" => " ",    "payload" => "after intermediate"  },
+      { "kind" => "end_chunk",   "number" => 12, "line" => " }}} TOP CHUNK",
+        "indentation" => " ",    "payload" => "TOP CHUNK"           },
+      { "kind" => "code",        "number" => 13, "line" => "after top",
+        "indentation" => "",     "payload" => "after top"           }
     ]
 
     VALID_CHUNKS = [
@@ -49,7 +62,8 @@ module Codnar
         "contained" => [ "top chunk" ],
         "lines" => [
           VALID_LINES[0].merge("indentation" => ""),
-          { "kind" => "nested_chunk", "line" => " {{{ top chunk", "number" => 2, "indentation" => " ", "payload" => "top chunk" },
+          { "kind" => "nested_chunk", "number" => 2, "line" => " {{{ top chunk",
+            "indentation" => " ",     "payload" => "top chunk" },
           VALID_LINES[12].merge("indentation" => ""),
         ] },
       { "name" => "top chunk",
@@ -59,7 +73,8 @@ module Codnar
         "lines" => [
           VALID_LINES[1].merge("indentation" => ""),
           VALID_LINES[2].merge("indentation" => ""),
-          { "kind" => "nested_chunk", "line" => "  {{{ intermediate chunk", "number" => 4, "indentation" => " ", "payload" => "intermediate chunk" },
+          { "kind" => "nested_chunk", "number" => 4, "line" => "  {{{ intermediate chunk",
+            "indentation" => " ",     "payload" => "intermediate chunk" },
           VALID_LINES[10].merge("indentation" => ""),
           VALID_LINES[11].merge("indentation" => ""),
         ] },
@@ -70,7 +85,8 @@ module Codnar
         "lines" => [
           VALID_LINES[3].merge("indentation" => ""),
           VALID_LINES[4].merge("indentation" => ""),
-          { "kind" => "nested_chunk", "line" => "   {{{ inner chunk", "number" => 6, "indentation" => " ", "payload" => "inner chunk" },
+          { "kind" => "nested_chunk", "number" => 6, "line" => "   {{{ inner chunk",
+            "indentation" => " ",     "payload" => "inner chunk" },
           VALID_LINES[8].merge("indentation" => ""),
           VALID_LINES[9].merge("indentation" => ""),
         ] },
@@ -87,8 +103,10 @@ module Codnar
 
     def test_mismatching_end_chunk_line
       lines = [
-        { "kind" => "begin_chunk", "line" => "{{{ top chunk",     "number" => 1, "indentation" => "", "payload" => "top chunk"     },
-        { "kind" => "end_chunk",   "line" => "}}} not top chunk", "number" => 2, "indentation" => "", "payload" => "not top chunk" }
+        { "kind" => "begin_chunk", "number" => 1, "line" => "{{{ top chunk",
+          "indentation" => "",     "payload" => "top chunk"     },
+        { "kind" => "end_chunk",   "number" => 2, "line" => "}}} not top chunk",
+          "indentation" => "",     "payload" => "not top chunk" }
       ]
       Merger.chunks(@errors, "path", lines)
       @errors.should == [
@@ -98,15 +116,16 @@ module Codnar
 
     def test_missing_begin_chunk_name
       lines = [
-        { "kind" => "begin_chunk", "line" => "{{{", "number" => 1, "indentation" => "", "payload" => "" },
-        { "kind" => "end_chunk",   "line" => "}}}", "number" => 2, "indentation" => "", "payload" => "" }
+        { "kind" => "begin_chunk", "number" => 1, "line" => "{{{", "indentation" => "", "payload" => "" },
+        { "kind" => "end_chunk",   "number" => 2, "line" => "}}}", "indentation" => "", "payload" => "" }
       ]
       Merger.chunks(@errors, "path", lines)
       @errors.should == [ "#{$0}: Begin line for chunk with no name in file: path at line: 1" ]
     end
 
     def test_missing_end_chunk_line
-      lines = [ { "kind" => "begin_chunk", "line" => "{{{ top chunk", "number" => 1, "indentation" => "", "payload" => "top chunk" } ]
+      lines = [ { "kind" => "begin_chunk", "number" => 1, "line" => "{{{ top chunk",
+                  "indentation" => "",     "payload" => "top chunk" } ]
       Merger.chunks(@errors, "path", lines)
       @errors.should == [ "#{$0}: Missing end line for chunk: top chunk in file: path at line: 1" ]
     end

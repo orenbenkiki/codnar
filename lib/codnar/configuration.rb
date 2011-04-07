@@ -5,7 +5,7 @@ module Codnar
   # Application.
   module Configuration
 
-    # {{{ Built-in documentation "splitting" configurations
+    # {{{ Documentation "splitting" configurations
 
     # "Split" a documentation file. All lines are assumed to have the same kind
     # "doc" and no indentation is collected. Unless overriden by additional
@@ -54,7 +54,7 @@ module Codnar
 
     # }}}
 
-    # {{{ Built-in chunk splitting configurations
+    # {{{ Chunk splitting configurations
 
     # Group lines into chunks using VIM-style "{{{"/"}}}" region designations.
     # Assumes other configurations handle the actual content lines.
@@ -83,45 +83,88 @@ module Codnar
 
     # }}}
 
-    # {{{ Built-in comment splitting configurations
+    # {{{ Classify source code lines
 
-    # Classify lines to two kinds, "code" and (#-style) "comment". It accepts a
-    # restricted format: each comment is expected to start with exactly one "#"
-    # and the following space, if any, is stripped from the payload. As a
-    # convenience, "#!" is not taken to start a comment. This both protects the
-    # 1st line of scripts, and also any other line you wish to avoid being
-    # treated as a comment.
-    #
-    # This configuration is typically complemented by an additional one
-    # specifying how to format the code and the (stripped!) comments; by
-    # default both are just displayed as-is using an HTML pre element, which
-    # isn't very useful.
-    CLASSIFY_SHELL_COMMENTS = {
-      "formatters" => {
-        "code" => "Formatter.lines_to_pre_html(lines, :class => :code)",
-        "comment" => "Formatter.lines_to_pre_html(lines, :class => :comment)",
-      },
-      "syntax" => {
-        "patterns" => {
-          "comment_as_code" => { "regexp" => "^(\\s*)(#!.*)$" },
-          "comment" => { "regexp" => "^(\\s*)#\\s?(.*)$" },
-          "code" => { "regexp" => "^(\\s*)(.*)$" },
+    # Classify all lines as source code of some syntax (kind). This doesn't
+    # distinguish between comment and code lines; to do that, you need to
+    # combine this with comment classification configuration(s). Also, it just
+    # formats the lines in an HTML pre element, without any syntax
+    # highlighting; to do that, you need to combine this with syntax
+    # highlighting formatting configuration(s).
+    CLASSIFY_SOURCE_CODE = lambda do |syntax|
+      return {
+        "formatters" => {
+          "#{syntax}_code" => "Formatter.lines_to_pre_html(lines, :class => :code)",
         },
-        "states" => {
-          "start" => {
-            "transitions" => [
-              { "pattern" => "comment_as_code", "kind" => "code" },
-              { "pattern" => "comment" },
-              { "pattern" => "code" },
-            ],
+        "syntax" => {
+          "patterns" => {
+            "#{syntax}_code" => { "regexp" => "^(\\s*)(.*)$" },
+          },
+          "states" => {
+            "start" => {
+              "transitions" => [
+                { "pattern" => "#{syntax}_code" },
+              ],
+            },
           },
         },
+      }
+    end
+
+    # }}}
+
+    # {{{ Simple comment classification configurations
+
+    # Classify comment lines. It accepts a restricted format: each comment is
+    # expected to start with some exact prefix (e.g. "#" for shell style
+    # comments or "//" for C++ style comments). The following space, if any, is
+    # stripped from the payload. As a convenience, comment that starts with "!"
+    # is not taken to start a comment. This both protects the 1st line of shell
+    # scripts ("#!"), and also any other line you wish to avoid being treated
+    # as a comment.
+    #
+    # This configuration is typically complemented by an additional one
+    # specifying how to format the (stripped!) comments; by default they are
+    # just displayed as-is using an HTML pre element, which isn't very useful.
+    CLASSIFY_SIMPLE_COMMENTS = lambda do |prefix|
+      return Configuration.simple_comments(prefix)
+    end
+
+    # Configuration for classifying lines to comments and code based on a
+    # simple prefix (e.g. "#" for shell style comments or "//" for C++ style
+    # comments).
+    def self.simple_comments(prefix)
+      return {
+        "syntax" => {
+          "patterns" => {
+            "comment_#{prefix}" => { "regexp" => "^(\\s*)#{prefix}(?!!)\\s?(.*)$" },
+          },
+          "states" => {
+            "start" => {
+              "transitions" => [
+                { "pattern" => "comment_#{prefix}", "kind" => "comment" },
+                []
+              ],
+            },
+          },
+        },
+      }
+    end
+
+    # }}}
+
+    # {{{ Comment formatting configurations
+
+    # Format comments as HTML pre elements. Is used to complement a
+    # configuration that classifies some lines as "comment".
+    FORMAT_PRE_COMMENTS = {
+      "formatters" => {
+        "comment" => "Formatter.lines_to_pre_html(lines, :class => :comment)",
       },
     }
 
     # Format comments that use the RDoc notation. Is used to complement a
-    # configuration that classifies some lines as "comment". Assumes some
-    # previous configuration already classified the comment lines.
+    # configuration that classifies some lines as "comment".
     FORMAT_RDOC_COMMENTS = {
       "formatters" => {
         "comment" => "Formatter.markup_lines_to_html(lines, 'RDoc')",
@@ -130,8 +173,7 @@ module Codnar
     }
 
     # Format comments that use the Markdown notation. Is used to complement a
-    # configuration that classifies some lines as "comment". Assumes some
-    # previous configuration already classifies the comment lines.
+    # configuration that classifies some lines as "comment".
     FORMAT_MARKDOWN_COMMENTS = {
       "formatters" => {
         "comment" => "Formatter.markup_lines_to_html(lines, 'Markdown')",
@@ -140,8 +182,8 @@ module Codnar
     }
 
     # }}}
-
-    # {{{ Built-in syntax highlighting configurations
+    
+    # {{{ Syntax highlighting configurations
 
     # Format code using GVim's Ruby syntax highlighting. Assumes some previous
     # configuration already classifies the code lines.
@@ -160,7 +202,6 @@ module Codnar
     def self.gvim_code_syntax(syntax, extra_commands = "")
       return {
         "formatters" => {
-          "code" => "Formatter.cast_lines(lines, '#{syntax}_code')",
           "#{syntax}_code" => "GVim.lines_to_html(lines, '#{syntax}', [ #{extra_commands} ])",
         },
       }
@@ -177,24 +218,33 @@ module Codnar
     # classification of the nested foreign syntax code. Therefore, the nested
     # code is not examined for begin/end chunk markers. Likewise, the nested
     # code may not contain deeper nested code using a third syntax.
-    NESTED_CODE_SYNTAX = lambda do |syntax|
+    NESTED_CODE_SYNTAX = lambda do |outer_syntax, inner_syntax|
       {
         "syntax" => {
           "patterns" => {
-            "start_nested_#{syntax}" => { "regexp" => "^(\\s*)(.*\\(\\(\\(\\s*#{syntax}.*)$" },
-            "end_nested_#{syntax}" => { "regexp" => "^(\\s*)(.*\\)\\)\\)\\s*#{syntax}.*)$" },
+            "start_#{inner_syntax}_in_#{outer_syntax}" =>
+              { "regexp" => "^(\\s*)(.*\\(\\(\\(\\s*#{inner_syntax}.*)$" },
+            "end_#{inner_syntax}_in_#{outer_syntax}" => 
+              { "regexp" => "^(\\s*)(.*\\)\\)\\)\\s*#{inner_syntax}.*)$" },
+            "#{inner_syntax}_in_#{outer_syntax}" =>
+              { "regexp" => "^(\\s*)(.*)$" },
           },
           "states" => {
             "start" => {
               "transitions" => [
-                { "pattern" => "start_nested_#{syntax}", "kind" => "code", "next_state" => syntax },
+                { "pattern" => "start_#{inner_syntax}_in_#{outer_syntax}",
+                  "kind" => "#{outer_syntax}_code",
+                  "next_state" => "#{inner_syntax}_in_#{outer_syntax}" },
                 [],
               ],
             },
-            syntax => {
+            "#{inner_syntax}_in_#{outer_syntax}" => {
               "transitions" => [
-                { "pattern" => "end_nested_#{syntax}", "kind" => "code", "next_state" => "start" },
-                { "pattern" => "code", "kind" => "#{syntax}_code" },
+                { "pattern" => "end_#{inner_syntax}_in_#{outer_syntax}",
+                  "kind" => "#{outer_syntax}_code",
+                  "next_state" => "start" },
+                { "pattern" => "#{inner_syntax}_in_#{outer_syntax}",
+                  "kind" => "#{inner_syntax}_code" },
               ],
             },
           },
@@ -204,7 +254,7 @@ module Codnar
 
     # }}}
 
-    # {{{ Built-in weaving templates
+    # {{{ Weaving templates
 
     # Weave configuration providing a single simple "include" template.
     WEAVE_INCLUDE = { "include" => "<%= chunk.expanded_html %>\n" }

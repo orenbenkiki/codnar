@@ -1,7 +1,8 @@
 *.swp
-pkg/
-rdoc/
-rcov/
-saikuro/
 chunks/
 codnar.html
+coverage/
+pkg/
+rcov/
+rdoc/
+saikuro/

@@ -120,14 +120,14 @@ module Codnar
     # disk file.
     def load_configuration(name_or_path)
       return YAML.load_file(name_or_path) if File.exist?(name_or_path)
-      name, arguments = name_or_path.split(':')
-      value = configuration_value(name, arguments)
+      name, *arguments = name_or_path.split(':')
+      value = configuration_value(name)
       value = value.call(*arguments) unless Hash === value
       return value
     end
 
     # Compute the value of a named built-in configuration.
-    def configuration_value(name, arguments)
+    def configuration_value(name)
       begin
         value = Codnar::Configuration.const_get(name.upcase)
         return value if value

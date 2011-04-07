@@ -113,7 +113,8 @@ module Codnar
 
     def test_weave_named_chunk_with_containers
       Writer.write("chunks", chunks("named_chunk_with_containers"))
-      html = Weaver.new(@errors, [ "chunks" ], Configuration::WEAVE_NAMED_CHUNK_WITH_CONTAINERS).weave("named_chunk_with_containers", "top")
+      weaver = Weaver.new(@errors, [ "chunks" ], Configuration::WEAVE_NAMED_CHUNK_WITH_CONTAINERS)
+      html = weaver.weave("named_chunk_with_containers", "top")
       @errors.should == []
       html.should == WOVEN_NAMED_CHUNK
     end
@@ -122,7 +123,9 @@ module Codnar
 
     def chunks(template)
       return [ {
-        "locations" => [ "file" => "chunk" ], "containers" => [ "Intermediate" ], "contained" => [], "name" => "BOTTOM", "html" => "<h3>Bottom</h3>\n",
+        "locations" => [ "file" => "chunk" ], "containers" => [ "Intermediate" ], "contained" => [],
+        "name" => "BOTTOM",
+        "html" => "<h3>Bottom</h3>\n",
       }, {
         "locations" => [ "file" => "chunk" ], "containers" => [ "Top" ], "contained" => [ "BOTTOM" ],
         "name" => "Intermediate", "html" => <<-EOF.unindent, #! ((( html

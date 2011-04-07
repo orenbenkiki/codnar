@@ -66,7 +66,8 @@ module Codnar
       begin
         return File.read(path)
       rescue Exception => exception
-        @errors.push("#{$0}: Reading file: #{path} exception: #{exception} #{Reader.locations_message(@last_chunk)}") if @last_chunk
+        @errors.push("#{$0}: Reading file: #{path} exception: #{exception} #{Reader.locations_message(@last_chunk)}") \
+          if @last_chunk
         return "FILE: #{path} EXCEPTION: #{exception}"
       end
     end

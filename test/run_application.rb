@@ -24,17 +24,20 @@ module Codnar
     def test_require_configuration_module
       # The additional_module is read by Ruby and is not captured by FakeFS.
       File.open("additional_configuration.yaml", "w") { |file| file.puts("bar: updated_bar") }
-      status = Application.with_argv(%w(-o stdout -I support -r additional_module -c ADDITIONAL additional_configuration.yaml -- dummy)) do
+      status = Application.with_argv(%w(-o stdout -I support -r additional_module
+                                        -c ADDITIONAL additional_configuration.yaml -- dummy)) do
         run_print_configuration
       end
       YAML.load_file("stdout").should == { "foo" => "original_foo", "bar" => "updated_bar" }
     end
 
     def test_require_missing_configuration
-      status = Application.with_argv(%w(-e stderr -I support -r additional_module -c additional no-such-configuration -- dummy)) do
+      status = Application.with_argv(%w(-e stderr -I support -r additional_module
+                                        -c additional no-such-configuration -- dummy)) do
         run_print_configuration
       end
-      File.read("stderr").should == "#{$0}: Configuration: no-such-configuration is neither a disk file nor a known configuration\n"
+      File.read("stderr").should \
+        == "#{$0}: Configuration: no-such-configuration is neither a disk file nor a known configuration\n"
     end
 
   protected

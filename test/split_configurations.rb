@@ -104,7 +104,9 @@ module Codnar
     #! ))) html
 
     def test_classify_shell_comments
-      check_split_file([ Configuration::CLASSIFY_SHELL_COMMENTS ]) do |path|
+      check_split_file([ Configuration::CLASSIFY_SOURCE_CODE.call("ruby"),
+                         Configuration::CLASSIFY_SIMPLE_COMMENTS.call("#"),
+                         Configuration::FORMAT_PRE_COMMENTS ]) do |path|
         [ {
           "name" => path,
           "locations" => [ { "file" => path, "line" => 1 } ],
@@ -155,7 +157,8 @@ module Codnar
     #! ))) html
 
     def test_classify_shell_comments_and_format_rdoc_comments
-      check_split_file([ Configuration::CLASSIFY_SHELL_COMMENTS,
+      check_split_file([ Configuration::CLASSIFY_SOURCE_CODE.call("ruby"),
+                         Configuration::CLASSIFY_SIMPLE_COMMENTS.call("#"),
                          Configuration::FORMAT_RDOC_COMMENTS ]) do |path|
         [ {
           "name" => path,
@@ -191,7 +194,8 @@ module Codnar
     #! ))) html
 
     def test_classify_shell_comments_and_format_markdown_comments
-      check_split_file([ Configuration::CLASSIFY_SHELL_COMMENTS,
+      check_split_file([ Configuration::CLASSIFY_SOURCE_CODE.call("ruby"),
+                         Configuration::CLASSIFY_SIMPLE_COMMENTS.call("#"),
                          Configuration::FORMAT_MARKDOWN_COMMENTS ]) do |path|
         [ {
           "name" => path,
@@ -221,8 +225,10 @@ module Codnar
     #! ))) html
 
     def test_classify_shell_comments_and_highlight_ruby_code_syntax
-      check_split_file([ Configuration::CLASSIFY_SHELL_COMMENTS,
-                         Configuration::HIGHLIGHT_CODE_SYNTAX.call('ruby') ]) do |path|
+      check_split_file([ Configuration::CLASSIFY_SOURCE_CODE.call("ruby"),
+                         Configuration::CLASSIFY_SIMPLE_COMMENTS.call("#"),
+                         Configuration::FORMAT_PRE_COMMENTS,
+                         Configuration::HIGHLIGHT_CODE_SYNTAX.call("ruby") ]) do |path|
         [ {
           "name" => path,
           "locations" => [ { "file" => path, "line" => 1 } ],
@@ -256,8 +262,9 @@ module Codnar
     #! ))) html
 
     def test_classify_shell_comments_and_css_ruby_code_syntax_and_format_rdoc_comments_and_chunk_by_vim_regions
-      check_split_file([ Configuration::CLASSIFY_SHELL_COMMENTS,
-                         Configuration::CSS_CODE_SYNTAX.call('ruby'),
+      check_split_file([ Configuration::CLASSIFY_SOURCE_CODE.call("ruby"),
+                         Configuration::CLASSIFY_SIMPLE_COMMENTS.call("#"),
+                         Configuration::CSS_CODE_SYNTAX.call("ruby"),
                          Configuration::FORMAT_RDOC_COMMENTS,
                          Configuration::CHUNK_BY_VIM_REGIONS ]) do |path|
         [ {
@@ -275,6 +282,17 @@ module Codnar
         } ]
       end
     end
+
+    NESTED_FILE = <<-EOF.unindent
+      #! This is ruby code
+      local = $global
+      html = <<EOH #! ((( html
+      <p>
+      This is HTML
+      </p>
+      EOH
+      #! ))) html
+    EOF
 
     NESTED_SYNTAX_HTML = <<-EOF.unindent.chomp #! ((( html
       <pre class='ruby code syntax'>
@@ -295,10 +313,11 @@ module Codnar
     #! ))) html
 
     def test_classify_nested_syntax
-      check_split_file([ Configuration::CLASSIFY_SHELL_COMMENTS,
-                         Configuration::CSS_CODE_SYNTAX.call('html'),
-                         Configuration::CSS_CODE_SYNTAX.call('ruby'), #! Last one is the default.
-                         Configuration::NESTED_CODE_SYNTAX.call('html') ], NESTED_FILE) do |path|
+      check_split_file([ Configuration::CLASSIFY_SOURCE_CODE.call("ruby"),
+                         Configuration::CLASSIFY_SIMPLE_COMMENTS.call("#"),
+                         Configuration::CSS_CODE_SYNTAX.call("html"),
+                         Configuration::CSS_CODE_SYNTAX.call("ruby"), #! Last one is the default.
+                         Configuration::NESTED_CODE_SYNTAX.call("ruby", "html") ], NESTED_FILE) do |path|
 
         [ {
           "name" => path,
@@ -313,7 +332,9 @@ module Codnar
   protected
 
     def check_split_file(configurations, file_text = SIMPLE_FILE, &block)
-      configuration = configurations.inject({}) { |merged_configuration, next_configuration| merged_configuration.deep_merge(next_configuration) }
+      configuration = configurations.inject({}) do |merged_configuration, next_configuration|
+        merged_configuration.deep_merge(next_configuration)
+      end
       splitter = Splitter.new(@errors, configuration)
       chunks = splitter.chunks(path = write_tempfile("ruby.rb", file_text))
       @errors.should == []
@@ -326,17 +347,6 @@ module Codnar
         local = $global
           indented
         #! }}}
-    EOF
-
-    NESTED_FILE = <<-EOF.unindent
-      #! This is ruby code
-      local = $global
-      html = <<EOH #! ((( html
-      <p>
-      This is HTML
-      </p>
-      EOH
-      #! ))) html
     EOF
 
   end

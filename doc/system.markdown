@@ -305,57 +305,78 @@ At any rate, here are the built-in configurations:
 
 (Built-in weaving templates are described later.)
 
-#### Documentation "Splitting" ####
-
-These are pretty simple configurations, applicable to files containing a piece
-of the narrative in some supported format.
-
-[[Built-in documentation "splitting" configurations|named_chunk_with_containers]]
-
-#### Chunk Splitting ####
-
-There are many ways to denote code regions (and, therefore, chunks). The
-following covers GVim's default scheme; there is also VisualStudio `#region`
-notation, as well as many others.
-
-[[Built-in chunk splitting configurations|named_chunk_with_containers]]
-
-#### Comment splitting ####
-
-The following only covers shell-like `#`  comments, and a few markup formats.
-There are too many other alternatives to list here.
-
-[[Built-in comment splitting configurations|named_chunk_with_containers]]
-
-#### Syntax highlighting ####
-
-Supporting a specific programming language (other than dealing with comments)
-is very easy using GVim for syntax highlighting, as demonstrated here:
-
-[[Built-in syntax highlighting configurations|named_chunk_with_containers]]
-
-Sometimes, a code in one syntax contains nested "islands" of code in another
-syntax. Here is a simple configuration to support that:
-
-[[Nested foreign syntax code islands configurations|named_chunk_with_containers]]
-
 #### Combining configurations ####
 
-The above configurations can be used in combination with each other, as
-demonstrated by the following tests:
-
-[[test/split-configurations.rb|named_chunk_with_containers]]
-
-Combining configurations requires deep-merging. This allows complex nested
-structures to be merged. There is even a way for arrays to append elements
-before/after the array they are merged with. Here is a simple test that
-demonstrates deep-merging complex structures:
+Different source files require different overall configurations but reuse
+common building blocks. To support it, we allow comfigurations to be combined
+using a "deep merge". This allows complex nested structures to be merged. There
+is even a way for arrays to append elements before/after the array they are
+merged with. Here is a simple test that demonstrates deep-merging complex
+structures:
 
 [[test/deep_merge.rb|named_chunk_with_containers]]
 
 And here is the implementation:
 
 [[Deep merge|named_chunk_with_containers]]
+
+#### Documentation "splitting" ####
+
+These are pretty simple configurations, applicable to files containing a piece
+of the narrative in some supported format.
+
+[[Documentation "splitting" configurations|named_chunk_with_containers]]
+
+#### Source code "splitting" ####
+
+Splitting source code files is a more complex affair. The basic configuration
+marks all lines as belonging to some code syntax, as a single chunk:
+
+[[Classify source code lines|named_chunk_with_containers]]
+
+#### Chunk splitting ####
+
+There are many ways to denote code regions (and, therefore, chunks). The
+following covers GVim's default scheme; there is also VisualStudio `#region`
+notation, as well as many others. It is safest to merge this configuration last
+of all, to ensure its patterns end up before any others.
+
+[[chunk splitting configurations|named_chunk_with_containers]]
+
+#### Simple comment classification ####
+
+Many languages use a simple comment syntax, where some prefix indicates a
+comment that spans until the end of the line (e.g., shell `#` comments or C++
+`//` comments).
+
+[[Simple comment classification configurations|named_chunk_with_containers]]
+
+#### Comment formatting ####
+
+In many cases, the text inside comments is written using some markup format
+(e.g., RDoc for Ruby or JavaDoc for Java). Currently, two such formats are
+supported, as well as simply wrapping the comment in an HTML pre element:
+
+[[Comment formatting configurations|named_chunk_with_containers]]
+
+#### Syntax highlighting ####
+
+Supporting a specific programming language (other than dealing with comments)
+is very easy using GVim for syntax highlighting, as demonstrated here:
+
+[[Syntax highlighting configurations|named_chunk_with_containers]]
+
+Sometimes, a code in one syntax contains nested "islands" of code in another
+syntax. Here is a simple configuration to support that:
+
+[[Nested foreign syntax code islands configurations|named_chunk_with_containers]]
+
+### Putting it all together ###
+
+Here are a bunch of tests demonstrating how the above configurations can be
+combined to achieve different desired effects:
+
+[[test/split-configurations.rb|named_chunk_with_containers]]
 
 ## Storing chunks on the disk ##
 
@@ -444,9 +465,8 @@ When embedding a documentation chunk inside another documentation chunk, things
 are pretty easy - we just need to insert the embedded chunk HTML into the
 containing chunk. When embedding a source code chunk into the documentation,
 however, we may want to wrap it in some boilerplate HTML, providing a header,
-footer, borders, links, etc. Therefore, the HTML-sh syntax we use to embed a
-chunk into the documentation is `<embed src="..."
-type="x-codnar/template-name"/>`.
+footer, borders, links, etc. Therefore, the HTML syntax we use to embed a chunk
+into the documentation is `<embed src="..." type="x-codnar/template-name"/>`.
 
 The templates are normal ERB templates. As a special and highly magical case,
 the template named `file` simply embeds the specified file into the
@@ -466,7 +486,7 @@ Here is the implementation:
 
 And here are the pre-defined weaving template configurations:
 
-[[Built-in weaving templates|named_chunk_with_containers]]
+[[Weaving templates|named_chunk_with_containers]]
 
 ## Invoking the functionality ##
 

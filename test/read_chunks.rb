@@ -18,18 +18,24 @@ module Codnar
     end
 
     def test_read_unused_chunks
-      Writer.write("foo.chunks", { "name" => "foo", "locations" => [ { "file" => "a", "line" => 1 } ] })
-      Writer.write("bar.chunks", { "name" => "bar", "locations" => [ { "file" => "b", "line" => 2 } ] })
+      Writer.write("foo.chunks", { "name" => "foo",
+                                   "locations" => [ { "file" => "a", "line" => 1 } ] })
+      Writer.write("bar.chunks", { "name" => "bar",
+                                   "locations" => [ { "file" => "b", "line" => 2 } ] })
       reader = Reader.new(@errors, Dir.glob("./**/*.chunks"))
-      check_read_data(reader, "foo" => { "name" => "foo", "locations" => [ { "file" => "a", "line" => 1 } ] })
+      check_read_data(reader, "foo" => { "name" => "foo",
+                                         "locations" => [ { "file" => "a", "line" => 1 } ] })
       @errors.should == [ "#{$0}: Unused chunk: bar in file: b at line: 2" ]
     end
 
     def test_read_duplicate_chunks
-      Writer.write("foo.chunks", { "name" => "foo", "locations" => [ { "file" => "a" } ], "contained" => [ "A" ], "containers" => [ "c" ] })
+      Writer.write("foo.chunks", { "name" => "foo", "locations" => [ { "file" => "a" } ],
+                                   "contained" => [ "A" ], "containers" => [ "c" ] })
       Writer.write("bar.chunks", [
-        { "name" => "foo", "locations" => [ { "file" => "b" } ], "contained" => [ "a" ], "containers" => [ "d" ] },
-        { "name" => "foo", "locations" => [ { "file" => "c" } ], "contained" => [ "a" ], "containers" => [] }
+        { "name" => "foo", "locations" => [ { "file" => "b" } ],
+          "contained" => [ "a" ], "containers" => [ "d" ] },
+        { "name" => "foo", "locations" => [ { "file" => "c" } ],
+          "contained" => [ "a" ], "containers" => [] }
       ])
       reader = Reader.new(@errors, Dir.glob("./**/*.chunks"))
       check_read_data(reader, "foo" => {
@@ -42,16 +48,17 @@ module Codnar
 
     def test_read_different_chunks
       Writer.write("foo.chunks", [
-        { "name" => "foo", "html" => "bar", "locations" => [ { "file" => "foo.chunks", "line" => 1 } ], "contained" => [ "a" ], "containers" => [] },
-        { "name" => "foo", "html" => "baz", "locations" => [ { "file" => "foo.chunks", "line" => 2 } ], "contained" => [ "A" ], "containers" => [] }
+        { "name" => "foo", "html" => "bar", "locations" => [ { "file" => "foo.chunks", "line" => 1 } ],
+          "contained" => [ "a" ], "containers" => [] },
+        { "name" => "foo", "html" => "baz", "locations" => [ { "file" => "foo.chunks", "line" => 2 } ],
+          "contained" => [ "A" ], "containers" => [] }
       ])
-      Writer.write("bar.chunks", [
-        { "name" => "foo", "html" => "bar", "locations" => [ { "file" => "bar.chunks", "line" => 1 } ], "contained" => [ "a" ], "containers" => [] }
-      ])
+      Writer.write("bar.chunks", [ { "name" => "foo", "html" => "bar",
+                                     "locations" => [ { "file" => "bar.chunks", "line" => 1 } ],
+                                     "contained" => [ "a" ], "containers" => [] } ])
       reader = Reader.new(@errors, Dir.glob("./**/*.chunks").sort)
-      @errors.should == [
-        "#{$0}: Chunk: foo is different in file: foo.chunks at line: 2, and in file: bar.chunks at line: 1 or in file: foo.chunks at line: 1"
-      ]
+      @errors.should == [ "#{$0}: Chunk: foo is different in file: foo.chunks at line: 2, " \
+                        + "and in file: bar.chunks at line: 1 or in file: foo.chunks at line: 1" ]
       check_read_data(reader, "foo" => {
         "name" => "foo",
         "html" => "bar",
@@ -69,8 +76,10 @@ module Codnar
 
     def test_read_equivalent_name_chunks
       Writer.write("foo.chunks", [
-        { "name" => "Foo?", "locations" => [ { "file" => "foo.chunks", "line" => 1 } ], "containers" => [ "1" ], "contained" => [ "c" ] },
-        { "name" => "FOO!!", "locations" => [ { "file" => "foo.chunks", "line" => 2 } ], "containers" => [ "2" ], "contained" => [ "C" ] }
+        { "name" => "Foo?", "locations" => [ { "file" => "foo.chunks", "line" => 1 } ],
+          "containers" => [ "1" ], "contained" => [ "c" ] },
+        { "name" => "FOO!!", "locations" => [ { "file" => "foo.chunks", "line" => 2 } ],
+          "containers" => [ "2" ], "contained" => [ "C" ] }
       ])
       reader = Reader.new(@errors, Dir.glob("./**/*.chunks"))
       check_read_data(reader, "foo-" => {

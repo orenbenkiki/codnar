@@ -26,7 +26,10 @@ module Codnar
     # Compute options for invoking an application.
     def self.application_options(output, configurations)
       options = [ "-o", output ]
-      options += [ "-c" ] + configurations.map { |configuration| configuration.to_s } + [ "--" ] if configurations.size > 0
+      options += [ "-c" ] \
+               + configurations.map { |configuration| configuration.to_s } \
+               + [ "--" ] \
+        if configurations.size > 0
       return options
     end
 

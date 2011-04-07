@@ -104,7 +104,8 @@ module Codnar
 
     # Convert an attribute mapping to HTML.
     def self.html_attributes(attributes)
-      return attributes == {} ? "" : " " + attributes.map { |name, value| "#{name}='#{CGI.escapeHTML(value.to_s)}'" }.join(" ")
+      return "" if attributes == {}
+      return " " + attributes.map { |name, value| "#{name}='#{CGI.escapeHTML(value.to_s)}'" }.join(" ")
     end
 
     # Format classified lines that indicate a nested chunk to HTML.
@@ -113,7 +114,8 @@ module Codnar
         (line = line.dup).kind = "html"
         chunk_name = line.payload
         line.payload = "<pre class='nested chunk'>\n" \
-                     + "#{line.indentation}<a class='nested chunk' href='##{chunk_name.to_id}'>#{CGI.escapeHTML(chunk_name)}</a>\n" \
+                     + line.indentation \
+                     + "<a class='nested chunk' href='##{chunk_name.to_id}'>#{CGI.escapeHTML(chunk_name)}</a>\n" \
                      + "</pre>"
         line
       end

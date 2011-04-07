@@ -147,12 +147,22 @@ Rake::RDocTask.new do |rdoc|
   rdoc.options = spec.rdoc_options
 end
 
-codnar_configurations = [ :classify_shell_comments, :format_rdoc_comments, "css_code_syntax:html", "nested_code_syntax:html" ]
+def syntax_configurations(syntax)
+  return [
+    "classify_source_code:#{syntax}",
+    "css_code_syntax:#{syntax}",
+    "classify_simple_comments:#",
+    "format_rdoc_comments",
+    "css_code_syntax:html",
+    "nested_code_syntax:ruby:html"
+  ]
+end
+
 Codnar::Rake::SplitTask.new(files.bin + files.lib + files.testlib + [ "Rakefile", "tools/codnar-changelog" ],
-                            codnar_configurations + [ :chunk_by_vim_regions, "css_code_syntax:ruby" ])
-Codnar::Rake::SplitTask.new(files.javascript, codnar_configurations + [ "css_code_syntax:javascript" ])
-Codnar::Rake::SplitTask.new(files.css, codnar_configurations + [ "css_code_syntax:css" ])
-Codnar::Rake::SplitTask.new(files.test + files.tools - [ "tools/codnar-changelog" ], codnar_configurations + [ "css_code_syntax:ruby" ])
+                            syntax_configurations("ruby") + [ "chunk_by_vim_regions" ])
+Codnar::Rake::SplitTask.new(files.javascript, syntax_configurations("javascript"))
+Codnar::Rake::SplitTask.new(files.css, syntax_configurations("css"))
+Codnar::Rake::SplitTask.new(files.test + files.tools - [ "tools/codnar-changelog" ], syntax_configurations("ruby"))
 Codnar::Rake::SplitTask.new(spec.files.find_all { |file| file.end_with?(".html") }, [ :split_html_documentation ])
 Codnar::Rake::SplitTask.new(spec.files.find_all { |file| file.end_with?(".rdoc") }, [ :split_rdoc_documentation ])
 Codnar::Rake::SplitTask.new(spec.files.find_all { |file| file.end_with?(".markdown") }, [ :split_markdown_documentation ])

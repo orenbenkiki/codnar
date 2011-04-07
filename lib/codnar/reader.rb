@@ -58,10 +58,17 @@ module Codnar
 
     # Merge a new "same" chunk into an old one.
     def self.merge_same_chunks(old_chunk, new_chunk)
-      old_chunk.locations = (old_chunk.locations + new_chunk.locations).uniq.sort do |first_location, second_location|
-        [ first_location.file.to_id, first_location.line ] <=> [ second_location.file.to_id, second_location.line ]
-      end
-      old_chunk.containers = (old_chunk.containers + new_chunk.containers).uniq.sort { |first_name, second_name| first_name.to_id <=> second_name.to_id }
+      old_chunk.locations = \
+        (old_chunk.locations + new_chunk.locations).uniq.sort \
+          do |first_location, second_location|
+            [ first_location.file.to_id, first_location.line ] \
+            <=> [ second_location.file.to_id, second_location.line ]
+          end
+      old_chunk.containers = \
+        (old_chunk.containers + new_chunk.containers).uniq.sort \
+          do |first_name, second_name|
+            first_name.to_id <=> second_name.to_id
+          end
     end
 
     # Check whether two chunks contain the same "stuff".
@@ -71,7 +78,7 @@ module Codnar
 
     # Return just the actual payload of a chunk for equality comparison.
     def self.chunk_payload(chunk)
-      chunk = chunk.reject { |key, value| key == "locations" || key == "name" || key == "containers" }
+      chunk = chunk.reject { |key, value| [ "locations", "name", "containers" ].include?(key) }
       chunk.contained.map! { |name| name.to_id }
       return chunk
     end

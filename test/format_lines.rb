@@ -10,7 +10,9 @@ module Codnar
     def setup
       super
       Formatter.send(:public, *Formatter.protected_instance_methods)
-      @formatter = Formatter.new(@errors, "code" => "Formatter.lines_to_pre_html(lines)", "fail" => "TestFormatLines.fail")
+      @formatter = Formatter.new(@errors,
+                                 "code" => "Formatter.lines_to_pre_html(lines)",
+                                 "fail" => "TestFormatLines.fail")
     end
 
     def test_process_html_lines
@@ -28,7 +30,8 @@ module Codnar
         { "kind" => "unknown-kind", "number" => 1, "payload" => "<foo>", },
       ])
       @errors.should == [ "#{$0}: No formatter specified for lines of kind: unknown-kind" ]
-      lines_group.should == [ { "kind" => "html", "number" => 1, "payload" => "<pre class='missing formatter error'>\n&lt;foo&gt;\n</pre>" } ]
+      lines_group.should == [ { "kind" => "html", "number" => 1,
+                                "payload" => "<pre class='missing formatter error'>\n&lt;foo&gt;\n</pre>" } ]
     end
 
     def test_process_code_lines
@@ -37,14 +40,17 @@ module Codnar
         { "kind" => "code", "number" => 2, "payload" => "bar", },
       ])
       @errors.should == []
-      lines_group.should == [ { "kind" => "html", "number" => 1, "payload" => "<pre>\n&lt;foo&gt;\nbar\n</pre>" } ]
+      lines_group.should == [ { "kind" => "html", "number" => 1,
+                                "payload" => "<pre>\n&lt;foo&gt;\nbar\n</pre>" } ]
     end
 
     def test_failed_formatter
       lines_group = @formatter.process_lines_group([ { "kind" => "fail", "number" => 1, "payload" => "foo", } ])
       @errors.size.should == 1
-      @errors.last.should =~ /#{$0}: Formatter: TestFormatLines.fail for lines of kind: fail failed with exception:.*in `fail': Reason/
-      lines_group.should == [ { "kind" => "html", "number" => 1, "payload" => "<pre class='failed formatter error'>\nfoo\n</pre>" } ]
+      @errors.last.should =~ \
+        /#{$0}: Formatter: TestFormatLines.fail for lines of kind: fail failed with exception:.*in `fail': Reason/
+      lines_group.should == [ { "kind" => "html", "number" => 1,
+                                "payload" => "<pre class='failed formatter error'>\nfoo\n</pre>" } ]
     end
 
     def test_lines_to_html
