@@ -97,7 +97,7 @@ module Codnar
       merged_line = lines[0]
       merged_line.kind = "html"
       merged_line.payload = "<pre" + Formatter.html_attributes(attributes) + ">\n" \
-                          + lines.map { |line| (line.indentation || "") + CGI.escapeHTML(line.payload) + "\n" }.join \
+                          + lines.map { |line| (line.indentation || "") + CGI.escapeHTML(line.payload || "") + "\n" }.join \
                           + "</pre>"
       return [ merged_line ]
     end
@@ -155,7 +155,7 @@ module Codnar
     # Convert a sequence of marked-up classified lines to (unindented) HTML
     def self.markup_lines_to_html(lines, klass)
       merged_line = lines[0]
-      merged_payload = lines.map { |line| line.payload + "\n" }.join
+      merged_payload = lines.map { |line| "#{line.payload}\n" }.join
       merged_line.payload = Formatter.markup_to_html(merged_payload, klass, merged_line.kind)
       merged_line.kind = "unindented_html"
       return [ merged_line ]

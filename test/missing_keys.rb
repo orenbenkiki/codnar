@@ -1,11 +1,10 @@
 require "codnar"
 require "test/spec"
-require "test_case"
 
 module Codnar
 
   # Test accessing missing keys as members.
-  class TestMissingKey < TestCase
+  class TestMissingKeys < Test::Unit::TestCase
 
     def test_read_missing_key
       {}.missing.should == nil

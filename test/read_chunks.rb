@@ -1,11 +1,15 @@
 require "codnar"
 require "test/spec"
-require "with_fakefs"
+require "test_with_errors"
+require "test_with_fakefs"
 
 module Codnar
 
   # Test reading chunks from files.
-  class TestReadChunks < TestWithFakeFS
+  class TestReadChunks < Test::Unit::TestCase
+  
+    include TestWithErrors
+    include TestWithFakeFS
 
     def test_read_chunks
       Writer.write("foo.chunks", { "name" => "foo" })

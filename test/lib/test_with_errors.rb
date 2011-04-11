@@ -8,14 +8,15 @@ module Codnar
     def self.included(base)
       base.class_eval do
 
-      alias_method :errors_original_setup, :setup
+        alias_method :errors_original_setup, :setup
 
-      # Automatically create an fresh errors data member for each test.
-      def setup
-        errors_original_setup
-        @errors = Errors.new
+        # Automatically create an fresh error data member for each test.
+        def setup
+          errors_original_setup
+          @errors = Errors.new
+        end
+
       end
-
     end
 
   end

@@ -1,11 +1,13 @@
 require "codnar"
 require "test/spec"
-require "with_fakefs"
+require "test_with_fakefs"
 
 module Codnar
 
   # Test running a Codnar Application.
-  class TestRunApplication < TestWithFakeFS
+  class TestRunApplication < Test::Unit::TestCase
+  
+    include TestWithFakeFS
 
     def test_do_nothing
       Application.with_argv(%w(dummy)) { Application.new(true).run }.should == 0

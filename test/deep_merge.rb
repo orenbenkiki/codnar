@@ -1,11 +1,10 @@
 require "codnar"
 require "test/spec"
-require "test_case"
 
 module Codnar
 
   # Test deep-merging complex structures.
-  class TestDeepMerge < TestCase
+  class TestDeepMerge < Test::Unit::TestCase
 
     def test_deep_merge
       default = {

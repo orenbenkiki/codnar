@@ -1,3 +1,7 @@
+2011-04-11	Oren Ben-Kiki <github-oren@ben-kiki.org>
+
+	* Support complex comments; refactor.
+
 2011-04-08	Oren Ben-Kiki <github-oren@ben-kiki.org>
 
 	* Refactor configurations, wrap long lines.

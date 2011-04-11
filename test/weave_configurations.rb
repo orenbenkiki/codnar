@@ -1,11 +1,15 @@
 require "codnar"
 require "test/spec"
-require "with_fakefs"
+require "test_with_errors"
+require "test_with_fakefs"
 
 module Codnar
 
   # Test the built-in weave configurations.
-  class TestWeaveConfigurations < TestWithFakeFS
+  class TestWeaveConfigurations < Test::Unit::TestCase
+  
+    include TestWithErrors
+    include TestWithFakeFS
 
     def test_weave_file
       Writer.write("chunks", {

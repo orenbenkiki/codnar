@@ -1,11 +1,10 @@
 require "codnar"
 require "test/spec"
-require "test_case"
 
 module Codnar
 
   # Test highlighting syntax using GVim.
-  class TestHighlightSyntax < TestCase
+  class TestHighlightSyntax < Test::Unit::TestCase
 
     def test_ruby_no_css
       ruby = <<-EOF.unindent

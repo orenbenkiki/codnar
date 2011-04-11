@@ -147,22 +147,40 @@ Rake::RDocTask.new do |rdoc|
   rdoc.options = spec.rdoc_options
 end
 
-def syntax_configurations(syntax)
+def ruby_configurations(*additional_configurations)
   return [
-    "classify_source_code:#{syntax}",
-    "css_code_syntax:#{syntax}",
-    "classify_simple_comments:#",
-    "format_rdoc_comments",
-    "css_code_syntax:html",
-    "nested_code_syntax:ruby:html"
+    "classify_source_code:ruby",
+    "format_code_gvim_css:ruby",
+    "classify_nested_code:ruby:html",
+    "format_code_gvim_css:html",
+    "classify_shell_comments",
+    "format_rdoc_comments"
+  ] + additional_configurations
+end
+
+def javascript_configurations
+  return [
+    "classify_source_code:javascript",
+    "format_code_gvim_css:javascript",
+    "classify_c_comments",
+    "format_markdown_comments"
+  ]
+end
+
+def css_configurations
+  return [
+    "classify_source_code:css",
+    "format_code_gvim_css:css",
+    "classify_c_comments",
+    "format_markdown_comments"
   ]
 end
 
 Codnar::Rake::SplitTask.new(files.bin + files.lib + files.testlib + [ "Rakefile", "tools/codnar-changelog" ],
-                            syntax_configurations("ruby") + [ "chunk_by_vim_regions" ])
-Codnar::Rake::SplitTask.new(files.javascript, syntax_configurations("javascript"))
-Codnar::Rake::SplitTask.new(files.css, syntax_configurations("css"))
-Codnar::Rake::SplitTask.new(files.test + files.tools - [ "tools/codnar-changelog" ], syntax_configurations("ruby"))
+                            ruby_configurations("chunk_by_vim_regions"))
+Codnar::Rake::SplitTask.new(files.javascript, javascript_configurations)
+Codnar::Rake::SplitTask.new(files.css, css_configurations)
+Codnar::Rake::SplitTask.new(files.test + files.tools - [ "tools/codnar-changelog" ], ruby_configurations)
 Codnar::Rake::SplitTask.new(spec.files.find_all { |file| file.end_with?(".html") }, [ :split_html_documentation ])
 Codnar::Rake::SplitTask.new(spec.files.find_all { |file| file.end_with?(".rdoc") }, [ :split_rdoc_documentation ])
 Codnar::Rake::SplitTask.new(spec.files.find_all { |file| file.end_with?(".markdown") }, [ :split_markdown_documentation ])

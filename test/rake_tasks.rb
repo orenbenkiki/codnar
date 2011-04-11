@@ -1,14 +1,18 @@
 require "codnar/rake"
 require "test/spec"
-require "with_fakefs"
+require "test_with_fakefs"
 
 module Codnar
 
   # Test rake tasks.
-  class TestRakeTasks < TestWithFakeFS
+  class TestRakeTasks < Test::Unit::TestCase
+
+    include TestWithFakeFS
+
+    alias_method :original_setup, :setup
 
     def setup
-      super
+      original_setup 
       @original_rake = ::Rake.application
       @rake = ::Rake::Application.new
       ::Rake.application = @rake

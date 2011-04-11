@@ -1,11 +1,13 @@
 require "codnar"
 require "test/spec"
-require "with_fakefs"
+require "test_with_fakefs"
 
 module Codnar
 
   # Test running the Split Codnar Application.
-  class TestRunSplit < TestWithFakeFS
+  class TestRunSplit < Test::Unit::TestCase
+  
+    include TestWithFakeFS
 
     def test_print_help
       Application.with_argv(%w(-h -o stdout)) { Split.new(true).run }.should == 0

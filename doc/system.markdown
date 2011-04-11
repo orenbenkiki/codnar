@@ -11,13 +11,6 @@ convenient list of all of Codnar's parts and dependencies:
 
 [[lib/codnar.rb|named_chunk_with_containers]]
 
-### Base test case ###
-
-This class is used as the base class of all test cases; it allows creating
-temporary files.
-
-[[test/lib/test_case.rb|named_chunk_with_containers]]
-
 ### Collecting and testing for errors ###
 
 Since Codnar needs to process multiple input files (in general, all the source
@@ -27,7 +20,7 @@ will continue so the full set of errors will be reported. This also makes the
 code easier to test, using a special test case base class supporting error
 collection:
 
-[[test/lib/with_errors.rb|named_chunk_with_containers]]
+[[test/lib/test_with_errors.rb|named_chunk_with_containers]]
 
 Here is a simple test that demonstrates error collection:
 
@@ -42,10 +35,17 @@ And here is the implementation:
 Since Codnar manipulates files (source files, chunk files, generated HTML
 files), it is very useful to be able to execute file-related tests with a fake
 file system. This is a more elegant alternative to creating and cleaning a
-temporary physical directory for the test. For simplicity we assume all(most)
-such tests also collect errors.
+temporary physical directory for the test.
 
-[[test/lib/with_fakefs.rb|named_chunk_with_containers]]
+[[test/lib/test_with_fakefs.rb|named_chunk_with_containers]]
+
+### Tests with temporary files ###
+
+Some tests need to create temporary files outside the fake file system. This is
+mainly needed to provide input to external tools (e.g., syntax highlighting
+using GVim).
+
+[[test/lib/test_with_tempfile.rb|named_chunk_with_containers]]
 
 ### Extending the Hash class ###
 
@@ -316,32 +316,45 @@ structures:
 
 [[test/deep_merge.rb|named_chunk_with_containers]]
 
-And here is the implementation:
+Here is the implementation:
 
 [[Deep merge|named_chunk_with_containers]]
+
+And here is a test module that automates the process of merging configurations
+and invoking the Splitter:
+
+[[test/lib/test_with_configurations.rb|named_chunk_with_containers]]
 
 #### Documentation "splitting" ####
 
 These are pretty simple configurations, applicable to files containing a piece
-of the narrative in some supported format.
+of the narrative in some supported format. These configurations typically do
+not require to be combined with other configurations. Here is a simple test
+that demonstrates "splitting" documentation:
+
+[[test/split_documentation_configurations.rb|named_chunk_with_containers]]
+
+And here are the actual configurations:
 
 [[Documentation "splitting" configurations|named_chunk_with_containers]]
 
-#### Source code "splitting" ####
+#### Source code lines classification ####
 
-Splitting source code files is a more complex affair. The basic configuration
-marks all lines as belonging to some code syntax, as a single chunk:
+Splitting source code files is a more complex affair, which does typically
+require combining several configurations. The basic configuration marks all
+lines as belonging to some code syntax, as a single chunk:
 
-[[Classify source code lines|named_chunk_with_containers]]
+[[Source code lines classification configurations|named_chunk_with_containers]]
 
-#### Chunk splitting ####
+Sometimes, a code in one syntax contains nested "islands" of code in another
+syntax. Here is a simple configuration to support that, which can be combined
+with the above basic configuration:
 
-There are many ways to denote code regions (and, therefore, chunks). The
-following covers GVim's default scheme; there is also VisualStudio `#region`
-notation, as well as many others. It is safest to merge this configuration last
-of all, to ensure its patterns end up before any others.
+[[Nested foreign syntax code islands configurations|named_chunk_with_containers]]
 
-[[chunk splitting configurations|named_chunk_with_containers]]
+Here is a simple test demonstrating using source code lines classifications:
+
+[[test/split_code_configurations.rb|named_chunk_with_containers]]
 
 #### Simple comment classification ####
 
@@ -351,6 +364,23 @@ comment that spans until the end of the line (e.g., shell `#` comments or C++
 
 [[Simple comment classification configurations|named_chunk_with_containers]]
 
+Here is a simple test demonstrating using simple comment classifications:
+
+[[test/split_simple_comment_configurations.rb|named_chunk_with_containers]]
+
+#### Complex comment classification ####
+
+Other languages use a complex multi-line comment syntax, where some prefix
+indicates the beginning of the comment, some suffix indicates the end, and by
+convention some prefix is expected for the inner comment lines (e.g., C's
+"`/*`", "` *`", "`*/`" comments or HTML's "`<!--`", "` -`", "`-->`" comments).
+
+[[Complex comment classification configurations|named_chunk_with_containers]]
+
+Here is a simple test demonstrating using complex comment classifications:
+
+[[test/split_complex_comment_configurations.rb|named_chunk_with_containers]]
+
 #### Comment formatting ####
 
 In many cases, the text inside comments is written using some markup format
@@ -359,24 +389,40 @@ supported, as well as simply wrapping the comment in an HTML pre element:
 
 [[Comment formatting configurations|named_chunk_with_containers]]
 
+Here is a simple test demonstrating formatting comment contents:
+
+[[test/format_comment_configurations.rb|named_chunk_with_containers]]
+
 #### Syntax highlighting ####
 
 Supporting a specific programming language (other than dealing with comments)
 is very easy using GVim for syntax highlighting, as demonstrated here:
 
-[[Syntax highlighting configurations|named_chunk_with_containers]]
+[[Syntax highlighting formatting configurations|named_chunk_with_containers]]
 
-Sometimes, a code in one syntax contains nested "islands" of code in another
-syntax. Here is a simple configuration to support that:
+Here is a simple test demonstrating highlighting code syntax:
 
-[[Nested foreign syntax code islands configurations|named_chunk_with_containers]]
+[[test/format_code_configurations.rb|named_chunk_with_containers]]
+
+#### Chunk splitting ####
+
+There are many ways to denote code "regions" (which become Codnar chunks). The
+following covers GVim's default scheme; others are easily added. It is safest
+to merge this configuration as the last of all the combined configurations, to
+ensure its patterns end up before any others.
+
+[[Chunk splitting configurations|named_chunk_with_containers]]
+
+Here is a simple test demonstrating splitting code chunks:
+
+[[test/split_chunk_configurations.rb|named_chunk_with_containers]]
 
 ### Putting it all together ###
 
-Here are a bunch of tests demonstrating how the above configurations can be
-combined to achieve different desired effects:
+Here is a test demonstrating putting several of the above configurations
+together in a meaningful way:
 
-[[test/split-configurations.rb|named_chunk_with_containers]]
+[[test/split_combined_configurations.rb|named_chunk_with_containers]]
 
 ## Storing chunks on the disk ##
 

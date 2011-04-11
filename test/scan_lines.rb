@@ -1,11 +1,15 @@
 require "codnar"
 require "test/spec"
-require "with_fakefs"
+require "test_with_errors"
+require "test_with_fakefs"
 
 module Codnar
 
   # Test scanning classified lines.
-  class TestScanLines < TestWithFakeFS
+  class TestScanLines < Test::Unit::TestCase
+  
+    include TestWithErrors
+    include TestWithFakeFS
 
     def test_scan_lines
       File.open("comments", "w") { |file| file.write(INPUT) }

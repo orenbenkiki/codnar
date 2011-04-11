@@ -1,11 +1,13 @@
 require "codnar"
 require "test/spec"
-require "with_errors"
+require "test_with_errors"
 
 module Codnar
 
   # Test merging classified lines to chunks.
-  class TestMergeLines < TestWithErrors
+  class TestMergeLines < Test::Unit::TestCase
+
+    include TestWithErrors
 
     def test_merge_no_chunks
       lines = [ { "kind" => "code", "line" => "foo", "number" => 1, "indentation" => "", "payload" => "foo" } ]

@@ -1,11 +1,10 @@
 require "codnar"
 require "test/spec"
-require "test_case"
 
 module Codnar
 
   # Test grouping classified lines by their kind.
-  class TestGroupLines < TestCase
+  class TestGroupLines < Test::Unit::TestCase
 
     def test_group_empty_lines
       Grouper.lines_to_groups([]).should == []

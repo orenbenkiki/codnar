@@ -1,11 +1,15 @@
 require "codnar"
 require "test/spec"
-require "with_fakefs"
+require "test_with_errors"
+require "test_with_fakefs"
 
 module Codnar
 
   # Test "splitting" documentation files.
-  class TestSplitDocumentation < TestWithFakeFS
+  class TestSplitDocumentation < Test::Unit::TestCase
+  
+    include TestWithErrors
+    include TestWithFakeFS
 
     def test_split_raw
       File.open("raw.html", "w") { |file| file.write("<foo>\nbar\n</foo>\n") }
