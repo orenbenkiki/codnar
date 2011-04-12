@@ -5,11 +5,11 @@ module Codnar
 
     # Create a temporary file on the disk.
     def write_tempfile(path, content)
-      (@tempfiles ||= []) << path
       file = Tempfile.open(path, ".")
       file.write(content)
       file.close(false)
-      return file.path
+      (@tempfiles ||= []) << (path = file.path)
+      return path
     end
 
     # Aliasing methods needs to be deferred to when the module is included and

@@ -21,6 +21,13 @@ module Codnar
       @errors.should == []
     end
 
+    def test_read_invalid_chunks
+      file_path = nil
+      File.open("foo.chunks", "w") { |file| file_path = File.expand_path(file.path) }
+      reader = Reader.new(@errors, Dir.glob("./**/*.chunks"))
+      @errors.should == [ "#{$0}: Invalid chunks data in file: #{file_path}" ]
+    end
+
     def test_read_unused_chunks
       Writer.write("foo.chunks", { "name" => "foo",
                                    "locations" => [ { "file" => "a", "line" => 1 } ] })

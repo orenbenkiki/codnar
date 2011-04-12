@@ -10,7 +10,7 @@ module Codnar
       @chunks = {}
       @used = {}
       paths.each do |path|
-        load_path_chunks(path)
+        read_path_chunks(path)
       end
     end
 
@@ -33,13 +33,22 @@ module Codnar
 
   protected
 
-    # Load all chunks from a disk file into memory.
-    def load_path_chunks(path)
+    # Load and merge all chunks from a disk file into memory.
+    def read_path_chunks(path)
       @errors.in_path(path) do
-        chunks = YAML.load_file(path)
+        chunks = load_path_chunks(path)
+        next unless chunks
         merge_loaded_chunks(chunks)
         @root_chunk ||= chunks[0].name
       end
+    end
+
+    # Load all chunks from a disk file into memory.
+    def load_path_chunks(path)
+      chunks = YAML.load_file(path)
+      @errors << "Invalid chunks data" unless chunks
+      # TODO: A bit more validation would be nice.
+      return chunks
     end
 
     # Merge an array of chunks into memory.
