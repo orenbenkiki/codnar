@@ -654,8 +654,17 @@ procedure:
 ## Formatting generated HTML ##
 
 The generated HTML requires some tweaking to yield aesthetic, readable results.
-This tweaking consists of using Javascript to generate a table of content, and
-using CSS to make the HTML look better.
+This tweaking consists of using Javascript to control chunk visibility,
+generating a table of content, and using CSS to make the HTML look better.
+
+### Javascript chunk visibilty control ###
+
+The following code injects visibility controls ("+"/"-" toggles) next to each
+embedded code chunk. It also hides all the chunks by default; this increases
+the readability of the overall narrative, turning it into a high-level summary.
+Expanding the embedded code chunks allows the reader to delve into the details.
+
+[[doc/control_chunks.js|named_chunk_with_containers]]
 
 ### Javascript table of content ###
 

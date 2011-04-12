@@ -6,7 +6,7 @@
  * "right" and should not confuse search engines etc. since they do not execute
  * Javascript code.
  */
-if (document.getElementById) onload = function () {
+function inject_contents() {
   var contents = document.getElementById("contents");
   var lists = contents_lists();
   contents.appendChild(contents_header()); // TRICKY: Must be done after contents_lists().
@@ -105,3 +105,6 @@ function header_anchor(id) {
   a.appendChild(text);
   return a;
 }
+
+/* Only invoke it after all helper functions are defined. */
+inject_contents();

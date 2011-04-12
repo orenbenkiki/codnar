@@ -23,6 +23,11 @@ div.chunk.html {
   padding: 0.33em;
 }
 
+span.control.chunk {
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+}
+
 /* Table of content */
 
 div#contents ul {
@@ -49,22 +54,24 @@ ul.chunk.containers li {
 
 /* Borders */
 
-table.layout td.indentation {
-  border: none;
-}
 pre,
+span.control.chunk,
 div.chunk.html {
   border: 1px solid #000;
 }
+
+table.layout td.indentation,
 div.chunk pre {
   border: none;
 }
 
 /* Colors */
 
+span.control.chunk,
 table.layout td.html {
   background-color: Beige;
 }
+
 span.Constant {
   color: Crimson;
 }
