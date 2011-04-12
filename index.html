@@ -303,6 +303,11 @@ div.chunk.html {
   padding: 0.33em;
 }
 
+span.control.chunk {
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+}
+
 /* Table of content */
 
 div#contents ul {
@@ -329,22 +334,24 @@ ul.chunk.containers li {
 
 /* Borders */
 
-table.layout td.indentation {
-  border: none;
-}
 pre,
+span.control.chunk,
 div.chunk.html {
   border: 1px solid #000;
 }
+
+table.layout td.indentation,
 div.chunk pre {
   border: none;
 }
 
 /* Colors */
 
+span.control.chunk,
 table.layout td.html {
   background-color: Beige;
 }
+
 span.Constant {
   color: Crimson;
 }
@@ -379,115 +386,6 @@ div.chunk.name {
   font-weight: bold;
 }
 </style>
-<script type="text/javascript">
-/*
- * Quick-and-dirty JS for inserting a table of content inside a DIV with the id
- * "contents". The table of content is a series of nested UL and LI elements,
- * prefixed with an H1 containing the text "0 Contents". This H1 comes in
- * addition to the single static H1 expected by HTML best practices. It looks
- * "right" and should not confuse search engines etc. since they do not execute
- * Javascript code.
- */
-if (document.getElementById) onload = function () {
-  var contents = document.getElementById("contents");
-  var lists = contents_lists();
-  contents.appendChild(contents_header()); // TRICKY: Must be done after contents_lists().
-  contents.appendChild(lists);
-}
-
-/*
- * Create a table of contents H1.
- */
-function contents_header() {
-  var h = document.createElement("h1");
-  var text = document.createTextNode("Contents");
-  h.appendChild(text);
-  return h;
-}
-
-/*
- * Create nested UL/LI lists for the table of content.
- */
-function contents_lists() {
-  var container;
-  var indices = [];
-  foreach_h_element(function (h, level) {
-    container = pop_container(container, indices, level);
-    container = push_container(container, indices, level);
-    var id = indices.join(".");
-    container.appendChild(list_element(id, h));
-    h.insertBefore(header_anchor(id), h.firstChild);
-  });
-  return pop_container(container, indices, 1);
-}
-
-/*
- * Apply a lambda to all H elements in the DOM. We skip the single H1 element;
- * otherwise it would just have the index "1" which would be prefixed to all
- * other headers.
- */
-function foreach_h_element(lambda) {
-  var elements = document.getElementsByTagName("*");
-  for (var e in elements) {
-    var h = elements[e];
-    if (!/^h[2-9]$/i.test(h.tagName)) continue;
-    var level = h.tagName.substring(1, 2) - 1;
-    lambda(h, level);
-  }
-}
-
-/*
- * Pop indices (and UL containers) until reaching up to a given level.
- */
-function pop_container(container, indices, level) {
-  while (indices.length > level) {
-    container = container.parentNode;
-    indices.pop();
-  }
-  return container;
-}
-
-/*
- * Push indices (and UL containers) until reaching doen to a given level.
- */
-function push_container(container, indices, level) {
-  while (indices.length < level) {
-    // TRICKY: push a 0 for the very last new level, so the ++ at the end
-    // will turn it into a 1.
-    indices.push(indices.level < level - 1);
-    var ul = document.createElement("ul");
-    if (container) {
-      container.appendChild(ul);
-    }
-    container = ul;
-  }
-  indices[indices.length - 1]++;
-  return container;
-}
-
-/*
- * Create a LI for an H element with some id.
- */
-function list_element(id, h) {
-  var a = document.createElement("a");
-  a.href = "#" + id;
-  a.innerHTML = id + "&nbsp;" + h.innerHTML;
-  var li = document.createElement("li");
-  li.appendChild(a);
-  return li;
-}
-
-/*
- * Create an anchor for an H element with some id.
- */
-function header_anchor(id) {
-  var text = document.createTextNode(id + " ");
-  var a = document.createElement("a");
-  a.id = id;
-  a.appendChild(text);
-  return a;
-}
-</script>
 </head>
 <body>
 <div id="contents"></div>
@@ -9529,7 +9427,7 @@ And here is the actual command-line application script:
 </div>
 <div class="chunk html">
 <pre class='ruby code syntax'>
-<span class="PreProc">#!/bin/ruby -w</span>
+<span class="PreProc">#!/usr/bin/ruby -w</span>
 
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar</span><span class="Special">&quot;</span>
 
@@ -9829,7 +9727,7 @@ And here is the actual command-line application script:
 </div>
 <div class="chunk html">
 <pre class='ruby code syntax'>
-<span class="PreProc">#!/bin/ruby -w</span>
+<span class="PreProc">#!/usr/bin/ruby -w</span>
 
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar</span><span class="Special">&quot;</span>
 
@@ -10900,7 +10798,7 @@ This version number.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.57</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.58</span><span class="Special">&quot;</span>
 </pre>
 <table class='layout'>
 <tr>
@@ -10995,8 +10893,111 @@ procedure:
 <h2>Formatting generated HTML</h2>
 <p>
 The generated HTML requires some tweaking to yield aesthetic, readable results.
-This tweaking consists of using Javascript to generate a table of content, and
-using CSS to make the HTML look better.
+This tweaking consists of using Javascript to control chunk visibility,
+generating a table of content, and using CSS to make the HTML look better.
+</p>
+<h3>Javascript chunk visibilty control</h3>
+<p>
+The following code injects visibility controls ("+"/"-" toggles) next to each
+embedded code chunk. It also hides all the chunks by default; this increases
+the readability of the overall narrative, turning it into a high-level summary.
+Expanding the embedded code chunks allows the reader to delve into the details.
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="doc-control-chunks-js">
+<span>doc/control_chunks.js</span>
+</a>
+</div>
+<div class="chunk html">
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='markdown comment markup'>
+<p>
+Quick-and-dirty JS for inserting a "+"/"-" control for chunk visibility next
+to each chunk's name. By default, all chunks are hidden.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='javascript code syntax'>
+<span class="Identifier">function</span> inject_chunk_controls() <span class="Identifier">{</span>
+  <span class="Identifier">var</span> name_div;
+  foreach_chunk_elements(<span class="Identifier">function</span>(div) <span class="Identifier">{</span>
+    name_div = div;
+  <span class="Identifier">}</span>, <span class="Identifier">function</span>(html_div) <span class="Identifier">{</span>
+    <span class="Identifier">var</span> control_span = <span class="Statement">document</span>.createElement(<span class="Constant">&quot;span&quot;</span>);
+    <span class="Identifier">var</span> hide = <span class="Identifier">function</span>() <span class="Identifier">{</span>
+      control_span.innerHTML = <span class="Constant">&quot;+&quot;</span>;
+      html_div.style.display = <span class="Constant">&quot;none&quot;</span>;
+    <span class="Identifier">}</span>
+    <span class="Identifier">var</span> show = <span class="Identifier">function</span>() <span class="Identifier">{</span>
+      control_span.innerHTML = <span class="Constant">&quot;&amp;#8211;&quot;</span>; <span class="Comment">// Vertical bar.</span>
+      html_div.style.display = <span class="Constant">&quot;block&quot;</span>;
+    <span class="Identifier">}</span>
+    name_div.onclick = <span class="Identifier">function</span>() <span class="Identifier">{</span>
+      html_div.style.display == <span class="Constant">&quot;block&quot;</span> ? hide() : show();
+    <span class="Identifier">}</span>
+    hide(); <span class="Comment">// Initializes html_div.style.display</span>
+    control_span.className = <span class="Constant">&quot;control chunk&quot;</span>;
+    name_div.insertBefore(control_span, name_div.firstChild);
+  <span class="Identifier">}</span>)
+<span class="Identifier">}</span>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='markdown comment markup'>
+<p>
+Loop on all DIV elements that contain a chunk name, or that contain chunk
+HTML. Assumes that they come in pairs - name first, HTML second.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='javascript code syntax'>
+<span class="Identifier">function</span> foreach_chunk_elements(name_lambda, html_lambda) <span class="Identifier">{</span>
+  <span class="Identifier">var</span> div_elements = <span class="Statement">document</span>.getElementsByTagName(<span class="Constant">&quot;div&quot;</span>);
+  <span class="Statement">for</span> (<span class="Identifier">var</span> e <span class="Statement">in</span> div_elements) <span class="Identifier">{</span>
+    <span class="Identifier">var</span> div = div_elements<span class="Identifier">[</span>e<span class="Identifier">]</span>;
+    classes = <span class="Constant">&quot; &quot;</span> + div.className + <span class="Constant">&quot; &quot;</span>;
+    <span class="Statement">if</span> (!<span class="Constant">/ chunk /</span>.test(classes)) <span class="Statement">continue</span>;
+    <span class="Statement">if</span> (<span class="Constant">/ name /</span>.test(classes)) name_lambda(div);
+    <span class="Statement">if</span> (<span class="Constant">/ html /</span>.test(classes)) html_lambda(div);
+  <span class="Identifier">}</span>
+<span class="Identifier">}</span>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='markdown comment markup'>
+<p>
+Only invoke it after all helper functions are defined.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='javascript code syntax'>
+inject_chunk_controls();
+</pre>
+</div>
+</div>
 </p>
 <h3>Javascript table of content</h3>
 <p>
@@ -11031,7 +11032,7 @@ Javascript code.
 </tr>
 </table>
 <pre class='javascript code syntax'>
-<span class="Statement">if</span> (<span class="Statement">document</span>.getElementById) onload = <span class="Identifier">function</span> () <span class="Identifier">{</span>
+<span class="Identifier">function</span> inject_contents() <span class="Identifier">{</span>
   <span class="Identifier">var</span> contents = <span class="Statement">document</span>.getElementById(<span class="Constant">&quot;contents&quot;</span>);
   <span class="Identifier">var</span> lists = contents_lists();
   contents.appendChild(contents_header()); <span class="Comment">// TRICKY: Must be done after contents_lists().</span>
@@ -11221,6 +11222,24 @@ Create an anchor for an H element with some id.
   a.appendChild(text);
   <span class="Statement">return</span> a;
 <span class="Identifier">}</span>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='markdown comment markup'>
+<p>
+Only invoke it after all helper functions are defined.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='javascript code syntax'>
+inject_contents();
 </pre>
 </div>
 </div>
@@ -11984,6 +12003,11 @@ Margin &amp; Padding
   <span class="Type">padding</span>: <span class="Constant">0.33em</span>;
 <span class="Identifier">}</span>
 
+<span class="Statement">span</span><span class="Identifier">.control.chunk</span> <span class="Identifier">{</span>
+  <span class="Type">padding-left</span>: <span class="Constant">0.25em</span>;
+  <span class="Type">padding-right</span>: <span class="Constant">0.25em</span>;
+<span class="Identifier">}</span>
+
 </pre>
 <table class='layout'>
 <tr>
@@ -12055,13 +12079,13 @@ Borders
 </table>
 <pre class='css code syntax'>
 
-<span class="Statement">table</span><span class="Identifier">.layout</span> <span class="Statement">td</span><span class="Identifier">.indentation</span> <span class="Identifier">{</span>
-  <span class="Type">border</span>: <span class="Type">none</span>;
-<span class="Identifier">}</span>
 <span class="Statement">pre</span>,
+<span class="Statement">span</span><span class="Identifier">.control.chunk</span>,
 <span class="Statement">div</span><span class="Identifier">.chunk.html</span> <span class="Identifier">{</span>
   <span class="Type">border</span>: <span class="Constant">1px</span> <span class="Type">solid</span> <span class="Constant">#000</span>;
 <span class="Identifier">}</span>
+
+<span class="Statement">table</span><span class="Identifier">.layout</span> <span class="Statement">td</span><span class="Identifier">.indentation</span>,
 <span class="Statement">div</span><span class="Identifier">.chunk</span> <span class="Statement">pre</span> <span class="Identifier">{</span>
   <span class="Type">border</span>: <span class="Type">none</span>;
 <span class="Identifier">}</span>
@@ -12083,9 +12107,11 @@ Colors
 </table>
 <pre class='css code syntax'>
 
+<span class="Statement">span</span><span class="Identifier">.control.chunk</span>,
 <span class="Statement">table</span><span class="Identifier">.layout</span> <span class="Statement">td</span><span class="Identifier">.html</span> <span class="Identifier">{</span>
   <span class="Type">background-color</span>: Beige;
 <span class="Identifier">}</span>
+
 <span class="Statement">span</span><span class="Identifier">.Constant</span> <span class="Identifier">{</span>
   <span class="Type">color</span>: Crimson;
 <span class="Identifier">}</span>
@@ -12139,5 +12165,161 @@ Fonts
 </div>
 </p>
 </div>
+<script type="text/javascript">
+/*
+ * Quick-and-dirty JS for inserting a table of content inside a DIV with the id
+ * "contents". The table of content is a series of nested UL and LI elements,
+ * prefixed with an H1 containing the text "0 Contents". This H1 comes in
+ * addition to the single static H1 expected by HTML best practices. It looks
+ * "right" and should not confuse search engines etc. since they do not execute
+ * Javascript code.
+ */
+function inject_contents() {
+  var contents = document.getElementById("contents");
+  var lists = contents_lists();
+  contents.appendChild(contents_header()); // TRICKY: Must be done after contents_lists().
+  contents.appendChild(lists);
+}
+
+/*
+ * Create a table of contents H1.
+ */
+function contents_header() {
+  var h = document.createElement("h1");
+  var text = document.createTextNode("Contents");
+  h.appendChild(text);
+  return h;
+}
+
+/*
+ * Create nested UL/LI lists for the table of content.
+ */
+function contents_lists() {
+  var container;
+  var indices = [];
+  foreach_h_element(function (h, level) {
+    container = pop_container(container, indices, level);
+    container = push_container(container, indices, level);
+    var id = indices.join(".");
+    container.appendChild(list_element(id, h));
+    h.insertBefore(header_anchor(id), h.firstChild);
+  });
+  return pop_container(container, indices, 1);
+}
+
+/*
+ * Apply a lambda to all H elements in the DOM. We skip the single H1 element;
+ * otherwise it would just have the index "1" which would be prefixed to all
+ * other headers.
+ */
+function foreach_h_element(lambda) {
+  var elements = document.getElementsByTagName("*");
+  for (var e in elements) {
+    var h = elements[e];
+    if (!/^h[2-9]$/i.test(h.tagName)) continue;
+    var level = h.tagName.substring(1, 2) - 1;
+    lambda(h, level);
+  }
+}
+
+/*
+ * Pop indices (and UL containers) until reaching up to a given level.
+ */
+function pop_container(container, indices, level) {
+  while (indices.length > level) {
+    container = container.parentNode;
+    indices.pop();
+  }
+  return container;
+}
+
+/*
+ * Push indices (and UL containers) until reaching doen to a given level.
+ */
+function push_container(container, indices, level) {
+  while (indices.length < level) {
+    // TRICKY: push a 0 for the very last new level, so the ++ at the end
+    // will turn it into a 1.
+    indices.push(indices.level < level - 1);
+    var ul = document.createElement("ul");
+    if (container) {
+      container.appendChild(ul);
+    }
+    container = ul;
+  }
+  indices[indices.length - 1]++;
+  return container;
+}
+
+/*
+ * Create a LI for an H element with some id.
+ */
+function list_element(id, h) {
+  var a = document.createElement("a");
+  a.href = "#" + id;
+  a.innerHTML = id + "&nbsp;" + h.innerHTML;
+  var li = document.createElement("li");
+  li.appendChild(a);
+  return li;
+}
+
+/*
+ * Create an anchor for an H element with some id.
+ */
+function header_anchor(id) {
+  var text = document.createTextNode(id + " ");
+  var a = document.createElement("a");
+  a.id = id;
+  a.appendChild(text);
+  return a;
+}
+
+/* Only invoke it after all helper functions are defined. */
+inject_contents();
+/*
+ * Quick-and-dirty JS for inserting a "+"/"-" control for chunk visibility next
+ * to each chunk's name. By default, all chunks are hidden.
+ */
+function inject_chunk_controls() {
+  var name_div;
+  foreach_chunk_elements(function(div) {
+    name_div = div;
+  }, function(html_div) {
+    var control_span = document.createElement("span");
+    var hide = function() {
+      control_span.innerHTML = "+";
+      html_div.style.display = "none";
+    }
+    var show = function() {
+      control_span.innerHTML = "&#8211;"; // Vertical bar.
+      html_div.style.display = "block";
+    }
+    name_div.onclick = function() {
+      html_div.style.display == "block" ? hide() : show();
+    }
+    hide(); // Initializes html_div.style.display
+    control_span.className = "control chunk";
+    name_div.insertBefore(control_span, name_div.firstChild);
+  })
+}
+
+/*
+ * Loop on all DIV elements that contain a chunk name, or that contain chunk
+ * HTML. Assumes that they come in pairs - name first, HTML second.
+ */
+function foreach_chunk_elements(name_lambda, html_lambda) {
+  var div_elements = document.getElementsByTagName("div");
+  for (var e in div_elements) {
+    var div = div_elements[e];
+    classes = " " + div.className + " ";
+    if (!/ chunk /.test(classes)) continue;
+    if (/ name /.test(classes)) name_lambda(div);
+    if (/ html /.test(classes)) html_lambda(div);
+  }
+}
+
+/* Only invoke it after all helper functions are defined. */
+inject_chunk_controls();
+</script>
 </body>
 </html>
