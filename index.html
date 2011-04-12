@@ -1254,11 +1254,11 @@ Create a temporary file on the disk.
 </table>
 <pre class='ruby code syntax'>
     <span class="PreProc">def</span> <span class="Identifier">write_tempfile</span>(path, content)
-      (<span class="Identifier">@tempfiles</span> ||= []) &lt;&lt; path
       file = <span class="Type">Tempfile</span>.open(path, <span class="Special">&quot;</span><span class="Constant">.</span><span class="Special">&quot;</span>)
       file.write(content)
       file.close(<span class="Constant">false</span>)
-      <span class="Statement">return</span> file.path
+      (<span class="Identifier">@tempfiles</span> ||= []) &lt;&lt; (path = file.path)
+      <span class="Statement">return</span> path
     <span class="PreProc">end</span>
 
 </pre>
@@ -7457,6 +7457,13 @@ Test reading chunks from files.
       <span class="Identifier">@errors</span>.should == []
     <span class="PreProc">end</span>
 
+    <span class="PreProc">def</span> <span class="Identifier">test_read_invalid_chunks</span>
+      file_path = <span class="Constant">nil</span>
+      <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">foo.chunks</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file_path = <span class="Type">File</span>.expand_path(file.path) }
+      reader = <span class="Type">Reader</span>.new(<span class="Identifier">@errors</span>, <span class="Type">Dir</span>.glob(<span class="Special">&quot;</span><span class="Constant">./**/*.chunks</span><span class="Special">&quot;</span>))
+      <span class="Identifier">@errors</span>.should == [ <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: Invalid chunks data in file: </span><span class="Special">#{</span>file_path<span class="Special">}</span><span class="Special">&quot;</span> ]
+    <span class="PreProc">end</span>
+
     <span class="PreProc">def</span> <span class="Identifier">test_read_unused_chunks</span>
       <span class="Type">Writer</span>.write(<span class="Special">&quot;</span><span class="Constant">foo.chunks</span><span class="Special">&quot;</span>, { <span class="Special">&quot;</span><span class="Constant">name</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">foo</span><span class="Special">&quot;</span>,
                                    <span class="Special">&quot;</span><span class="Constant">locations</span><span class="Special">&quot;</span> =&gt; [ { <span class="Special">&quot;</span><span class="Constant">file</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">a</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">line</span><span class="Special">&quot;</span> =&gt; <span class="Constant">1</span> } ] })
@@ -7600,7 +7607,7 @@ name.
       <span class="Identifier">@chunks</span> = {}
       <span class="Identifier">@used</span> = {}
       paths.each <span class="Statement">do</span> |<span class="Identifier">path</span>|
-        load_path_chunks(path)
+        read_path_chunks(path)
       <span class="Statement">end</span>
     <span class="PreProc">end</span>
 
@@ -7662,6 +7669,31 @@ Collect errors for unused chunks.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
+Load and merge all chunks from a disk file into memory.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Identifier">read_path_chunks</span>(path)
+      <span class="Identifier">@errors</span>.in_path(path) <span class="Statement">do</span>
+        chunks = load_path_chunks(path)
+        <span class="Statement">next</span> <span class="Statement">unless</span> chunks
+        merge_loaded_chunks(chunks)
+        <span class="Identifier">@root_chunk</span> ||= chunks[<span class="Constant">0</span>].name
+      <span class="Statement">end</span>
+    <span class="PreProc">end</span>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
 Load all chunks from a disk file into memory.
 </p>
 </div>
@@ -7670,12 +7702,26 @@ Load all chunks from a disk file into memory.
 </table>
 <pre class='ruby code syntax'>
     <span class="PreProc">def</span> <span class="Identifier">load_path_chunks</span>(path)
-      <span class="Identifier">@errors</span>.in_path(path) <span class="Statement">do</span>
-        chunks = <span class="Type">YAML</span>.load_file(path)
-        merge_loaded_chunks(chunks)
-        <span class="Identifier">@root_chunk</span> ||= chunks[<span class="Constant">0</span>].name
-      <span class="Statement">end</span>
-    <span class="PreProc">end</span>
+      chunks = <span class="Type">YAML</span>.load_file(path)
+      <span class="Identifier">@errors</span> &lt;&lt; <span class="Special">&quot;</span><span class="Constant">Invalid chunks data</span><span class="Special">&quot;</span> <span class="Statement">unless</span> chunks
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>      </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+TODO: A bit more validation would be nice.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+      <span class="Statement">return</span> chunks
+    end
 
 </pre>
 <table class='layout'>
@@ -10854,7 +10900,7 @@ This version number.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.56</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.57</span><span class="Special">&quot;</span>
 </pre>
 <table class='layout'>
 <tr>
