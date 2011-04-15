@@ -72,27 +72,15 @@ table.layout td.html {
   background-color: Beige;
 }
 
-span.Constant {
-  color: Crimson;
-}
-span.Identifier {
-  color: Teal;
-}
-span.PreProc {
-  color: Indigo;
-}
-span.Special {
-  color: Navy;
-}
-span.Statement {
-  color: Maroon;
-}
-span.Type {
-  color: Green;
-}
-span.Comment {
-  color: Purple;
-}
+/* Colors for GVim classes */
+
+span.Constant   { color: Crimson; }
+span.Identifier { color: Teal; }
+span.PreProc    { color: Indigo; }
+span.Special    { color: Navy; }
+span.Statement  { color: Maroon; }
+span.Type       { color: Green; }
+span.Comment    { color: Purple; }
 
 /* Fonts */
 
@@ -100,7 +88,7 @@ body {
   font-family: Sans-Serif;
 }
 pre {
-  font-family: Consolas, Monospace;
+  font-family: Consolas, Inconsolata, Monaco, "Courier New", Monospace;
 }
 div.chunk.name {
   font-weight: bold;

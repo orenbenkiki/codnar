@@ -81,25 +81,35 @@ module Codnar
 
     # {{{ Basic formatters
 
+    # Merge a group of consecutive indented lines into a group with a single
+    # classified "line". The given block is passed the joined content of all
+    # the lines, and may process it to yield the merged "line" content. If an
+    # explicit indentation is given, it overrides each line's indentation. This
+    # is useful for avoiding the inclusion of the indentation in the payload.
+    def self.merge_lines(lines, kind, indentation = nil)
+      payload = yield lines.map { |line| (indentation || line.indentation || "") + (line.payload || "") }.join("\n")
+      merged_line = lines[0]
+      merged_line.merge!("kind" => kind, "payload" => payload)
+      merged_line.delete("indentation") if indentation.nil?
+      return [ merged_line ]
+    end
+
     # Merge a group of consecutive HTML classified lines into a group with a
     # single HTML classified "line". This is the default formatting expression
     # for HTML lines.
     def self.merge_html_lines(lines)
-      merged_line = lines[0]
-      merged_line.payload = lines.map { |line| line.payload }.join("\n")
-      return [ merged_line ]
+      return Formatter.merge_lines(lines, "html") { |payload| payload }
     end
 
     # Format classified lines into HTML using a pre element with optional
     # attributes. This is the default formatting expression for classified
     # lines of unknown kinds.
     def self.lines_to_pre_html(lines, attributes = {})
-      merged_line = lines[0]
-      merged_line.kind = "html"
-      merged_line.payload = "<pre" + Formatter.html_attributes(attributes) + ">\n" \
-                          + lines.map { |line| (line.indentation || "") + CGI.escapeHTML(line.payload || "") + "\n" }.join \
-                          + "</pre>"
-      return [ merged_line ]
+      return Formatter.merge_lines(lines, "html") do |payload|
+        ( "<pre" + Formatter.html_attributes(attributes) + ">\n" \
+        + CGI.escapeHTML(payload) + "\n" \
+        + "</pre>" )
+      end
     end
 
     # Convert an attribute mapping to HTML.
@@ -110,14 +120,14 @@ module Codnar
 
     # Format classified lines that indicate a nested chunk to HTML.
     def self.nested_chunk_lines_to_html(lines)
-      return lines.map do |line|
-        (line = line.dup).kind = "html"
+      return lines.each do |line|
+        line.kind = "html"
         chunk_name = line.payload
         line.payload = "<pre class='nested chunk'>\n" \
-                     + line.indentation \
+                     + (line.indentation || "") \
                      + "<a class='nested chunk' href='##{chunk_name.to_id}'>#{CGI.escapeHTML(chunk_name)}</a>\n" \
                      + "</pre>"
-        line
+        line.delete("indentation")
       end
     end
 
@@ -154,19 +164,12 @@ module Codnar
 
     # Convert a sequence of marked-up classified lines to (unindented) HTML
     def self.markup_lines_to_html(lines, klass)
-      merged_line = lines[0]
-      merged_payload = lines.map { |line| "#{line.payload}\n" }.join
-      merged_line.payload = Formatter.markup_to_html(merged_payload, klass, merged_line.kind)
-      merged_line.kind = "unindented_html"
-      return [ merged_line ]
-    end
-
-    # Convert some markup text to div-wrapped HTML.
-    def self.markup_to_html(markup, klass, kind)
       implementation = String === klass ? Kernel.const_get(klass) : klass
-      return "<div class='#{klass.downcase} #{kind} markup'>\n" \
-           + implementation.to_html(markup) \
-           + "</div>"
+      return Formatter.merge_lines(lines, "unindented_html", "") do |payload|
+        ( "<div class='#{klass.downcase} #{lines[0].kind} markup'>\n" \
+        + implementation.to_html(payload) \
+        + "</div>" )
+      end
     end
 
     # }}}

@@ -283,7 +283,7 @@ module Codnar
 
     # }}}
     
-    # {{{ Syntax highlighting formatting configurations
+    # {{{ GVim syntax highlighting formatting configurations
 
     # Format code using GVim's Ruby syntax highlighting, using explicit HTML
     # constructs. Assumes some previous configuration already classified the
@@ -304,6 +304,27 @@ module Codnar
       return {
         "formatters" => {
           "#{syntax}_code" => "GVim.lines_to_html(lines, '#{syntax}', [ #{extra_commands} ])",
+        },
+      }
+    end
+
+    # }}}
+
+    # {{{ Sunlight syntax highlighting formatting configurations
+
+    # Format code using Sunlight's syntax highlighting. This assumes the HTML
+    # will include and invoke Sunlight's Javascript file which does the
+    # highlighting on the fly inside the DOM, instead of pre-computing it when
+    # splitting the file.
+    FORMAT_CODE_SUNLIGHT = lambda do |syntax|
+      return Configuration.sunlight_code_format(syntax)
+    end
+
+    # Return a configuration for highlighting a specific syntax using Sunlight.
+    def self.sunlight_code_format(syntax)
+      return {
+        "formatters" => {
+          "#{syntax}_code" => "Sunlight.lines_to_html(lines, '#{syntax}')",
         },
       }
     end

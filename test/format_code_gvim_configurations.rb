@@ -6,12 +6,36 @@ require "test_with_tempfile"
 
 module Codnar
 
-  # Test built-in split code formatting configurations.
-  class TestFormatCodeConfigurations < Test::Unit::TestCase
+  # Test built-in split code formatting configurations using GVim.
+  class TestGVimFormatCodeConfigurations < Test::Unit::TestCase
   
     include TestWithErrors
     include TestWithConfigurations
     include TestWithTempfile
+
+    CODE_TEXT_ = <<-EOF.unindent
+      local = $global;
+    EOF
+
+    SUNLIGHT_HTML = <<-EOF.unindent.chomp
+      <pre class='sunlight-highlight-ruby'>
+      local = $global;
+      </pre>
+    EOF
+
+    def test_sunlight_code
+      check_split_file(CODE_TEXT_,
+                       Configuration::CLASSIFY_SOURCE_CODE.call("ruby"),
+                       Configuration::FORMAT_CODE_SUNLIGHT.call("ruby")) do |path|
+        [ {
+          "name" => path,
+          "locations" => [ { "file" => path, "line" => 1 } ],
+          "containers" => [],
+          "contained" => [],
+          "html" => SUNLIGHT_HTML,
+        } ]
+      end
+    end
 
     CODE_TEXT = <<-EOF.unindent
       int x;

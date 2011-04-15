@@ -243,11 +243,32 @@ scope; almost any language you can think of has a `gvim` syntax highlighting
 definition. Here is a simple test that demonstrates using `gvim` for syntax
 highlighting:
 
-[[test/highlight_syntax.rb|named_chunk_with_containers]]
+[[test/gvim_highlight_syntax.rb|named_chunk_with_containers]]
 
 And here is the implementation:
 
 [[lib/codnar/gvim.rb|named_chunk_with_containers]]
+
+#### Syntax highlighting using Sunlight ####
+
+[Sunlight](http://sunlightjs.com/) offers a different approach for syntax
+highlighting. Instead of pre-processing the code to generate highlighted HTML
+while splitting, it provides Javascript files that examine the textual code in
+the DOM and convert it to highlighted HTML in the browser. This takes virtually
+no time when splitting the code, but requires recomputing highlighting for all
+the code chunks every time the HTML file is loaded. This can be pretty slow,
+especially if using a browser with a slow Javascript engine, like IE. However,
+given how slow GVIM is, this is a reasonable trade-off, at least for small
+projects. Since Sunlight is a new project, it doesn't offer the extensive
+coverage of different programming languages supported by GVIM.
+
+Here is a simple test that demonstrates using Sunlight for syntax highlighting:
+
+[[test/sunlight_highlight_syntax.rb|named_chunk_with_containers]]
+
+And here is the implementation:
+
+[[lib/codnar/sunlight.rb|named_chunk_with_containers]]
 
 ### Putting it all together ###
 
@@ -282,8 +303,7 @@ are also supported for code comments. Here is a simple test that demonstrates
 The splitting mechanism defined above is pretty generic. To apply it to a
 specific system requires providing the appropriate configuration. The system
 provides a few specific built-in configurations which may be useful "out of the
-box". Currently, these built-in configurations are focused on documenting Ruby
-code and GVim.
+box".
 
 If one is willing to give up altogether on syntax highlighting and comment
 formatting, the system would be applicable as-is to any programming language.
@@ -393,16 +413,27 @@ Here is a simple test demonstrating formatting comment contents:
 
 [[test/format_comment_configurations.rb|named_chunk_with_containers]]
 
-#### Syntax highlighting ####
+#### Syntax highlighting using GVim ####
 
 Supporting a specific programming language (other than dealing with comments)
 is very easy using GVim for syntax highlighting, as demonstrated here:
 
-[[Syntax highlighting formatting configurations|named_chunk_with_containers]]
+[[GVim syntax highlighting formatting configurations|named_chunk_with_containers]]
 
-Here is a simple test demonstrating highlighting code syntax:
+Here is a simple test demonstrating highlighting code syntax using `gvim`:
 
-[[test/format_code_configurations.rb|named_chunk_with_containers]]
+[[test/format_code_gvim_configurations.rb|named_chunk_with_containers]]
+
+#### Syntax highlighting using Sunlight ####
+
+For small projects in languages supported by Sunlight, you may choose to use
+it instead of GVIM
+
+[[Sunlight syntax highlighting formatting configurations|named_chunk_with_containers]]
+
+Here is a simple test demonstrating highlighting code syntax using Sunlight:
+
+[[test/format_code_sunlight_configurations.rb|named_chunk_with_containers]]
 
 #### Chunk splitting ####
 
@@ -673,23 +704,22 @@ iunjecting a table of content into the generated HTML.
 
 [[doc/contents.js|named_chunk_with_containers]]
 
-### CSS files ###
+### CSS style ###
 
 To avoid dealing with the different default styles used by different browsers,
-we employ the YUI CSS [reset](http://developer.yahoo.com/yui/reset/) file:
-
-[[doc/reset.css|named_chunk_with_containers]]
-
-This requires us to restore the default look and feel of the standard HTML
-elements, using the YUI [base](http://developer.yahoo.com/yui/base/) CSS style
-file. Resetting and restoring the default CSS styles is inelegant, but it is
-the only current way to get a consistent presentation of HTML.
-
-[[doc/base.css|named_chunk_with_containers]]
-
-Finally, we can apply styles specific to our HTML. Some of these override the
-default styles established by the base CSS file above. We do this instead of
-directly tweaking the base CSS file, to allow easy upgrade to new versions
-if/when YUI release any.
+we employ the YUI CSS [reset](http://developer.yahoo.com/yui/reset/) and
+[base](http://developer.yahoo.com/yui/base/) files. Resetting and restoring the
+default CSS styles is inelegant, but it is the only current way to get a
+consistent presentation of HTML. Once this is out of the way, we apply styles
+specific to our HTML. Some of these override the default styles established by
+the base CSS file above. We do this instead of directly tweaking the base CSS
+file, to allow easy upgrade to new versions if/when YUI release any.
 
 [[doc/style.css|named_chunk_with_containers]]
+
+### Using Sunlight ###
+
+When using Sunlight for syntax highlighting, we also need to include some CSS
+and Javascript files to convert the classified `pre` elements into properly
+marked-up HTML. We also need to invoke this Javascript code (a one-line
+operations). See the last few lines of the `doc/root.html` file for details.

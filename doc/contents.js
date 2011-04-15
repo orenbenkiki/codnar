@@ -29,29 +29,32 @@ function contents_header() {
 function contents_lists() {
   var container;
   var indices = [];
-  foreach_h_element(function (h, level) {
+  var h_elements = all_h_elements();
+  for (var e in h_elements) {
+    h = h_elements[e];
+    var level = h.tagName.substring(1, 2) - 1;
     container = pop_container(container, indices, level);
     container = push_container(container, indices, level);
     var id = indices.join(".");
     container.appendChild(list_element(id, h));
     h.insertBefore(header_anchor(id), h.firstChild);
-  });
+  }
   return pop_container(container, indices, 1);
 }
 
 /*
- * Apply a lambda to all H elements in the DOM. We skip the single H1 element;
+ * Get a list of all H elements in the DOM. We skip the single H1 element;
  * otherwise it would just have the index "1" which would be prefixed to all
  * other headers.
  */
-function foreach_h_element(lambda) {
+function all_h_elements() {
   var elements = document.getElementsByTagName("*");
+  var h_elements = [];
   for (var e in elements) {
     var h = elements[e];
-    if (!/^h[2-9]$/i.test(h.tagName)) continue;
-    var level = h.tagName.substring(1, 2) - 1;
-    lambda(h, level);
+    if (/^h[2-9]$/i.test(h.tagName)) h_elements.push(h);
   }
+  return h_elements;
 }
 
 /*

@@ -4,7 +4,7 @@ require "test/spec"
 module Codnar
 
   # Test highlighting syntax using GVim.
-  class TestHighlightSyntax < Test::Unit::TestCase
+  class TestGVimHighlightSyntax < Test::Unit::TestCase
 
     def test_ruby_no_css
       ruby = <<-EOF.unindent

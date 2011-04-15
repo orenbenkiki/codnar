@@ -5,6 +5,15 @@ module Codnar
   # Syntax highlight using GVim.
   class GVim
 
+    # Convert a sequence of classified code lines to HTML using GVim syntax
+    # highlighting. The commands array allows configuring the way that GVim
+    # will format the output (see the `syntax_to_html` method for details).
+    def self.lines_to_html(lines, syntax, commands = [])
+      return Formatter.merge_lines(lines, "html") do |payload|
+        GVim.syntax_to_html(payload + "\n", syntax, commands).chomp
+      end
+    end
+
     # Highlight syntax of text using GVim. This uses the GVim standard CSS
     # classes to mark keywords, identifiers, and so on. See the GVim
     # documentation for details. The commands array allows configuring the way
@@ -24,17 +33,6 @@ module Codnar
       html = read_html_file(file)
       delete_temporary_files(file)
       return clean_html(html, syntax)
-    end
-
-    # Convert a sequence of classified code lines to HTML using GVim syntax
-    # highlighting. The commands array allows configuring the way that GVim
-    # will format the output (see the `syntax_to_html` method for details).
-    def self.lines_to_html(lines, syntax, commands = [])
-      merged_line = lines[0]
-      merged_line.kind = "html"
-      payload = lines.map { |line| (line.indentation || "") + line.payload + "\n" }.join
-      merged_line.payload = GVim.syntax_to_html(payload, syntax, commands).chomp
-      return [ merged_line ]
     end
 
   protected

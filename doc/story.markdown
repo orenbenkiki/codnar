@@ -147,10 +147,11 @@ narrative. Then, when you write the new code itself, it should be easy to
 connect it to the narrative at the appropriate point.
 
 In the case of Code Narrator itself, the number of (raw) lines in the code
-itself is ~1800 lines, the number of test lines is ~1600 lines, while the
-number of narrative documentation lines is ~800 lines. Given narrative
-documentation are easier to write than system (or test) code, this indicates
-maintaining a narrative is not an unreasonable burden for a well-tested project.
+library itself is ~2100 lines, the number of test code lines is ~2200 lines,
+and the number of narrative documentation lines is only ~900 lines. Given
+narrative documentation are easier to write than system (or test) code, this
+indicates maintaining a narrative is not an unreasonable burden for a
+well-tested project.
 
 ### Code Narrator ###
 

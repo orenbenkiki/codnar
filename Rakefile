@@ -150,9 +150,9 @@ end
 def ruby_configurations(*additional_configurations)
   return [
     "classify_source_code:ruby",
-    "format_code_gvim_css:ruby",
+    "format_code_sunlight:ruby",
     "classify_nested_code:ruby:html",
-    "format_code_gvim_css:html",
+    "format_code_sunlight:html",
     "classify_shell_comments",
     "format_rdoc_comments"
   ] + additional_configurations
@@ -161,7 +161,7 @@ end
 def javascript_configurations
   return [
     "classify_source_code:javascript",
-    "format_code_gvim_css:javascript",
+    "format_code_sunlight:javascript",
     "classify_c_comments",
     "format_markdown_comments"
   ]
@@ -170,7 +170,7 @@ end
 def css_configurations
   return [
     "classify_source_code:css",
-    "format_code_gvim_css:css",
+    "format_code_sunlight:css",
     "classify_c_comments",
     "format_markdown_comments"
   ]
