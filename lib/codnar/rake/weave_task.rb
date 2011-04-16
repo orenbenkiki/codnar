@@ -41,8 +41,8 @@ module Codnar
         Application.with_argv(options) { Weave.new.run }
       end
 
-      # Connect the task for cleaning up after weaving (clobber_codnar) to the
-      # common task of cleaning up everything (clobber).
+      # Connect the task for cleaning up after weaving (+clobber_codnar+) to the
+      # common task of cleaning up everything (+clobber+).
       def connect_common_tasks
         desc "Build the code narrative HTML"
         ::Rake::Task.define_task(:codnar => "codnar_weave")

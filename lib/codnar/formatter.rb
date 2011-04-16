@@ -6,20 +6,20 @@ module Codnar
     # Construct a Formatter based on a mapping from a classified line kind, to
     # a Ruby expression, that converts an array of classified lines of that
     # kind, into an array of lines of another kind. This expression is simply
-    # eval-ed, and is expected to make use of a variable called "lines" that
+    # +eval+-ed, and is expected to make use of a variable called +lines+ that
     # contains an array of classified lines, as produced by a Scanner. The
     # result of evaluating the expressions is expected to be an array of any
     # number of classified lines of any kind.
     #
     # Formatting repeatedly applies these formatting expressions, until the
     # result is an array containing a single classified line, which has the
-    # kind "html" and whose payload field contains the unified final HTML
+    # kind +html+ and whose payload field contains the unified final HTML
     # presentation of the original classified lines. In each processing round,
     # all consecutive lines of the same kind are formated together. This allows
     # for properly formating line kinds that use a multi-line notation such as
     # Markdown.
     #
-    # The default formatting expression for the kind "html" simply joins all
+    # The default formatting expression for the kind +html+ simply joins all
     # the payloads of all the classified lines into a single html, and returns
     # a single "line" containing this joined HTML. All other line kinds need to
     # have a formatting expression explicitly specified in the formatters
@@ -27,9 +27,10 @@ module Codnar
     #
     # If no formatting expression is specified for some classified line kind,
     # an error is reported and the classified lines are wrapped in a pre HTML
-    # element with a "missing_formatter" class. Similarly, if a formatting
+    # element with a +missing_formatter+ CSS class. Similarly, if a formatting
     # expression fails (raises an exception), an error is reported and the
-    # lines are wrapped in a pre HTML element with a "failed_formatter" class.
+    # lines are wrapped in a pre HTML element with a +failed_formatter+ CSS
+    # class.
     def initialize(errors, formatters)
       @errors = errors
       @formatters = { "html" => "Formatter.merge_html_lines(lines)" }.merge(formatters)

@@ -7,7 +7,7 @@ module Codnar
 
     # Convert a sequence of classified code lines to HTML using GVim syntax
     # highlighting. The commands array allows configuring the way that GVim
-    # will format the output (see the `syntax_to_html` method for details).
+    # will format the output (see the +syntax_to_html+ method for details).
     def self.lines_to_html(lines, syntax, commands = [])
       return Formatter.merge_lines(lines, "html") do |payload|
         GVim.syntax_to_html(payload + "\n", syntax, commands).chomp

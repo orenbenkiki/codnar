@@ -23,7 +23,7 @@ module Codnar
     end
 
     # Add a single error to the collection, with automatic context annotation
-    # (current disk file and line). Other methods (push, += etc.) do not
+    # (current disk file and line). Other methods (+push+, "+=" etc.) do not
     # automatically add the context annotation.
     def <<(message)
       push(annotate_error_message(message))

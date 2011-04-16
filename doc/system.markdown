@@ -544,13 +544,8 @@ containing chunk. When embedding a source code chunk into the documentation,
 however, we may want to wrap it in some boilerplate HTML, providing a header,
 footer, borders, links, etc. Therefore, the HTML syntax we use to embed a chunk
 into the documentation is `<embed src="..." type="x-codnar/template-name"/>`.
-
-The templates are normal ERB templates. As a special and highly magical case,
-the template named `file` simply embeds the specified file into the
-documentation at that point. This is similar to the "server side include"
-available in many web framework, or to a client-side `iframe` directive. This
-really should have been part of HTML; why HTML allows unrestricted inclusion of
-JavaScript code but denies the same ability to HTML and CSS code is beyond me.
+The templates are normal ERB templates, except for the magical `file` and
+`image` templates, described below.
 
 At any rate, here is a simple test demonstrating applying different templates
 to the embedded code chunks:
@@ -564,6 +559,56 @@ Here is the implementation:
 And here are the pre-defined weaving template configurations:
 
 [[Weaving templates|named_chunk_with_containers]]
+
+#### Embedding files ####
+
+The template named `file` is special in two ways. First, the `src` is given
+special treatment. If it begins with a "`.`", it is assumed to be a normal path
+name relative to the current working directory; otherwise, it is assumed to be
+a name of a file packaged inside some gem and is searched for in Ruby's
+`$LOAD_PATH`. This allows gems (such as Codnar itself) to provide such files to
+be used in the woven documentation.
+
+Second, the content of the file is simply embedded into the generated
+documentation. This allows the documentation to be a stand-alone file,
+including all the CSS and Javascript required for proper display.
+
+At any rate, here is a simple test demonstrating how data file paths are
+resolved:
+
+[[test/access_data_files.rb|named_chunk_with_containers]]
+
+Here is the implementation:
+
+[[lib/codnar/data_files.rb|named_chunk_with_containers]]
+
+And here is the function for handling the magical `file` template:
+
+[[Processing the file template|named_chunk_with_containers]]
+
+See the `doc/root.html` file for plenty of examples of using this
+functionality.
+
+#### Embedding images ####
+
+The `image` template is a specialization of the `file` template for dealing
+with embedded images. The specified image file is embedded into the generated
+HTML as an `img` tag, using a [data
+URL](http://en.wikipedia.org/wiki/Data_URI_scheme). This is very useful for
+small images, but is problematic when their size increase beyond
+browser-specific limits.
+
+Here is a simple test demonstrating processing embedded image files:
+
+[[test/embed_images.rb|named_chunk_with_containers]]
+
+Here is the implementation:
+
+[[Processing Base64 embedded data images|named_chunk_with_containers]]
+
+And here is a sample embedded image:
+
+[[doc/logo.png|image]]
 
 ## Invoking the functionality ##
 
@@ -695,14 +740,14 @@ embedded code chunk. It also hides all the chunks by default; this increases
 the readability of the overall narrative, turning it into a high-level summary.
 Expanding the embedded code chunks allows the reader to delve into the details.
 
-[[doc/control_chunks.js|named_chunk_with_containers]]
+[[lib/codnar/data/control_chunks.js|named_chunk_with_containers]]
 
 ### Javascript table of content ###
 
 The following code is not very efficient or elegant but it does a basic job of
 iunjecting a table of content into the generated HTML.
 
-[[doc/contents.js|named_chunk_with_containers]]
+[[lib/codnar/data/contents.js|named_chunk_with_containers]]
 
 ### CSS style ###
 
@@ -715,7 +760,7 @@ specific to our HTML. Some of these override the default styles established by
 the base CSS file above. We do this instead of directly tweaking the base CSS
 file, to allow easy upgrade to new versions if/when YUI release any.
 
-[[doc/style.css|named_chunk_with_containers]]
+[[lib/codnar/data/style.css|named_chunk_with_containers]]
 
 ### Using Sunlight ###
 

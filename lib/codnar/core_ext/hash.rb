@@ -1,7 +1,7 @@
 # Extend the core Hash class.
 class Hash
 
-  # Provide OpenStruct/JavaScript-like implicit .key and .key= methods.
+  # Provide OpenStruct/JavaScript-like implicit ".key" and ".key=" methods.
   def method_missing(method, *arguments)
     method = method.to_s
     key = method.chomp("=")
@@ -37,8 +37,8 @@ protected
     end
   end
 
-  # If the override has a [] element, it is replaced by the default it is
-  # overriding.
+  # If the overriding data array contains an empty array element ("[]"), it is
+  # replaced by the default data array being overriden.
   def self.deep_merge_arrays(default, override)
     embed_index = override.find_index([])
     return override unless embed_index

@@ -31,14 +31,14 @@ module Codnar
     # - The kind field of a pattern can be ommitted; by default it is assumed
     #   to be identical to the pattern name.
     # - A pattern regexp can be presented by a plain string.
-    # - The pattern groups field can be ommitted or contain null if it is
+    # - The pattern groups field can be ommitted or contain +nil+ if it is
     #   equal to [ "indentation", "payload" ].
     # - The kind field of a transition can be ommitted; by default it is
     #   assumed to be identical to the pattern kind.
     # - The next state of a transition can be ommitted; by default it is
     #   assumed to be identical to the containing state.
     # - The start state can be ommitted; by default it is assumed to be named
-    #   "start".
+    #   +start+.
     #
     # When the Scanner is constructed, a deep clone of the syntax object is
     # created and modified to expand all the above shorthands. Any problems
@@ -185,14 +185,14 @@ module Codnar
       return true
     end
 
-    # Extract named groups from a match. As a special case, indentation is nil
-    # if there is no payload.
+    # Extract named groups from a match. As a special case, indentation is
+    # deleted if there is no payload.
     def self.extracted_groups(match, groups)
       extracted = {}
       groups.each_with_index do |group, index|
         extracted[group] = match[index + 1]
       end
-      extracted.indentation = nil if match[0] == ""
+      extracted.delete("indentation") if match[0] == ""
       return extracted
     end
 

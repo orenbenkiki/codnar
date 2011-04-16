@@ -1,5 +1,6 @@
 2011-04-16	Oren Ben-Kiki <github-oren@ben-kiki.org>
 
+	* Better treatment of embedded files.
 	* Support and use Sunlight syntax highlighting.
 
 2011-04-12	Oren Ben-Kiki <github-oren@ben-kiki.org>

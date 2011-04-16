@@ -27,9 +27,10 @@ task :verify => [ :rcov, :reek, :roodi, :flay, :saikuro ]
 
 patterns = {
   "bin" => "bin/*",
-  "css" => "doc/*.css",
+  "css" => "lib/codnar/data/*.css",
+  "data" => "lib/codnar/data/**/*.*",
   "doc" => "doc/*",
-  "javascript" => "doc/*.js",
+  "javascript" => "lib/codnar/data/*.js",
   "lib" => "lib/**/*.rb",
   "test" => "test/*.rb",
   "testlib" => "test/lib/*.rb",
@@ -73,7 +74,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency("Saikuro")
   s.add_development_dependency("test-spec")
 
-  s.files = files.lib + files.bin + files.doc
+  s.files = files.lib + files.bin + files.doc + files.data
   s.test_files = files.test + files.testlib
   s.executables = files.bin.map { |path| path.sub("bin/", "") }
 

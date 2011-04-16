@@ -8,7 +8,7 @@ module Codnar
     # {{{ Documentation "splitting" configurations
 
     # "Split" a documentation file. All lines are assumed to have the same kind
-    # "doc" and no indentation is collected. Unless overriden by additional
+    # +doc+ and no indentation is collected. Unless overriden by additional
     # configuration(s), the lines are assumed to contain formatted HTML, and
     # are passed as-is to the output.
     #
@@ -59,7 +59,7 @@ module Codnar
     # Classify all lines as source code of some syntax (kind). This doesn't
     # distinguish between comment and code lines; to do that, you need to
     # combine this with comment classification configuration(s). Also, it just
-    # formats the lines in an HTML pre element, without any syntax
+    # formats the lines in an HTML +pre+ element, without any syntax
     # highlighting; to do that, you need to combine this with syntax
     # highlighting formatting configuration(s).
     CLASSIFY_SOURCE_CODE = lambda do |syntax|
@@ -141,7 +141,8 @@ module Codnar
     #
     # This configuration is typically complemented by an additional one
     # specifying how to format the (stripped!) comments; by default they are
-    # just displayed as-is using an HTML pre element, which isn't very useful.
+    # just displayed as-is using an HTML +pre+ element, which isn't very
+    # useful.
     CLASSIFY_SIMPLE_COMMENTS = lambda do |prefix|
       return Configuration.simple_comments(prefix)
     end
@@ -196,7 +197,8 @@ module Codnar
     #
     # This configuration is typically complemented by an additional one
     # specifying how to format the (stripped!) comments; by default they are
-    # just displayed as-is using an HTML pre element, which isn't very useful.
+    # just displayed as-is using an HTML +pre+ element, which isn't very
+    # useful.
     CLASSIFY_COMPLEX_COMMENTS = lambda do |prefix, inner, suffix|
       return Configuration.complex_comments(prefix, inner, suffix)
     end
@@ -256,7 +258,7 @@ module Codnar
     # {{{ Comment formatting configurations
 
     # Format comments as HTML pre elements. Is used to complement a
-    # configuration that classifies some lines as "comment".
+    # configuration that classifies some lines as +comment+.
     FORMAT_PRE_COMMENTS = {
       "formatters" => {
         "comment" => "Formatter.lines_to_pre_html(lines, :class => :comment)",
@@ -264,7 +266,7 @@ module Codnar
     }
 
     # Format comments that use the RDoc notation. Is used to complement a
-    # configuration that classifies some lines as "comment".
+    # configuration that classifies some lines as +comment+.
     FORMAT_RDOC_COMMENTS = {
       "formatters" => {
         "comment" => "Formatter.markup_lines_to_html(lines, 'RDoc')",
@@ -273,7 +275,7 @@ module Codnar
     }
 
     # Format comments that use the Markdown notation. Is used to complement a
-    # configuration that classifies some lines as "comment".
+    # configuration that classifies some lines as +comment+.
     FORMAT_MARKDOWN_COMMENTS = {
       "formatters" => {
         "comment" => "Formatter.markup_lines_to_html(lines, 'Markdown')",
@@ -362,7 +364,7 @@ module Codnar
 
     # {{{ Weaving templates
 
-    # Weave configuration providing a single simple "include" template.
+    # Weave configuration providing a single simple +include+ template.
     WEAVE_INCLUDE = { "include" => "<%= chunk.expanded_html %>\n" }
 
     # Weave chunks in the plainest possible way.
