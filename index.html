@@ -868,10 +868,12 @@ convenient list of all of Codnar's parts and dependencies:
 <div class="chunk html">
 <pre class='sunlight-highlight-ruby'>
 require &quot;andand&quot;
+require &quot;base64&quot;
 require &quot;cgi&quot;
 require &quot;erb&quot;
 require &quot;fileutils&quot;
 require &quot;getoptions&quot;
+require &quot;irb&quot;
 require &quot;rdiscount&quot;
 require &quot;rdoc/markup/to_html&quot;
 require &quot;yaml&quot;
@@ -885,6 +887,7 @@ require &quot;codnar/version&quot;
 
 require &quot;codnar/application.rb&quot;
 require &quot;codnar/configuration.rb&quot;
+require &quot;codnar/data_files.rb&quot;
 require &quot;codnar/errors&quot;
 require &quot;codnar/formatter&quot;
 require &quot;codnar/globals.rb&quot;
@@ -1167,8 +1170,8 @@ Set the line number for any errors collected from here on.
 <div class='rdoc comment markup'>
 <p>
 Add a single error to the collection, with automatic context annotation
-(current disk file and line). Other methods (push, += etc.) do not
-automatically add the context annotation.
+(current disk file and line). Other methods (<tt>push</tt>, “+=” etc.)
+do not automatically add the context annotation.
 </p>
 </div>
 </td>
@@ -1538,7 +1541,8 @@ class Hash
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Provide OpenStruct/JavaScript-like implicit .key and .key= methods.
+Provide OpenStruct/JavaScript-like implicit “.key” and “.key=”
+methods.
 </p>
 </div>
 </td>
@@ -1894,8 +1898,8 @@ A pattern regexp can be presented by a plain string.
 </p>
 </li><li>
 <p>
-The pattern groups field can be ommitted or contain null if it is equal to
-[ “indentation”, “payload” ].
+The pattern groups field can be ommitted or contain <tt>nil</tt> if it is
+equal to [ “indentation”, “payload” ].
 </p>
 </li><li>
 <p>
@@ -1910,7 +1914,7 @@ be identical to the containing state.
 </li><li>
 <p>
 The start state can be ommitted; by default it is assumed to be named
-“start”.
+<tt>start</tt>.
 </p>
 </li></ul>
 <p>
@@ -2411,8 +2415,8 @@ end
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Extract named groups from a match. As a special case, indentation is nil if
-there is no payload.
+Extract named groups from a match. As a special case, indentation is
+deleted if there is no payload.
 </p>
 </div>
 </td>
@@ -2424,7 +2428,7 @@ def self.extracted_groups(match, groups)
   groups.each_with_index do |group, index|
     extracted[group] = match[index + 1]
   end
-  extracted.indentation = nil if match[0] == &quot;&quot;
+  extracted.delete(&quot;indentation&quot;) if match[0] == &quot;&quot;
   return extracted
 end
 
@@ -3523,34 +3527,35 @@ Format chunks into HTML.
 <p>
 Construct a Formatter based on a mapping from a classified line kind, to a
 Ruby expression, that converts an array of classified lines of that kind,
-into an array of lines of another kind. This expression is simply eval-ed,
-and is expected to make use of a variable called “lines” that contains
-an array of classified lines, as produced by a Scanner. The result of
-evaluating the expressions is expected to be an array of any number of
-classified lines of any kind.
+into an array of lines of another kind. This expression is simply
+<tt>eval</tt>-ed, and is expected to make use of a variable called
+<tt>lines</tt> that contains an array of classified lines, as produced by a
+Scanner. The result of evaluating the expressions is expected to be an
+array of any number of classified lines of any kind.
 </p>
 <p>
 Formatting repeatedly applies these formatting expressions, until the
 result is an array containing a single classified line, which has the kind
-“html” and whose payload field contains the unified final HTML
+<tt>html</tt> and whose payload field contains the unified final HTML
 presentation of the original classified lines. In each processing round,
 all consecutive lines of the same kind are formated together. This allows
 for properly formating line kinds that use a multi-line notation such as
 Markdown.
 </p>
 <p>
-The default formatting expression for the kind “html” simply joins all
-the payloads of all the classified lines into a single html, and returns a
-single “line” containing this joined HTML. All other line kinds need to
-have a formatting expression explicitly specified in the formatters
-mapping.
+The default formatting expression for the kind <tt>html</tt> simply joins
+all the payloads of all the classified lines into a single html, and
+returns a single “line” containing this joined HTML. All other line
+kinds need to have a formatting expression explicitly specified in the
+formatters mapping.
 </p>
 <p>
 If no formatting expression is specified for some classified line kind, an
 error is reported and the classified lines are wrapped in a pre HTML
-element with a “missing_formatter” class. Similarly, if a formatting
-expression fails (raises an exception), an error is reported and the lines
-are wrapped in a pre HTML element with a “failed_formatter” class.
+element with a <tt>missing_formatter</tt> CSS class. Similarly, if a
+formatting expression fails (raises an exception), an error is reported and
+the lines are wrapped in a pre HTML element with a
+<tt>failed_formatter</tt> CSS class.
 </p>
 </div>
 </td>
@@ -4172,19 +4177,20 @@ extensions:
 </p>
 <ul><li>
 <p>
-The notation [[chunk|template]] is expanded to embedding the specified
-chunk (name) using the specified template at Weave time.
+The notation “[[chunk|template]]” is expanded to embedding the
+specified chunk (name) using the specified template at Weave time.
 </p>
 </li><li>
 <p>
-The notation [[#name]] defines an empty anchor. The HTML anchor id is not
-the specified name, but rather the identifier generated from it (in the
+The notation “[[#name]]” defines an empty anchor. The HTML anchor id is
+not the specified name, but rather the identifier generated from it (in the
 same way that chunk names are converted to identifiers).
 </p>
 </li><li>
 <p>
-The notation […](#name) defines a link to an anchor, which is either the
-chunk with the specified name, or an empty anchor defined as above.
+The notation “[…](#name)” defines a link to an anchor, which is
+either the chunk with the specified name, or an empty anchor defined as
+above.
 </p>
 </li></ul>
 </div>
@@ -4211,7 +4217,9 @@ protected
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Expand [[chunk|template]] to HTML embed tags.
+Expand “[[chunk|template]]” to HTML embed tags. Use identifiers instead
+of names in the <tt>src</tt> field for safety, unless the template is a
+magical file template, in which case we must preserve the file path,
 </p>
 </div>
 </td>
@@ -4219,7 +4227,12 @@ Expand [[chunk|template]] to HTML embed tags.
 </table>
 <pre class='sunlight-highlight-ruby'>
   def self.embed_chunks(markdown)
-    return markdown.gsub(/\[\[(.*?)\|(.*?)\]\]/) { &quot;&lt;embed src='#{$1.to_id}' type='x-codnar/#{$2}'/&gt;&quot; }
+    return markdown.gsub(/\[\[(.*?)\|(.*?)\]\]/) do
+      src = $1
+      template = $2
+      src = src.to_id unless Codnar::Weaver::FILE_TEMPLATE_PROCESSORS.include?(template)
+      &quot;&lt;embed src='#{src}' type='x-codnar/#{template}'/&gt;&quot;
+    end
   end
 
 </pre>
@@ -4231,7 +4244,8 @@ Expand [[chunk|template]] to HTML embed tags.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Expand [[#name]] anchors to HTML anchor tags with the matching identifier.
+Expand “[[#name]]” anchors to HTML anchor tags with the matching
+identifier.
 </p>
 </div>
 </td>
@@ -4251,7 +4265,8 @@ Expand [[#name]] anchors to HTML anchor tags with the matching identifier.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Expand href=‘#name’ links to the matching href=‘#id’ links.
+Expand “href=‘#name’” links to the matching “href=‘#id’”
+links.
 </p>
 </div>
 </td>
@@ -4406,7 +4421,7 @@ Syntax highlight using GVim.
 <p>
 Convert a sequence of classified code lines to HTML using GVim syntax
 highlighting. The commands array allows configuring the way that GVim will
-format the output (see the `syntax_to_html` method for details).
+format the output (see the <tt>syntax_to_html</tt> method for details).
 </p>
 </div>
 </td>
@@ -5398,8 +5413,8 @@ Return a Hash merger that recursively merges nested hashes.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-If the override has a [] element, it is replaced by the default it is
-overriding.
+If the overriding data array contains an empty array element (“[]”), it
+is replaced by the default data array being overriden.
 </p>
 </div>
 </td>
@@ -5667,7 +5682,7 @@ And here are the actual configurations:
 <div class='rdoc comment markup'>
 <p>
 “Split” a documentation file. All lines are assumed to have the same
-kind “doc” and no indentation is collected. Unless overriden by
+kind <tt>doc</tt> and no indentation is collected. Unless overriden by
 additional configuration(s), the lines are assumed to contain formatted
 HTML, and are passed as-is to the output.
 </p>
@@ -5803,8 +5818,8 @@ lines as belonging to some code syntax, as a single chunk:
 Classify all lines as source code of some syntax (kind). This doesn’t
 distinguish between comment and code lines; to do that, you need to combine
 this with comment classification configuration(s). Also, it just formats
-the lines in an HTML pre element, without any syntax highlighting; to do
-that, you need to combine this with syntax highlighting formatting
+the lines in an HTML <tt>pre</tt> element, without any syntax highlighting;
+to do that, you need to combine this with syntax highlighting formatting
 configuration(s).
 </p>
 </div>
@@ -6080,7 +6095,8 @@ treated as a comment.
 <p>
 This configuration is typically complemented by an additional one
 specifying how to format the (stripped!) comments; by default they are just
-displayed as-is using an HTML pre element, which isn’t very useful.
+displayed as-is using an HTML <tt>pre</tt> element, which isn’t very
+useful.
 </p>
 </div>
 </td>
@@ -6323,7 +6339,8 @@ classified as a comment.
 <p>
 This configuration is typically complemented by an additional one
 specifying how to format the (stripped!) comments; by default they are just
-displayed as-is using an HTML pre element, which isn’t very useful.
+displayed as-is using an HTML <tt>pre</tt> element, which isn’t very
+useful.
 </p>
 </div>
 </td>
@@ -6624,7 +6641,7 @@ supported, as well as simply wrapping the comment in an HTML pre element:
 <div class='rdoc comment markup'>
 <p>
 Format comments as HTML pre elements. Is used to complement a configuration
-that classifies some lines as “comment”.
+that classifies some lines as <tt>comment</tt>.
 </p>
 </div>
 </td>
@@ -6647,7 +6664,7 @@ FORMAT_PRE_COMMENTS = {
 <div class='rdoc comment markup'>
 <p>
 Format comments that use the RDoc notation. Is used to complement a
-configuration that classifies some lines as “comment”.
+configuration that classifies some lines as <tt>comment</tt>.
 </p>
 </div>
 </td>
@@ -6671,7 +6688,7 @@ FORMAT_RDOC_COMMENTS = {
 <div class='rdoc comment markup'>
 <p>
 Format comments that use the Markdown notation. Is used to complement a
-configuration that classifies some lines as “comment”.
+configuration that classifies some lines as <tt>comment</tt>.
 </p>
 </div>
 </td>
@@ -8353,14 +8370,8 @@ containing chunk. When embedding a source code chunk into the documentation,
 however, we may want to wrap it in some boilerplate HTML, providing a header,
 footer, borders, links, etc. Therefore, the HTML syntax we use to embed a chunk
 into the documentation is <code>&lt;embed src="..." type="x-codnar/template-name"/&gt;</code>.
-</p>
-<p>
-The templates are normal ERB templates. As a special and highly magical case,
-the template named <code>file</code> simply embeds the specified file into the
-documentation at that point. This is similar to the "server side include"
-available in many web framework, or to a client-side <code>iframe</code> directive. This
-really should have been part of HTML; why HTML allows unrestricted inclusion of
-JavaScript code but denies the same ability to HTML and CSS code is beyond me.
+The templates are normal ERB templates, except for the magical <code>file</code> and
+<code>image</code> templates, described below.
 </p>
 <p>
 At any rate, here is a simple test demonstrating applying different templates
@@ -8645,6 +8656,27 @@ the specified templates.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
+How to process each magical file template.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='sunlight-highlight-ruby'>
+    FILE_TEMPLATE_PROCESSORS = {
+      &quot;file&quot; =&gt; lambda { |name, data| data },
+      &quot;image&quot; =&gt; lambda { |name, data| Weaver.embedded_base64_img_tag(name, data) },
+    }
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
 Weave the HTML for a named chunk.
 </p>
 </div>
@@ -8653,7 +8685,7 @@ Weave the HTML for a named chunk.
 </table>
 <pre class='sunlight-highlight-ruby'>
     def weave(template, chunk_name = @root_chunk)
-      return process_file(chunk_name) if template == &quot;file&quot;
+      return process_file_template(template, chunk_name) if FILE_TEMPLATE_PROCESSORS.include?(template)
       @last_chunk = chunk = self[chunk_name.to_id]
       expand_chunk_html(chunk)
       return process_template(chunk, template)
@@ -8689,7 +8721,7 @@ the following regular expressions must be on a single line.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Detect embedded chunks (type= before src=).
+Detect embedded chunks (<tt>type</tt> before <tt>src</tt>).
 </p>
 </div>
 </td>
@@ -8707,7 +8739,7 @@ Detect embedded chunks (type= before src=).
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Detect embedded chunks (src= before type=).
+Detect embedded chunks (<tt>src</tt> before <tt>type</tt>).
 </p>
 </div>
 </td>
@@ -8795,30 +8827,16 @@ chunk.
     end
 
 </pre>
-    <table class='layout'>
-<tr>
-<td class='indentation'>
-<pre>    </pre>
-</td>
-<td class='html'>
-<div class='rdoc comment markup'>
-<p>
-Process a disk file (invoked by the special “file” template).
-</p>
-</div>
-</td>
-</tr>
-</table>
+<pre class='nested chunk'>
+    <a class='nested chunk' href='#processing-the-file-template'>Processing the file template</a>
+</pre>
 <pre class='sunlight-highlight-ruby'>
-    def process_file(path)
-      begin
-        return File.read(path)
-      rescue Exception =&gt; exception
-        @errors.push(&quot;#{$0}: Reading file: #{path} exception: #{exception} #{Reader.locations_message(@last_chunk)}&quot;) \
-          if @last_chunk
-        return &quot;FILE: #{path} EXCEPTION: #{exception}&quot;
-      end
-    end
+
+</pre>
+<pre class='nested chunk'>
+    <a class='nested chunk' href='#processing-base64-embedded-data-images'>Processing Base64 embedded data images</a>
+</pre>
+<pre class='sunlight-highlight-ruby'>
 
   end
 
@@ -8849,7 +8867,7 @@ And here are the pre-defined weaving template configurations:
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Weave configuration providing a single simple “include” template.
+Weave configuration providing a single simple <tt>include</tt> template.
 </p>
 </div>
 </td>
@@ -8945,6 +8963,366 @@ WEAVE_NAMED_CHUNK_WITH_CONTAINERS = {
 </ul>
 </div>
 </div>
+</p>
+<h4>Embedding files</h4>
+<p>
+The template named <code>file</code> is special in two ways. First, the <code>src</code> is given
+special treatment. If it begins with a "<code>.</code>", it is assumed to be a normal path
+name relative to the current working directory; otherwise, it is assumed to be
+a name of a file packaged inside some gem and is searched for in Ruby's
+<code>$LOAD_PATH</code>. This allows gems (such as Codnar itself) to provide such files to
+be used in the woven documentation.
+</p>
+<p>
+Second, the content of the file is simply embedded into the generated
+documentation. This allows the documentation to be a stand-alone file,
+including all the CSS and Javascript required for proper display.
+</p>
+<p>
+At any rate, here is a simple test demonstrating how data file paths are
+resolved:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="test-access-data-files-rb">
+<span>test/access_data_files.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='sunlight-highlight-ruby'>
+require &quot;codnar&quot;
+require &quot;test/spec&quot;
+
+module Codnar
+
+</pre>
+  <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>  </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Test accessing data files packages with the gem.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='sunlight-highlight-ruby'>
+  class TestAccessDataFiles &lt; Test::Unit::TestCase
+
+    def test_access_data_file
+      File.exist?(DataFiles.expand_path(&quot;codnar/reader.rb&quot;)).should == true
+    end
+
+    def test_access_missing_file
+      DataFiles.expand_path(&quot;no-such-file&quot;).should == &quot;no-such-file&quot;
+    end
+
+  end
+
+end
+</pre>
+</div>
+</div>
+</p>
+<p>
+Here is the implementation:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="lib-codnar-data-files-rb">
+<span>lib/codnar/data_files.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='sunlight-highlight-ruby'>
+module Codnar
+
+</pre>
+  <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>  </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Provide access to data files packaged with the gem.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='sunlight-highlight-ruby'>
+  module DataFiles
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Given the name of a data file packaged in some gem, return the absolute
+disk path for accessing that data file. This is similar to what
+<tt>require</tt> does internally, but here we just want the path for
+reading data, rather than load the Ruby code in the file.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='sunlight-highlight-ruby'>
+    def self.expand_path(relative_path)
+      $LOAD_PATH.each do |load_directory|
+        absolute_path = File.expand_path(load_directory + &quot;/&quot; + relative_path)
+        return absolute_path if File.exist?(absolute_path)
+      end
+      return relative_path # This will cause &quot;file not found error&quot; down the line.
+    end
+
+  end
+
+end
+</pre>
+</div>
+</div>
+</p>
+<p>
+And here is the function for handling the magical <code>file</code> template:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="processing-the-file-template">
+<span>Processing the file template</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='sunlight-highlight-ruby'>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Process one of the magical file templates. The content of the file,
+optionally processed, is directly embedded into the generated
+documentation. If the file’s path begins with “.”, it is taken to be
+relative to the current working directory. Otherwise, it is searched for in
+Ruby’s load path, allowing easy access to files packaged inside gems.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='sunlight-highlight-ruby'>
+def process_file_template(template, path)
+  begin
+    path = DataFiles.expand_path(path) unless path[0,1] == &quot;.&quot;
+    return FILE_TEMPLATE_PROCESSORS[template].call(path, File.read(path))
+  rescue Exception =&gt; exception
+    @errors.push(&quot;#{$0}: Reading file: #{path} exception: #{exception} #{Reader.locations_message(@last_chunk)}&quot;) \
+      if @last_chunk
+    return &quot;FILE: #{path} EXCEPTION: #{exception}&quot;
+  end
+end
+
+</pre>
+</div>
+<div class="chunk containers">
+<span class="chunk containers header">Contained in:</span>
+<ul class="chunk containers">
+<li class="chunk container">
+<a class="chunk container" href="#lib-codnar-weaver-rb">lib/codnar/weaver.rb</a>
+</li>
+</ul>
+</div>
+</div>
+</p>
+<p>
+See the <code>doc/root.html</code> file for plenty of examples of using this
+functionality.
+</p>
+<h4>Embedding images</h4>
+<p>
+The <code>image</code> template is a specialization of the <code>file</code> template for dealing
+with embedded images. The specified image file is embedded into the generated
+HTML as an <code>img</code> tag, using a <a href="http://en.wikipedia.org/wiki/Data_URI_scheme">data
+URL</a>. This is very useful for
+small images, but is problematic when their size increase beyond
+browser-specific limits.
+</p>
+<p>
+Here is a simple test demonstrating processing embedded image files:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="test-embed-images-rb">
+<span>test/embed_images.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='sunlight-highlight-ruby'>
+require &quot;codnar&quot;
+require &quot;test/spec&quot;
+
+module Codnar
+
+</pre>
+  <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>  </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Test computing embedded image HTML tags.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='sunlight-highlight-ruby'>
+  class TestEmbedImages &lt; Test::Unit::TestCase
+
+    def test_embed_image
+      Weaver.embedded_base64_img_tag('fake file.png', 'fake file content').should \
+        == &quot;&lt;img src='data:image/png;base64,ZmFrZSBmaWxlIGNvbnRlbnQ=\n'/&gt;&quot;
+    end
+
+  end
+
+end
+</pre>
+</div>
+</div>
+</p>
+<p>
+Here is the implementation:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="processing-base64-embedded-data-images">
+<span>Processing Base64 embedded data images</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='sunlight-highlight-ruby'>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Create an <tt>img</tt> tag with an embedded data URL. Different browsers
+have different constraints about the size of the resulting URL, so YMMV.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='sunlight-highlight-ruby'>
+def self.embedded_base64_img_tag(name, data)
+  extension = File.extname(name).sub(&quot;.&quot;, &quot;/&quot;)
+  return &quot;&lt;img src='data:image#{extension};base64,&quot; \
+       + Base64.encode64(data) \
+       + &quot;'/&gt;&quot;
+end
+
+</pre>
+</div>
+<div class="chunk containers">
+<span class="chunk containers header">Contained in:</span>
+<ul class="chunk containers">
+<li class="chunk container">
+<a class="chunk container" href="#lib-codnar-weaver-rb">lib/codnar/weaver.rb</a>
+</li>
+</ul>
+</div>
+</div>
+</p>
+<p>
+And here is a sample embedded image:
+</p>
+<p>
+<img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAAABGdBTUEAALGP
+C/xhBQAAAwBQTFRFAAAAAAQACAgACAwACAgICAwIEBAAEBQAGBgAGBwAEBAQ
+EBQQGBgYGBwYISAAISQAKSgAKSwAMTAAMTQAOTgAOTwAISAhISQhKSgpKSwp
+MTAxMTQxOTg5OTw5QkEAQkUASkkASk0AUlEAUlUAWlkAWl0AY2EAY2UAa2kA
+a20Ac3EAc3UAe3kAe30AQkFCQkVCSklKSk1KUlFSUlVSWllaWl1aY2Vja2lr
+a21rc3Fzc3Vze3l7e317hIIAhIYAjIoAjI4AlJIAlJYAnJoAnJ4ApaIApaYA
+raoAra4AtbIAtbYAvboAvb4AxsMAxscAzssAzs8A1tMA1tcA3tsA3t8A5+MA
+5+cA7+sA7+8A9/MA9/cA//sA//8AhIKEhIaEjIqMjI6MlJKUlJaUnJqcpaKl
+paalraqtra6ttbK1AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAA6Ke7cwAAAQB0Uk5T////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////AFP3ByUAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2
+My41LjVJivzgAAAFm0lEQVRoQ+1ZaVsURxCe2dEFPGDRKCqKqHhExXgnKgQP
+EFHkPndb3cSI+f9/YDLTVTPTVV093WMev1GfeNi36u3qrq1ro/QnS/ST7aeH
+BN4bPryi/3FF/RczDcRJ5HyDgzhqIvddDE6Cc03MR1F84GBwEXxqZj+KzjUk
+ON6UIPoiMzg8eNLYfnS8EcERTTAY9tAIeyoyyB7c0/aTxU6II/H8Lxp2JJzg
+K9id6i20Ahgmu+8Bdk9iED04Cxe0obqX/QTJqupNAeybwCARvAD4rFJqJfEy
+/JrBNgY0bCyQ4JhGj+xlmuqWj2BoO4fdBdgnm0Hw4JHGxm9zRbU1WM8Qv9Sw
+3RENOxZEALE50dWaaq4+VE/vA+wNwB5bDLYH4xqZfARFtX+qzoXWEsK6E+C3
+n+BvsHcLFZV6Vxeq13oF7iOEw0XOYHlwUuMGN0uC3hW3C+31EqauA+wrY+AE
+z8DTuUpRrblD9bYB24RwOOshOKpRozpEC7ntcmFkx4TNwjs/owzMgwca01o0
+FdX2kMwQvyawvVENO1pH8B0OcaV8OrDwWg7VMxjJBc0iwB4SBurBeY1or5GT
+KdWFdMmktcxgvUmNoKFKCPpgIs8uVJakUJ1ifiq1CuEwbrpACE7ozyG7ECnS
+penDwIYFUzcB0DcYTIKn4OErW1Gtt/kFxXcF2Nawhp1wEECdLLIL1Z/mBJ1d
+gUC9BNgfFYPhAdTJ1ntJsUiXJU28IMIwcxnVsyL4BkFWZRdqYZ6G6mXrhQG+
+BLCq0asIxvQnZnYhDJgu0YVkRXRAKcxcVaNXEszAC0tPB7Y+mCnphsO+UmtQ
+PctGryTAOik+HVjDGMzVh7acBOoOOPkZ37kggFYunncrqk04Wy5msuUaOxCq
+RaNXEECI8uxClTFd8mTLGTBzYaOHBBe1/WS5xgGlMF1G8bta2D5p9IAAW7nr
+jtgr7C1ADE56YB/MRg8IoE5K2YWG6mQOa6/WOpCFKjZ6/+SmNcFzeOE/PYqY
+Ls06KWuYjZ4mgBDtkDopq2ahOmwnWwuLmStv9HKCh+AAtHL1klVPKdlyJaPR
+ywmwldvZC5DpU9sBqL1XYPOR9uCz/juKkxBpd0JQCaaV83BFkObC5OpiyEyC
+tvKUlxNgog5hGFjvXQ3BASZP2jqKoNSEyJ0sXfpnErSkyw580SAT+WU4b+Wc
+jR7X/70igHLvFUi2OzBseAVKPya7sMH+DEwbjkaPM0LzggR973kyQJFs5UaP
+W7ig7ZdbR2ga62Wq+MJiuqxFFw1kUXC++6ybyVZq9Lj+A3Cg2ptC414n+dyM
+gumyBl028VXb4gtVkmytRo9zlWNIRQDDk1NaJNnudurRJ/GCjCsqyppLcYLW
+SayeLnQ1Chq9KQ6wsg5v5Wijx3WMYdZs32EEl8Vq5ZZrUpI545ABxL01sFu5
+3g33abI6I71BmsIaRBBceZDK6F6TkJUI8SCFKdmWUVx5EIZZ13FmDAfYDxS4
+iuKaLbGVKxo9jqZrKepBCss0LnxuRkdwLuZoulhjBNhDUh1XK4dzMSO4ZF4Q
++aLpDy4JDjhbuVVr9rSXm8wDqXrqOimLsNHj61mL4DF3ga08CJO9JrEWzBYB
+NqoVjTw3I4+10ftCX8B+gzSFabCURJ6bkWD/NEXbS37bg5T+NGGvPMgl0TWJ
+8DOFQHBgHmrA2MpJD003enkrx0QgSH8zGKZ9Df16NXvyZRetySZxVT1rQrRg
+Nho9YwciZ9Piv2WjF7/xOWA2euYWp54ghc1UtV+upcGtchT9Zb+AFKY5qg/2
+47mVAFmG0T7CVi7gkTMINnpxmMBppPO7PEj/FXKe5190m+l5gzS935SB7WO9
+BM7q6SJ+Lt+Q+zd9T6PHefhO3O9BOj7WRPReIjxMXegf+L+Ui37AjFvlkMB7
+nYdX5L2i/wAENTnBDcjR4QAAAABJRU5ErkJggg==
+'/>
 </p>
 <h2>Invoking the functionality</h2>
 <p>
@@ -10848,8 +11226,8 @@ Run the Weave application for a single source file.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Connect the task for cleaning up after weaving (clobber_codnar) to the
-common task of cleaning up everything (clobber).
+Connect the task for cleaning up after weaving (<tt>clobber_codnar</tt>) to
+the common task of cleaning up everything (<tt>clobber</tt>).
 </p>
 </div>
 </td>
@@ -10946,9 +11324,10 @@ Source file lists
 
 patterns = {
   &quot;bin&quot; =&gt; &quot;bin/*&quot;,
-  &quot;css&quot; =&gt; &quot;doc/*.css&quot;,
+  &quot;css&quot; =&gt; &quot;lib/codnar/data/*.css&quot;,
+  &quot;data&quot; =&gt; &quot;lib/codnar/data/**/*.*&quot;,
   &quot;doc&quot; =&gt; &quot;doc/*&quot;,
-  &quot;javascript&quot; =&gt; &quot;doc/*.js&quot;,
+  &quot;javascript&quot; =&gt; &quot;lib/codnar/data/*.js&quot;,
   &quot;lib&quot; =&gt; &quot;lib/**/*.rb&quot;,
   &quot;test&quot; =&gt; &quot;test/*.rb&quot;,
   &quot;testlib&quot; =&gt; &quot;test/lib/*.rb&quot;,
@@ -11007,7 +11386,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency(&quot;Saikuro&quot;)
   s.add_development_dependency(&quot;test-spec&quot;)
 
-  s.files = files.lib + files.bin + files.doc
+  s.files = files.lib + files.bin + files.doc + files.data
   s.test_files = files.test + files.testlib
   s.executables = files.bin.map { |path| path.sub(&quot;bin/&quot;, &quot;&quot;) }
 
@@ -11338,7 +11717,7 @@ This version number.
 </tr>
 </table>
 <pre class='sunlight-highlight-ruby'>
-  VERSION = &quot;0.1.59&quot;
+  VERSION = &quot;0.1.60&quot;
 </pre>
   <table class='layout'>
 <tr>
@@ -11446,8 +11825,8 @@ Expanding the embedded code chunks allows the reader to delve into the details.
 <p>
 <div class="named_with_containers chunk">
 <div class="chunk name">
-<a name="doc-control-chunks-js">
-<span>doc/control_chunks.js</span>
+<a name="lib-codnar-data-control-chunks-js">
+<span>lib/codnar/data/control_chunks.js</span>
 </a>
 </div>
 <div class="chunk html">
@@ -11547,8 +11926,8 @@ iunjecting a table of content into the generated HTML.
 <p>
 <div class="named_with_containers chunk">
 <div class="chunk name">
-<a name="doc-contents-js">
-<span>doc/contents.js</span>
+<a name="lib-codnar-data-contents-js">
+<span>lib/codnar/data/contents.js</span>
 </a>
 </div>
 <div class="chunk html">
@@ -11801,8 +12180,8 @@ file, to allow easy upgrade to new versions if/when YUI release any.
 <p>
 <div class="named_with_containers chunk">
 <div class="chunk name">
-<a name="doc-style-css">
-<span>doc/style.css</span>
+<a name="lib-codnar-data-style-css">
+<span>lib/codnar/data/style.css</span>
 </a>
 </div>
 <div class="chunk html">
