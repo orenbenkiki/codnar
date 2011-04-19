@@ -1,4 +1,4 @@
-# Expand RDoc text with some Codnar extensions.
+# Extend the RDoc module.
 module RDoc
 
   # Process a RDoc String and return the resulting HTML.

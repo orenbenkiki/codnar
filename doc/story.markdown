@@ -163,6 +163,14 @@ your source code files, and works perfectly well inside your favorite IDE or
 editor. If you follow TDD or BDD, Codnar will make it easier for you to
 complement it with DDD.
 
+Codnar is available under the MIT license:
+
+[[LICENSE|named_chunk_with_containers]]
+
+And the current Codnar version is:
+
+[[lib/codnar/version.rb|named_chunk_with_containers]]
+
 The rest of this document goes into the details of Codnar's implementation. The
 core of the system is the following simple data flow: A set of source files is
 split into chunks; the chunks are woven into a single HTML. This simple flow

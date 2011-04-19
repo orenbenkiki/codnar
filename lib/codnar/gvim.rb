@@ -1,5 +1,3 @@
-require "tempfile"
-
 module Codnar
 
   # Syntax highlight using GVim.

@@ -76,7 +76,7 @@ module Codnar
     # in Ruby's load path, allowing easy access to files packaged inside gems.
     def process_file_template(template, path)
       begin
-        path = DataFiles.expand_path(path) unless path[0,1] == "."
+        path = Olag::DataFiles.expand_path(path) unless path[0,1] == "."
         return FILE_TEMPLATE_PROCESSORS[template].call(path, File.read(path))
       rescue Exception => exception
         @errors.push("#{$0}: Reading file: #{path} exception: #{exception} #{Reader.locations_message(@last_chunk)}") \

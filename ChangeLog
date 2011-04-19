@@ -1,6 +1,13 @@
-2011-04-16	Oren Ben-Kiki <github-oren@ben-kiki.org>
+2011-04-19	Oren Ben-Kiki <github-oren@ben-kiki.org>
+
+	* Refactor out the Olag gem.
+
+2011-04-17	Oren Ben-Kiki <github-oren@ben-kiki.org>
 
 	* Better treatment of embedded files.
+
+2011-04-16	Oren Ben-Kiki <github-oren@ben-kiki.org>
+
 	* Support and use Sunlight syntax highlighting.
 
 2011-04-12	Oren Ben-Kiki <github-oren@ben-kiki.org>

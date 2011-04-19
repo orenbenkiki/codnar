@@ -1,21 +1,10 @@
 # Extend the core Hash class.
 class Hash
 
-  # Provide OpenStruct/JavaScript-like implicit ".key" and ".key=" methods.
-  def method_missing(method, *arguments)
-    method = method.to_s
-    key = method.chomp("=")
-    return method == key ? self[key] : self[key] = arguments[0]
-  end
-
-  # {{{ Deep clone
-
   # Obtain a deep clone which shares nothing with this hash.
   def deep_clone
     return YAML.load(to_yaml)
   end
-
-  # }}}
 
   # {{{ Deep merge
 

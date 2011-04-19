@@ -1,53 +1,54 @@
 require "codnar"
+require "olag/test"
 require "test/spec"
-require "test_with_fakefs"
 
 module Codnar
 
   # Test running a Codnar Application.
   class TestRunApplication < Test::Unit::TestCase
   
-    include TestWithFakeFS
-
-    def test_do_nothing
-      Application.with_argv(%w(dummy)) { Application.new(true).run }.should == 0
-    end
+    include Test::WithFakeFS
+    include Test::WithTempfile
 
     def test_print_version
-      Application.with_argv(%w(-v -h -o nested/stdout dummy)) { Application.new(true).run }.should == 0
-      File.read("nested/stdout").should == "#{$0}: Version: #{Codnar::VERSION}\n"
+      Codnar::Application.with_argv(%w(-o nested/stdout -v -h dummy)) { Codnar::Application.new(true).run }.should == 0
+      File.read("nested/stdout").should == "#{$0}: Version: #{Codnar.version}\n"
     end
 
     def test_print_help
-      Application.with_argv(%w(-h -o stdout dummy)) { Application.new(true).run }.should == 0
+      Codnar::Application.with_argv(%w(-o stdout -h -v dummy)) { Codnar::Application.new(true).run }.should == 0
       File.read("stdout").should.include?("OPTIONS")
     end
 
-    def test_require_configuration_module
-      # The additional_module is read by Ruby and is not captured by FakeFS.
-      File.open("additional_configuration.yaml", "w") { |file| file.puts("bar: updated_bar") }
-      status = Application.with_argv(%w(-o stdout -I support -r additional_module
-                                        -c ADDITIONAL additional_configuration.yaml -- dummy)) do
-        run_print_configuration
-      end
-      YAML.load_file("stdout").should == { "foo" => "original_foo", "bar" => "updated_bar" }
+    USER_CONFIGURATION = {
+      "formatters" => {
+        "doc" => "Formatter.lines_to_pre_html(lines, :class => :pre)",
+      }
+    }
+
+    def test_merge_configurations
+      File.open("user_configuration.yaml", "w") { |file| file.print(USER_CONFIGURATION.to_yaml) }
+      Codnar::Application.with_argv(%w(-o stdout -c split_pre_documentation -c user_configuration.yaml -p)) { Codnar::Application.new(true).run }.should == 0
+      YAML.load_file("stdout").should == Codnar::Configuration::SPLIT_PRE_DOCUMENTATION.deep_merge(USER_CONFIGURATION)
     end
 
     def test_require_missing_configuration
-      status = Application.with_argv(%w(-e stderr -I support -r additional_module
-                                        -c additional no-such-configuration -- dummy)) do
-        run_print_configuration
-      end
+      status = Application.with_argv(%w(-e stderr -c no-such-configuration)) { Codnar::Application.new(true).run }.should == 1
       File.read("stderr").should \
         == "#{$0}: Configuration: no-such-configuration is neither a disk file nor a known configuration\n"
     end
 
-  protected
+    def test_require_module
+      FakeFS.deactivate! # The additional_module is read by Ruby and is not affected by FakeFS.
+      directory = create_tempdir
+      File.open(directory + "/additional_module.rb", "w") { |file| file.puts("puts 'HERE'") }
+      Application.with_argv(["-o", stdout = directory + "/stdout", "-I", directory, "-r", "additional_module" ]) { Codnar::Application.new(true).run }.should == 0
+      File.read(stdout).should == "HERE\n"
+    end
 
-    def run_print_configuration
-      Application.new(true).run do |configuration|
-        puts configuration.to_yaml
-      end
+    def test_require_missing_module
+      Application.with_argv(%w(-e stderr -I support -r no_such_module)) { Codnar::Application.new(true).run }.should == 1
+      File.read("stderr").should == "#{$0}: no such file to load -- no_such_module\n"
     end
 
   end

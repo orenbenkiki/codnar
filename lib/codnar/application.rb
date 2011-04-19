@@ -1,118 +1,67 @@
 module Codnar
 
   # Base class for Codnar applications.
-  class Application
+  class Application < Olag::Application
 
     # Create a Codnar application.
     def initialize(is_test = nil)
-      @errors = Errors.new
-      @is_test = !!is_test
+      super(is_test)
       @configuration ||= {}
     end
 
     # Run the Codnar application, returning its status.
     def run(&block)
-      parse_options
-      block.call(@configuration) if block
-      return print_errors
-    rescue ExitException => exception
-      return exception.status
-    end
-
-    # Execute a block with an overriden ARGV, typically for running an
-    # application.
-    def self.with_argv(argv)
-      return Globals.without_changes do
-        ARGV.replace(argv)
-        yield
-      end
+      super(@configuration, &block)
     end
 
   protected
 
-    # Parse the command line options of the program.
-    def parse_options
-      @options = GetOptions.new(%w(help version output=string error=string include|I=@string require=@string configuration=@string))
-      redirect_files
-      print_options
-      load_modules
-      merge_configurations
+    # Define Codnar application flags.
+    def define_flags
+      super
+      define_include_flag
+      define_require_flag
+      define_merge_flag
+      define_print_flag
     end
 
-    # Redirect standard output and error according to the parsed command line
-    # options.
-    def redirect_files
-      $stdout = Application::redirect_file($stdout, @options.output)
-      $stderr = Application::redirect_file($stderr, @options.error)
+    # Return the application's version - that is, Codnar's version.
+    def version
+      return Codnar.version
     end
 
-    # Redirect a standard file.
-    def self.redirect_file(default, file)
-      return default if file.nil? || file == "-"
-      FileUtils.mkdir_p(File.dirname(File.expand_path(file)))
-      return File.open(file, "w")
-    end
-
-    # Print data about the program and exit according to the parsed command
-    # line options.
-    def print_options
-      print_version if @options.version
-      print_help if @options.help
-    end
-
-    # Print the current Codnar version.
-    def print_version
-      puts("#{$0}: Version: #{Codnar::VERSION}")
-      exit(0)
-    end
-
-    # Print a short help message listing the available command line options.
-    def print_help(&block)
-      print_help_before_options
-      print_standard_options
-      print_help_after_options
-      exit(0)
-    end
-
-    # Print the part of the help message before the standard options.
-    def print_help_before_options
-    end
-
-    # Print the standard Codnar options.
-    def print_standard_options
-      print(<<-EOF.unindent)
-        OPTIONS:
-
-          -h, --help                           Print this help message and exit.
-          -v, --version                        Print the version number (#{Codnar::VERSION}) and exit.
-          -o, --output <path>|-                Redirect standard output to the <path>.
-          -e, --error <path>|-                 Redirect standard error to the <path>.
-          -I, --include <path>...              Add <path>(s) to Ruby's libs search path.
-          -r, --require <path>...              Ruby require the code in the <path>(s).
-          -c, --configuration <NAME>|<path>... Load named or disk file configuration(s).
-      EOF
-    end
-
-    # Print the part of the help message after the standard options.
-    def print_help_after_options
-    end
-
-    # Load all requested modules.
-    def load_modules
-      (@options.include || []).reverse.each do |path|
-        $:.unshift(path)
-      end
-      (@options.require || []).each do |path|
-        require path
+    # Define a flag for collecting module load path directories.
+    def define_include_flag
+      @options.on("-I", "--include DIRECTORY", String, "Add directory to Ruby's load path.") do |path|
+        $LOAD_PATH.unshift(path)
       end
     end
 
-    # Merge all the specified configuration data into one mapping.
-    def merge_configurations
-      configurations = @options.configuration || []
-      @configuration = configurations.reduce(@configuration) do |configuration, name_or_path|
-        named_configuration = load_configuration(name_or_path)
-        configuration.deep_merge(named_configuration)
+    # Define a flag for loading a Ruby module. This may be needed for
+    # user-specified configurations to work.
+    def define_require_flag
+      @options.on("-r", "--require MODULE", String, "Load a Ruby module for user configurations.") do |path|
+        begin
+          require(path)
+        rescue Exception => exception
+          $stderr.puts("#{$0}: #{exception}")
+          exit(1)
+        end
+      end
+    end
+
+    # Define a flag for applying (merging) a Codnar configuration.
+    def define_merge_flag
+      @options.on("-c", "--configuration NAME-or-FILE", String, "Apply a named or disk file configuration.") do |name_or_path|
+        loaded_configuration = load_configuration(name_or_path)
+        @configuration = @configuration.deep_merge(loaded_configuration)
+      end
+    end
+
+    # Define a flag for printing the (merged) Codnar configuration.
+    def define_print_flag
+      @options.on("-p", "--print", "Print the merged configuration.") do |name_or_path|
+        puts(@configuration.to_yaml)
       end
     end
 
@@ -129,40 +78,13 @@ module Codnar
     # Compute the value of a named built-in configuration.
     def configuration_value(name)
       begin
-        value = Codnar::Configuration.const_get(name.upcase)
+        value = Configuration.const_get(name.upcase)
         return value if value
       rescue
         value = nil
       end
       $stderr.puts("#{$0}: Configuration: #{name} is neither a disk file nor a known configuration")
       exit(1)
-    end
-
-    # Print all the collected errors.
-    def print_errors
-      @errors.each do |error|
-        $stderr.puts(error)
-      end
-      return @errors.size
-    end
-
-    # Exit the application, unless we are running inside a test.
-    def exit(status)
-      Kernel.exit(status) unless @is_test
-      raise ExitException.new(status)
-    end
-
-  end
-
-  # Exception used to exit when running inside tests.
-  class ExitException < Exception
-
-    # The exit status.
-    attr_reader :status
-
-    # Create a new exception to indicate exiting the program with some status.
-    def initialize(status)
-      @status = status
     end
 
   end

@@ -1,4 +1,4 @@
-# Expand Markdown text with some Codnar extensions.
+# Extend the Markdown class.
 class Markdown
 
   # Process a Markdown String and return the resulting HTML. In addition to the
