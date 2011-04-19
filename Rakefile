@@ -13,18 +13,18 @@ Olag::Rake::CODNAR_CONFIGURATIONS.unshift([
   # They may however contain HTML islands.
   "test/.*\.rb",
   "classify_source_code:ruby",
-  "format_code_sunlight:ruby",
+  "format_code_gvim_css:ruby",
   "classify_nested_code:ruby:html",
-  "format_code_sunlight:html",
+  "format_code_gvim_css:html",
   "classify_shell_comments",
   "format_rdoc_comments",
 ], [
   # Ruby sources contain HTML islands.
   "Rakefile|.*\.rb|bin/.*",
   "classify_source_code:ruby",
-  "format_code_sunlight:ruby",
+  "format_code_gvim_css:ruby",
   "classify_nested_code:ruby:html",
-  "format_code_sunlight:html",
+  "format_code_gvim_css:html",
   "classify_shell_comments",
   "format_rdoc_comments",
   "chunk_by_vim_regions",
@@ -32,14 +32,14 @@ Olag::Rake::CODNAR_CONFIGURATIONS.unshift([
   # We also have Javascript sources.
   ".*\.js",
   "classify_source_code:javascript",
-  "format_code_sunlight:javascript",
+  "format_code_gvim_css:javascript",
   "classify_c_comments",
   "format_markdown_comments"
 ], [
   # We also have CSS sources.
   ".*\.css",
   "classify_source_code:css",
-  "format_code_sunlight:css",
+  "format_code_gvim_css:css",
   "classify_c_comments",
   "format_markdown_comments"
 ])

@@ -4,3 +4,9 @@ FeatureEnvy: # LowCohesion
 UtilityFunction: # LowCohesion
   exclude:
   - !ruby/regexp /Test|With/
+Duplication:
+  exclude:
+  - !ruby/regexp /test_cached_computation/
+LongMethod:
+  exclude:
+  - !ruby/regexp /test_cached_computation/

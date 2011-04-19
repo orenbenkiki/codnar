@@ -168,6 +168,18 @@ And here is the implementation:
 
 [[lib/codnar/gvim.rb|named_chunk_with_containers]]
 
+Since GVim is so slow, we are using caching to minimize the time it takes to
+recompute the same code's highlighted HTML. This is pretty useful in practice -
+making changes in one chunk in a file will not require recomputing the
+highlighting for any of the unchanged chunks in the same file. Here is a simple
+test of using the caching functionality:
+
+[[test/cache_computations.rb|named_chunk_with_containers]]
+
+And here is the implementation:
+
+[[lib/codnar/cache.rb|named_chunk_with_containers]]
+
 #### Syntax highlighting using Sunlight ####
 
 [Sunlight](http://sunlightjs.com/) offers a different approach for syntax
@@ -650,4 +662,10 @@ file, to allow easy upgrade to new versions if/when YUI release any.
 When using Sunlight for syntax highlighting, we also need to include some CSS
 and Javascript files to convert the classified `pre` elements into properly
 marked-up HTML. We also need to invoke this Javascript code (a one-line
-operations). See the last few lines of the `doc/root.html` file for details.
+operations). Here is what such code might look like inside a Javascript block
+of the generated HTML:
+
+  &lt;embed src="codnar/data/sunlight/min.js" type="x-codnar/file"/&gt;
+  &lt;embed src="codnar/data/sunlight/ruby-min.js" type="x-codnar/file"/&gt;
+  Sunlight.globalOptions.lineNumbers = false;
+  Sunlight.highlightAll();

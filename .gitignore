@@ -1,8 +1,7 @@
 *.swp
+.gvim-cache/*.yaml
 chunks/
-codnar.html
 coverage/
 pkg/
-rcov/
 rdoc/
 saikuro/

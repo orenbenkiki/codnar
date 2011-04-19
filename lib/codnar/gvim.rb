@@ -8,14 +8,27 @@ module Codnar
     # will format the output (see the +syntax_to_html+ method for details).
     def self.lines_to_html(lines, syntax, commands = [])
       return Formatter.merge_lines(lines, "html") do |payload|
-        GVim.syntax_to_html(payload + "\n", syntax, commands).chomp
+        GVim.cached_syntax_to_html(payload + "\n", syntax, commands).chomp
       end
+    end
+
+    # The cache used for speeding up recomputing the same syntax highlighting
+    # HTML.
+    @cache = Cache.new(".gvim-cache") do |data|
+      GVim.uncached_syntax_to_html(data.text, data.syntax, data.commands)
+    end
+
+    # Force recomputation of the syntax highlighting HTML, even if a cached
+    # version exists.
+    def self.force_recompute=(force_recompute)
+      @cache.force_recompute = force_recompute
     end
 
     # Highlight syntax of text using GVim. This uses the GVim standard CSS
     # classes to mark keywords, identifiers, and so on. See the GVim
     # documentation for details. The commands array allows configuring the way
     # that GVim will format the output. For example:
+    #
     # * The command "+:colorscheme <name>" will override the default color
     #   scheme used.
     # * The command "+:let html_use_css=1" will just annotate each HTML tag
@@ -23,9 +36,21 @@ module Codnar
     #   into the tag. In this case the colorscheme and background are ignored;
     #   you will need to provide your own CSS stylesheet as part of the final
     #   woven document to style the marked-up words.
+    #
     # Additional commands may be useful; GVim provides a full scripting
     # environment so there is no theoretical limit to what can be done here.
-    def self.syntax_to_html(text, syntax, commands = [])
+    #
+    # Since GVim is as slow as molasses to start up, we cache the results of
+    # highlighting the syntax of each code fragment in a directory called
+    # ".+gvim-cache+", which can appear at the current working directory or in
+    # any of its parents.
+    def self.cached_syntax_to_html(text, syntax, commands = [])
+      data = { "text" => text, "syntax" => syntax, "commands" => commands }
+      return @cache[data]
+    end
+
+    # Highlight syntax of text using GVim, without caching. This is *slow*.
+    def self.uncached_syntax_to_html(text, syntax, commands = [])
       file = write_temporary_file(text)
       run_gvim(file, syntax, commands)
       html = read_html_file(file)
