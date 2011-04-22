@@ -52,7 +52,7 @@ spec = Gem::Specification.new do |spec|
   spec.title = "Code Narrator"
   spec.author = "Oren Ben-Kiki"
   spec.email = "rubygems-oren@ben-kiki.org"
-  spec.homepage = "http://codnar.rubygems.org"
+  spec.homepage = "https://rubygems.org/gems/codnar"
   spec.summary = "Code narrator - an inverse literate programming tool."
   spec.description = (<<-EOF).gsub(/^\s+/, "").chomp.gsub("\n", " ")
     Code Narrator (Codnar) is an inverse literate programming tool. It splits the
