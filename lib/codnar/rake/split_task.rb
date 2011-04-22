@@ -36,7 +36,8 @@ module Codnar
       def run_split_application(path, output)
         options = Rake.application_options(output, @configurations)
         options << path
-        Application.with_argv(options) { Split.new.run }
+        status = Application.with_argv(options) { Split.new.run }
+        raise "Codnar split errors" unless status == 0
       end
 
       # Define common Rake split tasks. This method may be invoked several

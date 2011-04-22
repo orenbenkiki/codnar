@@ -48,7 +48,7 @@ Olag::Rake::CODNAR_CONFIGURATIONS.unshift([
 
 spec = Gem::Specification.new do |spec|
   spec.name = "codnar"
-  spec.version = Codnar.version
+  spec.version = Codnar::VERSION
   spec.title = "Code Narrator"
   spec.author = "Oren Ben-Kiki"
   spec.email = "rubygems-oren@ben-kiki.org"
@@ -60,6 +60,7 @@ spec = Gem::Specification.new do |spec|
     into a narrative that describes the overall system.
   EOF
   spec.add_dependency("andand")
+  spec.add_dependency("rdiscount")
 end
 
 Olag::Rake.new(spec)

@@ -38,7 +38,8 @@ module Codnar
         options = Rake.application_options(@output, @configurations)
         options << @root
         options += Rake.chunk_files.reject { |chunk| chunk == @root }
-        Application.with_argv(options) { Weave.new.run }
+        status = Application.with_argv(options) { Weave.new.run }
+        raise "Codnar weave errors" unless status == 0
       end
 
       # Connect the task for cleaning up after weaving (+clobber_codnar+) to the

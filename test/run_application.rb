@@ -12,7 +12,7 @@ module Codnar
 
     def test_print_version
       Codnar::Application.with_argv(%w(-o nested/stdout -v -h dummy)) { Codnar::Application.new(true).run }.should == 0
-      File.read("nested/stdout").should == "#{$0}: Version: #{Codnar.version}\n"
+      File.read("nested/stdout").should == "#{$0}: Version: #{Codnar::VERSION}\n"
     end
 
     def test_print_help

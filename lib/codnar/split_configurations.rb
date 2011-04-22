@@ -184,7 +184,7 @@ module Codnar
 
     # Classify complex comment lines. It accepts a restricted format: each
     # comment is expected to start with some exact prefix (e.g. "/*" for C
-    # style comments or "<!--" for HTML++ style comments). The following space,
+    # style comments or "<!--" for HTML style comments). The following space,
     # if any, is stripped from the payload. Following lines are also considered
     # comments; a leading inner line prefix (e.g., " *" for C style comments or
     # " -" for HTML style comments) with an optional following space are

@@ -27,7 +27,7 @@ module Codnar
 
     # Return the application's version - that is, Codnar's version.
     def version
-      return Codnar.version
+      return Codnar::VERSION
     end
 
     # Define a flag for collecting module load path directories.

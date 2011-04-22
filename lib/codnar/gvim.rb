@@ -5,7 +5,8 @@ module Codnar
 
     # Convert a sequence of classified code lines to HTML using GVim syntax
     # highlighting. The commands array allows configuring the way that GVim
-    # will format the output (see the +syntax_to_html+ method for details).
+    # will format the output (see the +cached_syntax_to_html+ method for
+    # details).
     def self.lines_to_html(lines, syntax, commands = [])
       return Formatter.merge_lines(lines, "html") do |payload|
         GVim.cached_syntax_to_html(payload + "\n", syntax, commands).chomp
@@ -29,27 +30,30 @@ module Codnar
     # documentation for details. The commands array allows configuring the way
     # that GVim will format the output. For example:
     #
-    # * The command "+:colorscheme <name>" will override the default color
-    #   scheme used.
-    # * The command "+:let html_use_css=1" will just annotate each HTML tag
-    #   with a CSS class, instead of embedding some specific style directly
-    #   into the tag. In this case the colorscheme and background are ignored;
-    #   you will need to provide your own CSS stylesheet as part of the final
-    #   woven document to style the marked-up words.
+    # * The command <tt>"+:colorscheme <name>"</tt> will override the default
+    #   color scheme used.
+    # * The command <tt>"+:let html_use_css=1"</tt> will just annotate each
+    #   HTML tag with a CSS class, instead of embedding some specific style
+    #   directly into the tag. In this case the colorscheme and background are
+    #   ignored; you will need to provide your own CSS stylesheet as part of
+    #   the final woven document to style the marked-up words.
     #
     # Additional commands may be useful; GVim provides a full scripting
     # environment so there is no theoretical limit to what can be done here.
     #
     # Since GVim is as slow as molasses to start up, we cache the results of
     # highlighting the syntax of each code fragment in a directory called
-    # ".+gvim-cache+", which can appear at the current working directory or in
-    # any of its parents.
+    # <tt>.gvim-cache</tt>, which can appear at the current working directory
+    # or in any of its parents.
     def self.cached_syntax_to_html(text, syntax, commands = [])
       data = { "text" => text, "syntax" => syntax, "commands" => commands }
       return @cache[data]
     end
 
-    # Highlight syntax of text using GVim, without caching. This is *slow*.
+    # Highlight syntax of text using GVim, without caching. This is *slow*
+    # (measured in seconds), due to GVim's start-up tim. See the
+    # +cached_syntax_to_html+ method for a faster variant and functionality
+    # details.
     def self.uncached_syntax_to_html(text, syntax, commands = [])
       file = write_temporary_file(text)
       run_gvim(file, syntax, commands)
@@ -95,13 +99,20 @@ module Codnar
 
     # Read the HTML with the syntax highlighting written out by GVim.
     def self.read_html_file(file)
-      return File.read(file.path + ".xhtml")
+      return File.read(html_file_path(file))
     end
 
     # Delete both the text and HTML temporary files.
     def self.delete_temporary_files(file)
-      File.delete(file.path + ".xhtml")
+      File.delete(html_file_path(file))
       file.delete
+    end
+
+    # Find the path of the generate HTML file. You'd think it would be
+    # predictable, but it ends up either ".html" or ".xhtml" depending on the
+    # system.
+    def self.html_file_path(file)
+      return Dir.glob(file.path + ".*html")[0]
     end
 
     # Extract the clean highlighted syntax HTML from GVim's HTML output.

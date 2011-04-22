@@ -1,9 +1,9 @@
 FeatureEnvy: # LowCohesion
   exclude:
-  - !ruby/regexp /Test|With/
+  - !ruby/regexp /Test/
 UtilityFunction: # LowCohesion
   exclude:
-  - !ruby/regexp /Test|With/
+  - !ruby/regexp /Test/
 Duplication:
   exclude:
   - !ruby/regexp /test_cached_computation/

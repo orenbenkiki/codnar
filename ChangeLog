@@ -1,6 +1,10 @@
+2011-04-22	Oren Ben-Kiki <github-oren@ben-kiki.org>
+
+	* Olag 0.1.7 and issue fixes.
+
 2011-04-19	Oren Ben-Kiki <github-oren@ben-kiki.org>
 
-	* Add GVim caching; refactor together with Olag-0.1.6.
+	* Add GVim caching; refactor together with Olag-0-1-6.
 	* Refactor out the Olag gem.
 
 2011-04-17	Oren Ben-Kiki <github-oren@ben-kiki.org>
