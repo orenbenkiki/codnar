@@ -26,21 +26,21 @@ class TestRunWeave < Test::Unit::TestCase
   } ]
 
   def test_run_weave
-    File.open("root", "w") { |file| file.write(ROOT_CHUNKS.to_yaml) }
-    File.open("included", "w") { |file| file.write(INCLUDED_CHUNKS.to_yaml) }
+    write_fake_file("root", ROOT_CHUNKS.to_yaml)
+    write_fake_file("included", INCLUDED_CHUNKS.to_yaml)
     Codnar::Application.with_argv(%w(-o stdout root included)) { Codnar::Weave.new(true).run }.should == 0
     File.read("stdout").should == "Root\nIncluded\n"
   end
 
   def test_run_weave_missing_chunk
-    File.open("root", "w") { |file| file.write(ROOT_CHUNKS.to_yaml) }
+    write_fake_file("root", ROOT_CHUNKS.to_yaml)
     Codnar::Application.with_argv(%w(-e stderr -o stdout root)) { Codnar::Weave.new(true).run }.should == 1
     File.read("stderr").should == "#{$0}: Missing chunk: included in file: root\n"
   end
 
   def test_run_weave_unused_chunk
-    File.open("root", "w") { |file| file.write(ROOT_CHUNKS.to_yaml) }
-    File.open("included", "w") { |file| file.write(INCLUDED_CHUNKS.to_yaml) }
+    write_fake_file("root", ROOT_CHUNKS.to_yaml)
+    write_fake_file("included", INCLUDED_CHUNKS.to_yaml)
     Codnar::Application.with_argv(%w(-e stderr -o stdout included root)) { Codnar::Weave.new(true).run }.should == 1
     File.read("stderr").should == "#{$0}: Unused chunk: root in file: root at line: 1\n"
   end
@@ -57,7 +57,7 @@ class TestRunWeave < Test::Unit::TestCase
   } ]
 
   def test_run_weave_missing_file
-    File.open("root", "w") { |file| file.write(FILE_CHUNKS.to_yaml) }
+    write_fake_file("root", FILE_CHUNKS.to_yaml)
     Codnar::Application.with_argv(%w(-e stderr -o stdout root)) { Codnar::Weave.new(true).run }.should == 1
     double_message = "No such file or directory - " * 2 # Something weird in Ruby Exception.to_s
     File.read("stdout").should == "Root\nFILE: included.file EXCEPTION: #{double_message}\n"
@@ -66,8 +66,8 @@ class TestRunWeave < Test::Unit::TestCase
   end
 
   def test_run_weave_existing_file
-    File.open("root", "w") { |file| file.write(FILE_CHUNKS.to_yaml) }
-    File.open("included.file", "w") { |file| file.write("included file\n") }
+    write_fake_file("root", FILE_CHUNKS.to_yaml)
+    write_fake_file("included.file", "included file\n")
     Codnar::Application.with_argv(%w(-e stderr -o stdout root)) { Codnar::Weave.new(true).run }.should == 0
     File.read("stdout").should == "Root\nincluded file\n"
   end

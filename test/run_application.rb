@@ -27,7 +27,7 @@ module Codnar
     }
 
     def test_merge_configurations
-      File.open("user_configuration.yaml", "w") { |file| file.print(USER_CONFIGURATION.to_yaml) }
+      write_fake_file("user_configuration.yaml", USER_CONFIGURATION.to_yaml)
       Codnar::Application.with_argv(%w(-o stdout -c split_pre_documentation -c user_configuration.yaml -p)) { Codnar::Application.new(true).run }.should == 0
       YAML.load_file("stdout").should == Codnar::Configuration::SPLIT_PRE_DOCUMENTATION.deep_merge(USER_CONFIGURATION)
     end
@@ -41,7 +41,7 @@ module Codnar
     def test_require_module
       FakeFS.deactivate! # The additional_module is read by Ruby and is not affected by FakeFS.
       directory = create_tempdir
-      File.open(directory + "/additional_module.rb", "w") { |file| file.puts("puts 'HERE'") }
+      write_fake_file(directory + "/additional_module.rb", "puts 'HERE'\n")
       Application.with_argv(["-o", stdout = directory + "/stdout", "-I", directory, "-r", "additional_module" ]) { Codnar::Application.new(true).run }.should == 0
       File.read(stdout).should == "HERE\n"
     end

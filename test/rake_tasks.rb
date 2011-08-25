@@ -16,7 +16,7 @@ class TestRakeTasks < Test::Unit::TestCase
 protected
 
   def run_rake
-    File.open("foo", "w") { |file| file.puts("foo") }
+    write_fake_file("foo", "foo\n")
     Codnar::Rake::SplitTask.new([ "foo" ], [])
     Codnar::Rake::WeaveTask.new("foo", [])
     @rake["codnar"].invoke

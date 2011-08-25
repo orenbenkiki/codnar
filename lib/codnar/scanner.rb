@@ -77,7 +77,7 @@ module Codnar
       @path = path
       @lines = []
       @state = @syntax.start_state
-      @errors.in_path(path) { scan_path }
+      @errors.in_file_lines(path) { |line| scan_line(line.chomp) }
       return @lines
     end
 
@@ -144,22 +144,6 @@ module Codnar
 
     # {{{ Scanner file processing
 
-    # Scan a disk file.
-    def scan_path
-      File.open(@path, "r") do |file|
-        scan_file(file)
-      end
-    end
-
-    # Scan an opened file.
-    def scan_file(file)
-      @line_number = 0
-      file.read.each_line do |line|
-        @errors.at_line(@line_number += 1)
-        scan_line(line.chomp)
-      end
-    end
-
     # Scan the next file line.
     def scan_line(line)
       @state.transitions.each do |transition|
@@ -179,7 +163,7 @@ module Codnar
       @lines << Scanner.extracted_groups(match, pattern.groups).update({
         "line" => line,
         "kind" => transition.kind,
-        "number" => @line_number
+        "number" => @errors.line_number
       })
       @state = transition.next_state
       return true
@@ -204,7 +188,7 @@ module Codnar
         "payload" => line.unindent,
         "kind" => "error",
         "state" => state_name,
-        "number" => @line_number
+        "number" => @errors.line_number
       }
       @errors << "State: #{state_name} failed to classify line: #{@lines.last.payload}"
     end

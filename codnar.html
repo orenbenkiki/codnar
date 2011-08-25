@@ -686,7 +686,7 @@ number of Git commits by running <tt>rake version</tt>.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.64</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.65</span><span class="Special">&quot;</span>
 
 end
 </pre>
@@ -763,7 +763,7 @@ Test scanning classified lines.
   <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithFakeFS</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_scan_lines</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">comments</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Type">INPUT</span>) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">comments</span><span class="Special">&quot;</span>, <span class="Type">INPUT</span>)
     scanner = <span class="Type">Codnar</span>::<span class="Type">Scanner</span>.new(<span class="Identifier">@errors</span>, <span class="Type">SYNTAX</span>)
     scanner.lines(<span class="Special">&quot;</span><span class="Constant">comments</span><span class="Special">&quot;</span>).should == <span class="Type">LINES</span>
     <span class="Identifier">@errors</span>.should == <span class="Type">ERRORS</span>
@@ -1001,7 +1001,7 @@ follows:
       <span class="Identifier">@path</span> = path
       <span class="Identifier">@lines</span> = []
       <span class="Identifier">@state</span> = <span class="Identifier">@syntax</span>.start_state
-      <span class="Identifier">@errors</span>.in_path(path) { scan_path }
+      <span class="Identifier">@errors</span>.in_file_lines(path) { |<span class="Identifier">line</span>| scan_line(line.chomp) }
       <span class="Statement">return</span> <span class="Identifier">@lines</span>
     <span class="PreProc">end</span>
 
@@ -1327,52 +1327,6 @@ state transitions to each line:
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Scan a disk file.
-</p>
-</div>
-</td>
-</tr>
-</table>
-<pre class='ruby code syntax'>
-<span class="PreProc">def</span> <span class="Identifier">scan_path</span>
-  <span class="Type">File</span>.open(<span class="Identifier">@path</span>, <span class="Special">&quot;</span><span class="Constant">r</span><span class="Special">&quot;</span>) <span class="Statement">do</span> |<span class="Identifier">file</span>|
-    scan_file(file)
-  <span class="Statement">end</span>
-<span class="PreProc">end</span>
-
-</pre>
-<table class='layout'>
-<tr>
-<td class='indentation'>
-<pre></pre>
-</td>
-<td class='html'>
-<div class='rdoc comment markup'>
-<p>
-Scan an opened file.
-</p>
-</div>
-</td>
-</tr>
-</table>
-<pre class='ruby code syntax'>
-<span class="PreProc">def</span> <span class="Identifier">scan_file</span>(file)
-  <span class="Identifier">@line_number</span> = <span class="Constant">0</span>
-  file.read.each_line <span class="Statement">do</span> |<span class="Identifier">line</span>|
-    <span class="Identifier">@errors</span>.at_line(<span class="Identifier">@line_number</span> += <span class="Constant">1</span>)
-    scan_line(line.chomp)
-  <span class="Statement">end</span>
-<span class="PreProc">end</span>
-
-</pre>
-<table class='layout'>
-<tr>
-<td class='indentation'>
-<pre></pre>
-</td>
-<td class='html'>
-<div class='rdoc comment markup'>
-<p>
 Scan the next file line.
 </p>
 </div>
@@ -1435,7 +1389,7 @@ Handle a file line, only if it matches the pattern.
   <span class="Identifier">@lines</span> &lt;&lt; <span class="Type">Scanner</span>.extracted_groups(match, pattern.groups).update({
     <span class="Special">&quot;</span><span class="Constant">line</span><span class="Special">&quot;</span> =&gt; line,
     <span class="Special">&quot;</span><span class="Constant">kind</span><span class="Special">&quot;</span> =&gt; transition.kind,
-    <span class="Special">&quot;</span><span class="Constant">number</span><span class="Special">&quot;</span> =&gt; <span class="Identifier">@line_number</span>
+    <span class="Special">&quot;</span><span class="Constant">number</span><span class="Special">&quot;</span> =&gt; <span class="Identifier">@errors</span>.line_number
   })
   <span class="Identifier">@state</span> = transition.next_state
   <span class="Statement">return</span> <span class="Constant">true</span>
@@ -1490,7 +1444,7 @@ Handle a file line that couldn’t be classified.
     <span class="Special">&quot;</span><span class="Constant">payload</span><span class="Special">&quot;</span> =&gt; line.unindent,
     <span class="Special">&quot;</span><span class="Constant">kind</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">error</span><span class="Special">&quot;</span>,
     <span class="Special">&quot;</span><span class="Constant">state</span><span class="Special">&quot;</span> =&gt; state_name,
-    <span class="Special">&quot;</span><span class="Constant">number</span><span class="Special">&quot;</span> =&gt; <span class="Identifier">@line_number</span>
+    <span class="Special">&quot;</span><span class="Constant">number</span><span class="Special">&quot;</span> =&gt; <span class="Identifier">@errors</span>.line_number
   }
   <span class="Identifier">@errors</span> &lt;&lt; <span class="Special">&quot;</span><span class="Constant">State: </span><span class="Special">#{</span>state_name<span class="Special">}</span><span class="Constant"> failed to classify line: </span><span class="Special">#{</span><span class="Identifier">@lines</span>.last.payload<span class="Special">}</span><span class="Special">&quot;</span>
 <span class="PreProc">end</span>
@@ -4368,7 +4322,7 @@ Test “splitting” documentation files.
   <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithFakeFS</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_split_raw</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">raw.html</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Special">&quot;</span><span class="Constant">&lt;foo&gt;</span><span class="Special">\n</span><span class="Constant">bar</span><span class="Special">\n</span><span class="Constant">&lt;/foo&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">raw.html</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">&lt;foo&gt;</span><span class="Special">\n</span><span class="Constant">bar</span><span class="Special">\n</span><span class="Constant">&lt;/foo&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>)
     splitter = <span class="Type">Codnar</span>::<span class="Type">Splitter</span>.new(<span class="Identifier">@errors</span>, configuration(<span class="Special">&quot;</span><span class="Constant">html</span><span class="Special">&quot;</span>))
     chunks = splitter.chunks(<span class="Special">&quot;</span><span class="Constant">raw.html</span><span class="Special">&quot;</span>)
     <span class="Identifier">@errors</span>.should == []
@@ -4382,7 +4336,7 @@ Test “splitting” documentation files.
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_split_markdown</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">markdown.md</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Special">&quot;</span><span class="Constant">*foo*</span><span class="Special">\n</span><span class="Constant">bar</span><span class="Special">\n</span><span class="Special">&quot;</span>) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">markdown.md</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">*foo*</span><span class="Special">\n</span><span class="Constant">bar</span><span class="Special">\n</span><span class="Special">&quot;</span>)
     splitter = <span class="Type">Codnar</span>::<span class="Type">Splitter</span>.new(<span class="Identifier">@errors</span>, configuration(<span class="Special">&quot;</span><span class="Constant">markdown</span><span class="Special">&quot;</span>))
     chunks = splitter.chunks(<span class="Special">&quot;</span><span class="Constant">markdown.md</span><span class="Special">&quot;</span>)
     <span class="Identifier">@errors</span>.should == []
@@ -4396,7 +4350,7 @@ Test “splitting” documentation files.
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_split_rdoc</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">rdoc.rdoc</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Special">&quot;</span><span class="Constant">*foo*</span><span class="Special">\n</span><span class="Constant">bar</span><span class="Special">\n</span><span class="Special">&quot;</span>) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">rdoc.rdoc</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">*foo*</span><span class="Special">\n</span><span class="Constant">bar</span><span class="Special">\n</span><span class="Special">&quot;</span>)
     splitter = <span class="Type">Codnar</span>::<span class="Type">Splitter</span>.new(<span class="Identifier">@errors</span>, configuration(<span class="Special">&quot;</span><span class="Constant">rdoc</span><span class="Special">&quot;</span>))
     chunks = splitter.chunks(<span class="Special">&quot;</span><span class="Constant">rdoc.rdoc</span><span class="Special">&quot;</span>)
     <span class="Identifier">@errors</span>.should == []
@@ -4410,7 +4364,7 @@ Test “splitting” documentation files.
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_split_unknown_kind</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">unknown.kind</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Special">&quot;</span><span class="Constant">foo</span><span class="Special">\n</span><span class="Constant">bar</span><span class="Special">\n</span><span class="Special">&quot;</span>) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">unknown.kind</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">foo</span><span class="Special">\n</span><span class="Constant">bar</span><span class="Special">\n</span><span class="Special">&quot;</span>)
     splitter = <span class="Type">Codnar</span>::<span class="Type">Splitter</span>.new(<span class="Identifier">@errors</span>, configuration(<span class="Special">&quot;</span><span class="Constant">unknown-kind</span><span class="Special">&quot;</span>))
     chunks = splitter.chunks(<span class="Special">&quot;</span><span class="Constant">unknown.kind</span><span class="Special">&quot;</span>)
     <span class="Identifier">@errors</span>.should == [ <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: No formatter specified for lines of kind: unknown-kind</span><span class="Special">&quot;</span> ]
@@ -7123,10 +7077,9 @@ Test reading chunks from files.
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_read_invalid_chunks</span>
-    file_path = <span class="Constant">nil</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">foo.chunks</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file_path = <span class="Type">File</span>.expand_path(file.path) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">foo.chunks</span><span class="Special">&quot;</span>)
     reader = <span class="Type">Codnar</span>::<span class="Type">Reader</span>.new(<span class="Identifier">@errors</span>, <span class="Type">Dir</span>.glob(<span class="Special">&quot;</span><span class="Constant">./**/*.chunks</span><span class="Special">&quot;</span>))
-    <span class="Identifier">@errors</span>.should == [ <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: Invalid chunks data in file: </span><span class="Special">#{</span>file_path<span class="Special">}</span><span class="Special">&quot;</span> ]
+    <span class="Identifier">@errors</span>.should == [ <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: Invalid chunks data in file: </span><span class="Special">#{</span><span class="Type">File</span>.expand_path(<span class="Special">&quot;</span><span class="Constant">foo.chunks</span><span class="Special">&quot;</span>)<span class="Special">}</span><span class="Special">&quot;</span> ]
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_read_unused_chunks</span>
@@ -7627,7 +7580,7 @@ Test the built-in weave configurations.
 <span class="Constant">        &lt;embed src=&quot;path&quot; type=&quot;x-codnar/file&quot;/&gt;</span>
 <span class="Constant">      </span><span class="Special">EOF</span>
     })
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">path</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.puts(<span class="Special">&quot;</span><span class="Constant">&lt;h2&gt;File&lt;/h2&gt;</span><span class="Special">&quot;</span>) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">path</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">&lt;h2&gt;File&lt;/h2&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>)
     html = <span class="Type">Codnar</span>::<span class="Type">Weaver</span>.new(<span class="Identifier">@errors</span>, [ <span class="Special">&quot;</span><span class="Constant">chunks</span><span class="Special">&quot;</span> ], <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">WEAVE_INCLUDE</span>).weave(<span class="Special">&quot;</span><span class="Constant">include</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">top</span><span class="Special">&quot;</span>)
     <span class="Identifier">@errors</span>.should == []
     html.should == &lt;&lt;-<span class="Special">EOF</span>.unindent
@@ -8526,7 +8479,7 @@ Test running a Codnar Application.
     }
 
     <span class="PreProc">def</span> <span class="Identifier">test_merge_configurations</span>
-      <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">user_configuration.yaml</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.print(<span class="Type">USER_CONFIGURATION</span>.to_yaml) }
+      write_fake_file(<span class="Special">&quot;</span><span class="Constant">user_configuration.yaml</span><span class="Special">&quot;</span>, <span class="Type">USER_CONFIGURATION</span>.to_yaml)
       <span class="Type">Codnar</span>::<span class="Type">Application</span>.with_argv(<span class="Special">%w(</span><span class="Constant">-o stdout -c split_pre_documentation -c user_configuration.yaml -p</span><span class="Special">)</span>) { <span class="Type">Codnar</span>::<span class="Type">Application</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">0</span>
       <span class="Type">YAML</span>.load_file(<span class="Special">&quot;</span><span class="Constant">stdout</span><span class="Special">&quot;</span>).should == <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">SPLIT_PRE_DOCUMENTATION</span>.deep_merge(<span class="Type">USER_CONFIGURATION</span>)
     <span class="PreProc">end</span>
@@ -8540,7 +8493,7 @@ Test running a Codnar Application.
     <span class="PreProc">def</span> <span class="Identifier">test_require_module</span>
       <span class="Type">FakeFS</span>.deactivate! <span class="Comment"># The additional_module is read by Ruby and is not affected by FakeFS.</span>
       directory = create_tempdir
-      <span class="Type">File</span>.open(directory + <span class="Special">&quot;</span><span class="Constant">/additional_module.rb</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.puts(<span class="Special">&quot;</span><span class="Constant">puts 'HERE'</span><span class="Special">&quot;</span>) }
+      write_fake_file(directory + <span class="Special">&quot;</span><span class="Constant">/additional_module.rb</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">puts 'HERE'</span><span class="Special">\n</span><span class="Special">&quot;</span>)
       <span class="Type">Application</span>.with_argv([<span class="Special">&quot;</span><span class="Constant">-o</span><span class="Special">&quot;</span>, stdout = directory + <span class="Special">&quot;</span><span class="Constant">/stdout</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">-I</span><span class="Special">&quot;</span>, directory, <span class="Special">&quot;</span><span class="Constant">-r</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">additional_module</span><span class="Special">&quot;</span> ]) { <span class="Type">Codnar</span>::<span class="Type">Application</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">0</span>
       <span class="Type">File</span>.read(stdout).should == <span class="Special">&quot;</span><span class="Constant">HERE</span><span class="Special">\n</span><span class="Special">&quot;</span>
     <span class="PreProc">end</span>
@@ -8875,7 +8828,7 @@ Test running the Split Codnar Application.
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_run_split</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">input</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.puts(<span class="Special">&quot;</span><span class="Constant">&lt;foo&gt;</span><span class="Special">&quot;</span>) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">input</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">&lt;foo&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>)
     <span class="Type">Codnar</span>::<span class="Type">Application</span>.with_argv(<span class="Special">%w(</span><span class="Constant">-o stdout input</span><span class="Special">)</span>) { <span class="Type">Codnar</span>::<span class="Type">Split</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">0</span>
     <span class="Type">YAML</span>.load_file(<span class="Special">&quot;</span><span class="Constant">stdout</span><span class="Special">&quot;</span>).should == [ {
       <span class="Special">&quot;</span><span class="Constant">name</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">input</span><span class="Special">&quot;</span>,
@@ -9158,21 +9111,21 @@ Test running the Weave Codnar Application.
   } ]
 
   <span class="PreProc">def</span> <span class="Identifier">test_run_weave</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Type">ROOT_CHUNKS</span>.to_yaml) }
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">included</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Type">INCLUDED_CHUNKS</span>.to_yaml) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Type">ROOT_CHUNKS</span>.to_yaml)
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">included</span><span class="Special">&quot;</span>, <span class="Type">INCLUDED_CHUNKS</span>.to_yaml)
     <span class="Type">Codnar</span>::<span class="Type">Application</span>.with_argv(<span class="Special">%w(</span><span class="Constant">-o stdout root included</span><span class="Special">)</span>) { <span class="Type">Codnar</span>::<span class="Type">Weave</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">0</span>
     <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stdout</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">Root</span><span class="Special">\n</span><span class="Constant">Included</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_run_weave_missing_chunk</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Type">ROOT_CHUNKS</span>.to_yaml) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Type">ROOT_CHUNKS</span>.to_yaml)
     <span class="Type">Codnar</span>::<span class="Type">Application</span>.with_argv(<span class="Special">%w(</span><span class="Constant">-e stderr -o stdout root</span><span class="Special">)</span>) { <span class="Type">Codnar</span>::<span class="Type">Weave</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">1</span>
     <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stderr</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: Missing chunk: included in file: root</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_run_weave_unused_chunk</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Type">ROOT_CHUNKS</span>.to_yaml) }
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">included</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Type">INCLUDED_CHUNKS</span>.to_yaml) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Type">ROOT_CHUNKS</span>.to_yaml)
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">included</span><span class="Special">&quot;</span>, <span class="Type">INCLUDED_CHUNKS</span>.to_yaml)
     <span class="Type">Codnar</span>::<span class="Type">Application</span>.with_argv(<span class="Special">%w(</span><span class="Constant">-e stderr -o stdout included root</span><span class="Special">)</span>) { <span class="Type">Codnar</span>::<span class="Type">Weave</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">1</span>
     <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stderr</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: Unused chunk: root in file: root at line: 1</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
@@ -9189,7 +9142,7 @@ Test running the Weave Codnar Application.
   } ]
 
   <span class="PreProc">def</span> <span class="Identifier">test_run_weave_missing_file</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Type">FILE_CHUNKS</span>.to_yaml) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Type">FILE_CHUNKS</span>.to_yaml)
     <span class="Type">Codnar</span>::<span class="Type">Application</span>.with_argv(<span class="Special">%w(</span><span class="Constant">-e stderr -o stdout root</span><span class="Special">)</span>) { <span class="Type">Codnar</span>::<span class="Type">Weave</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">1</span>
     double_message = <span class="Special">&quot;</span><span class="Constant">No such file or directory - </span><span class="Special">&quot;</span> * <span class="Constant">2</span> <span class="Comment"># Something weird in Ruby Exception.to_s</span>
     <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stdout</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">Root</span><span class="Special">\n</span><span class="Constant">FILE: included.file EXCEPTION: </span><span class="Special">#{</span>double_message<span class="Special">}</span><span class="Special">\n</span><span class="Special">&quot;</span>
@@ -9198,8 +9151,8 @@ Test running the Weave Codnar Application.
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_run_weave_existing_file</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Type">FILE_CHUNKS</span>.to_yaml) }
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">included.file</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.write(<span class="Special">&quot;</span><span class="Constant">included file</span><span class="Special">\n</span><span class="Special">&quot;</span>) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Type">FILE_CHUNKS</span>.to_yaml)
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">included.file</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">included file</span><span class="Special">\n</span><span class="Special">&quot;</span>)
     <span class="Type">Codnar</span>::<span class="Type">Application</span>.with_argv(<span class="Special">%w(</span><span class="Constant">-e stderr -o stdout root</span><span class="Special">)</span>) { <span class="Type">Codnar</span>::<span class="Type">Weave</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">0</span>
     <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stdout</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">Root</span><span class="Special">\n</span><span class="Constant">included file</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
@@ -9457,7 +9410,7 @@ Test rake tasks.
 <span class="Statement">protected</span>
 
   <span class="PreProc">def</span> <span class="Identifier">run_rake</span>
-    <span class="Type">File</span>.open(<span class="Special">&quot;</span><span class="Constant">foo</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) { |<span class="Identifier">file</span>| file.puts(<span class="Special">&quot;</span><span class="Constant">foo</span><span class="Special">&quot;</span>) }
+    write_fake_file(<span class="Special">&quot;</span><span class="Constant">foo</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">foo</span><span class="Special">\n</span><span class="Special">&quot;</span>)
     <span class="Type">Codnar</span>::<span class="Type">Rake</span>::<span class="Type">SplitTask</span>.new([ <span class="Special">&quot;</span><span class="Constant">foo</span><span class="Special">&quot;</span> ], [])
     <span class="Type">Codnar</span>::<span class="Type">Rake</span>::<span class="Type">WeaveTask</span>.new(<span class="Special">&quot;</span><span class="Constant">foo</span><span class="Special">&quot;</span>, [])
     <span class="Identifier">@rake</span>[<span class="Special">&quot;</span><span class="Constant">codnar</span><span class="Special">&quot;</span>].invoke

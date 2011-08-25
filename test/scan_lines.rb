@@ -9,7 +9,7 @@ class TestScanLines < Test::Unit::TestCase
   include Test::WithFakeFS
 
   def test_scan_lines
-    File.open("comments", "w") { |file| file.write(INPUT) }
+    write_fake_file("comments", INPUT)
     scanner = Codnar::Scanner.new(@errors, SYNTAX)
     scanner.lines("comments").should == LINES
     @errors.should == ERRORS

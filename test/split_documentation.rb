@@ -9,7 +9,7 @@ class TestSplitDocumentation < Test::Unit::TestCase
   include Test::WithFakeFS
 
   def test_split_raw
-    File.open("raw.html", "w") { |file| file.write("<foo>\nbar\n</foo>\n") }
+    write_fake_file("raw.html", "<foo>\nbar\n</foo>\n")
     splitter = Codnar::Splitter.new(@errors, configuration("html"))
     chunks = splitter.chunks("raw.html")
     @errors.should == []
@@ -23,7 +23,7 @@ class TestSplitDocumentation < Test::Unit::TestCase
   end
 
   def test_split_markdown
-    File.open("markdown.md", "w") { |file| file.write("*foo*\nbar\n") }
+    write_fake_file("markdown.md", "*foo*\nbar\n")
     splitter = Codnar::Splitter.new(@errors, configuration("markdown"))
     chunks = splitter.chunks("markdown.md")
     @errors.should == []
@@ -37,7 +37,7 @@ class TestSplitDocumentation < Test::Unit::TestCase
   end
 
   def test_split_rdoc
-    File.open("rdoc.rdoc", "w") { |file| file.write("*foo*\nbar\n") }
+    write_fake_file("rdoc.rdoc", "*foo*\nbar\n")
     splitter = Codnar::Splitter.new(@errors, configuration("rdoc"))
     chunks = splitter.chunks("rdoc.rdoc")
     @errors.should == []
@@ -51,7 +51,7 @@ class TestSplitDocumentation < Test::Unit::TestCase
   end
 
   def test_split_unknown_kind
-    File.open("unknown.kind", "w") { |file| file.write("foo\nbar\n") }
+    write_fake_file("unknown.kind", "foo\nbar\n")
     splitter = Codnar::Splitter.new(@errors, configuration("unknown-kind"))
     chunks = splitter.chunks("unknown.kind")
     @errors.should == [ "#{$0}: No formatter specified for lines of kind: unknown-kind" ]

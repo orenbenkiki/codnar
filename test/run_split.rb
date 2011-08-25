@@ -14,7 +14,7 @@ class TestRunSplit < Test::Unit::TestCase
   end
 
   def test_run_split
-    File.open("input", "w") { |file| file.puts("<foo>") }
+    write_fake_file("input", "<foo>\n")
     Codnar::Application.with_argv(%w(-o stdout input)) { Codnar::Split.new(true).run }.should == 0
     YAML.load_file("stdout").should == [ {
       "name" => "input",

@@ -19,10 +19,9 @@ class TestReadChunks < Test::Unit::TestCase
   end
 
   def test_read_invalid_chunks
-    file_path = nil
-    File.open("foo.chunks", "w") { |file| file_path = File.expand_path(file.path) }
+    write_fake_file("foo.chunks")
     reader = Codnar::Reader.new(@errors, Dir.glob("./**/*.chunks"))
-    @errors.should == [ "#{$0}: Invalid chunks data in file: #{file_path}" ]
+    @errors.should == [ "#{$0}: Invalid chunks data in file: #{File.expand_path("foo.chunks")}" ]
   end
 
   def test_read_unused_chunks

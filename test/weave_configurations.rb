@@ -16,7 +16,7 @@ class TestWeaveConfigurations < Test::Unit::TestCase
         <embed src="path" type="x-codnar/file"/>
       EOF
     })
-    File.open("path", "w") { |file| file.puts("<h2>File</h2>") }
+    write_fake_file("path", "<h2>File</h2>\n")
     html = Codnar::Weaver.new(@errors, [ "chunks" ], Codnar::Configuration::WEAVE_INCLUDE).weave("include", "top")
     @errors.should == []
     html.should == <<-EOF.unindent
