@@ -45,11 +45,6 @@ class TestRunWeave < Test::Unit::TestCase
     File.read("stderr").should == "#{$0}: Unused chunk: root in file: root at line: 1\n"
   end
 
-  def test_run_weave_no_chunks
-    Codnar::Application.with_argv(%w(-e stderr)) { Codnar::Weave.new(true).run }.should == 1
-    File.read("stderr").should == "#{$0}: No chunk files to weave\n"
-  end
-
   FILE_CHUNKS = [ {
     "name" => "root",
     "locations" => [ { "file" => "root", "line" => 1 } ],

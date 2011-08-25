@@ -20,9 +20,7 @@ module Codnar
 
     # Parse remaining command-line file arguments.
     def parse_arguments
-      return if ARGV.size > 0
-      $stderr.puts("#{$0}: No chunk files to weave")
-      exit(1)
+      expect_at_least(1, "chunk files to weave")
     end
 
     # Return the banner line of the help message.

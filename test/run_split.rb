@@ -25,14 +25,4 @@ class TestRunSplit < Test::Unit::TestCase
     } ]
   end
 
-  def test_run_split_no_file
-    Codnar::Application.with_argv(%w(-e stderr)) { Codnar::Split.new(true).run }.should == 1
-    File.read("stderr").should == "#{$0}: No input file to split\n"
-  end
-
-  def test_run_split_many_file
-    Codnar::Application.with_argv(%w(-e stderr one two)) { Codnar::Split.new(true).run }.should == 1
-    File.read("stderr").should == "#{$0}: Too many input files to split\n"
-  end
-
 end

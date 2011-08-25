@@ -19,12 +19,7 @@ module Codnar
 
     # Parse remaining command-line file arguments.
     def parse_arguments
-      case ARGV.size
-      when 1 then return
-      when 0 then $stderr.puts("#{$0}: No input file to split")
-      else $stderr.puts("#{$0}: Too many input files to split")
-      end
-      exit(1)
+      expect_exactly(1, "files to split")
     end
 
     # Return the banner line of the help message.

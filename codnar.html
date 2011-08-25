@@ -686,7 +686,7 @@ number of Git commits by running <tt>rake version</tt>.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.65</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.66</span><span class="Special">&quot;</span>
 
 end
 </pre>
@@ -8839,16 +8839,6 @@ Test running the Split Codnar Application.
     } ]
   <span class="PreProc">end</span>
 
-  <span class="PreProc">def</span> <span class="Identifier">test_run_split_no_file</span>
-    <span class="Type">Codnar</span>::<span class="Type">Application</span>.with_argv(<span class="Special">%w(</span><span class="Constant">-e stderr</span><span class="Special">)</span>) { <span class="Type">Codnar</span>::<span class="Type">Split</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">1</span>
-    <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stderr</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: No input file to split</span><span class="Special">\n</span><span class="Special">&quot;</span>
-  <span class="PreProc">end</span>
-
-  <span class="PreProc">def</span> <span class="Identifier">test_run_split_many_file</span>
-    <span class="Type">Codnar</span>::<span class="Type">Application</span>.with_argv(<span class="Special">%w(</span><span class="Constant">-e stderr one two</span><span class="Special">)</span>) { <span class="Type">Codnar</span>::<span class="Type">Split</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">1</span>
-    <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stderr</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: Too many input files to split</span><span class="Special">\n</span><span class="Special">&quot;</span>
-  <span class="PreProc">end</span>
-
 <span class="PreProc">end</span>
 </pre>
 </div>
@@ -8947,12 +8937,7 @@ Parse remaining command-line file arguments.
 </table>
 <pre class='ruby code syntax'>
     <span class="PreProc">def</span> <span class="Identifier">parse_arguments</span>
-      <span class="Statement">case</span> <span class="Identifier">ARGV</span>.size
-      <span class="Statement">when</span> <span class="Constant">1</span> <span class="Statement">then</span> <span class="Statement">return</span>
-      <span class="Statement">when</span> <span class="Constant">0</span> <span class="Statement">then</span> <span class="Identifier">$stderr</span>.puts(<span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: No input file to split</span><span class="Special">&quot;</span>)
-      <span class="Statement">else</span> <span class="Identifier">$stderr</span>.puts(<span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: Too many input files to split</span><span class="Special">&quot;</span>)
-      <span class="Statement">end</span>
-      <span class="Statement">exit</span>(<span class="Constant">1</span>)
+      expect_exactly(<span class="Constant">1</span>, <span class="Special">&quot;</span><span class="Constant">files to split</span><span class="Special">&quot;</span>)
     <span class="PreProc">end</span>
 
 </pre>
@@ -9130,11 +9115,6 @@ Test running the Weave Codnar Application.
     <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stderr</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: Unused chunk: root in file: root at line: 1</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
-  <span class="PreProc">def</span> <span class="Identifier">test_run_weave_no_chunks</span>
-    <span class="Type">Codnar</span>::<span class="Type">Application</span>.with_argv(<span class="Special">%w(</span><span class="Constant">-e stderr</span><span class="Special">)</span>) { <span class="Type">Codnar</span>::<span class="Type">Weave</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">1</span>
-    <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stderr</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: No chunk files to weave</span><span class="Special">\n</span><span class="Special">&quot;</span>
-  <span class="PreProc">end</span>
-
   <span class="Type">FILE_CHUNKS</span> = [ {
     <span class="Special">&quot;</span><span class="Constant">name</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>,
     <span class="Special">&quot;</span><span class="Constant">locations</span><span class="Special">&quot;</span> =&gt; [ { <span class="Special">&quot;</span><span class="Constant">file</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">line</span><span class="Special">&quot;</span> =&gt; <span class="Constant">1</span> } ],
@@ -9256,9 +9236,7 @@ Parse remaining command-line file arguments.
 </table>
 <pre class='ruby code syntax'>
     <span class="PreProc">def</span> <span class="Identifier">parse_arguments</span>
-      <span class="Statement">return</span> <span class="Statement">if</span> <span class="Identifier">ARGV</span>.size &gt; <span class="Constant">0</span>
-      <span class="Identifier">$stderr</span>.puts(<span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: No chunk files to weave</span><span class="Special">&quot;</span>)
-      <span class="Statement">exit</span>(<span class="Constant">1</span>)
+      expect_at_least(<span class="Constant">1</span>, <span class="Special">&quot;</span><span class="Constant">chunk files to weave</span><span class="Special">&quot;</span>)
     <span class="PreProc">end</span>
 
 </pre>
