@@ -394,7 +394,8 @@ weaves them back into a narrative that describes the overall system.
 <p>
 A simple <tt>gem install codnar</tt> should do the trick, assuming you have
 Ruby gems set up. If you want to use the VIM-based syntax highlighting, you
-also need to install <tt>gvim</tt>.
+also need to install <tt>gvim</tt>. Similarly, you need to install
+<tt>GraphViz</tt> to be able to embed SVG diagrams in your HTML.
 </p>
 <h3>Usage</h3>
 <p>
@@ -686,7 +687,7 @@ number of Git commits by running <tt>rake version</tt>.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.66</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.67</span><span class="Special">&quot;</span>
 
 end
 </pre>
@@ -704,6 +705,100 @@ for Rake integration.
 </p>
 </div>
 <div class='markdown doc markup'>
+<h2>Data Flow</h2>
+<p>
+Here is a diagram showing the overall data flow in a system documented with
+Codnar:
+</p>
+<p>
+<div class="plain chunk">
+<a name="doc-dataflow-dot"/>
+<div class='graphviz doc markup'>
+<svg width="512pt" height="98pt"
+ viewBox="0.00 0.00 512.00 98.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph1" class="graph" transform="scale(1 1) rotate(0) translate(4 94)">
+<title>Codnar Dataflow</title>
+<polygon fill="white" stroke="white" points="-4,5 -4,-94 509,-94 509,5 -4,5"/>
+<!-- Documentation -->
+<g id="node1" class="node"><title>Documentation</title>
+<polygon fill="none" stroke="black" points="101,-90 1,-90 1,-54 101,-54 101,-90"/>
+<text text-anchor="middle" x="51" y="-67.4" font-family="Times New Roman,serif" font-size="14.00">Documentation</text>
+</g>
+<!-- Split -->
+<g id="node3" class="node"><title>Split</title>
+<ellipse fill="none" stroke="black" cx="169" cy="-72" rx="28.1745" ry="18"/>
+<text text-anchor="middle" x="169" y="-67.4" font-family="Times New Roman,serif" font-size="14.00">Split</text>
+</g>
+<!-- Documentation&#45;&gt;Split -->
+<g id="edge2" class="edge"><title>Documentation&#45;&gt;Split</title>
+<path fill="none" stroke="black" d="M101.727,-72C111.44,-72 121.457,-72 130.699,-72"/>
+<polygon fill="black" stroke="black" points="130.745,-75.5001 140.745,-72 130.745,-68.5001 130.745,-75.5001"/>
+</g>
+<!-- Sources -->
+<g id="node2" class="node"><title>Sources</title>
+<polygon fill="none" stroke="black" points="82,-36 20,-36 20,-1.06581e-014 82,-0 82,-36"/>
+<text text-anchor="middle" x="51" y="-13.4" font-family="Times New Roman,serif" font-size="14.00">Sources</text>
+</g>
+<!-- Sources&#45;&gt;Split -->
+<g id="edge4" class="edge"><title>Sources&#45;&gt;Split</title>
+<path fill="none" stroke="black" d="M82.0031,-32.1879C98.785,-39.8677 119.501,-49.3478 136.507,-57.1305"/>
+<polygon fill="black" stroke="black" points="135.485,-60.5114 146.034,-61.4902 138.397,-54.1463 135.485,-60.5114"/>
+</g>
+<!-- Build -->
+<g id="node7" class="node"><title>Build</title>
+<ellipse fill="none" stroke="black" cx="169" cy="-18" rx="30.8577" ry="18"/>
+<text text-anchor="middle" x="169" y="-13.4" font-family="Times New Roman,serif" font-size="14.00">Build</text>
+</g>
+<!-- Sources&#45;&gt;Build -->
+<g id="edge9" class="edge"><title>Sources&#45;&gt;Build</title>
+<path fill="none" stroke="black" d="M82.0031,-18C95.9842,-18 112.696,-18 127.718,-18"/>
+<polygon fill="black" stroke="black" points="127.794,-21.5001 137.794,-18 127.794,-14.5001 127.794,-21.5001"/>
+</g>
+<!-- Chunks -->
+<g id="node4" class="node"><title>Chunks</title>
+<polygon fill="none" stroke="black" points="298,-90 240,-90 240,-54 298,-54 298,-90"/>
+<text text-anchor="middle" x="269" y="-67.4" font-family="Times New Roman,serif" font-size="14.00">Chunks</text>
+</g>
+<!-- Split&#45;&gt;Chunks -->
+<g id="edge5" class="edge"><title>Split&#45;&gt;Chunks</title>
+<path fill="none" stroke="black" d="M197.122,-72C207.103,-72 218.533,-72 229.298,-72"/>
+<polygon fill="black" stroke="black" points="229.346,-75.5001 239.346,-72 229.346,-68.5001 229.346,-75.5001"/>
+</g>
+<!-- Weave -->
+<g id="node5" class="node"><title>Weave</title>
+<ellipse fill="none" stroke="black" cx="375" cy="-72" rx="36.8951" ry="18"/>
+<text text-anchor="middle" x="375" y="-67.4" font-family="Times New Roman,serif" font-size="14.00">Weave</text>
+</g>
+<!-- Chunks&#45;&gt;Weave -->
+<g id="edge6" class="edge"><title>Chunks&#45;&gt;Weave</title>
+<path fill="none" stroke="black" d="M298.527,-72C307.529,-72 317.663,-72 327.539,-72"/>
+<polygon fill="black" stroke="black" points="327.677,-75.5001 337.677,-72 327.677,-68.5001 327.677,-75.5001"/>
+</g>
+<!-- HTML -->
+<g id="node6" class="node"><title>HTML</title>
+<polygon fill="none" stroke="black" points="504,-90 448,-90 448,-54 504,-54 504,-90"/>
+<text text-anchor="middle" x="476" y="-67.4" font-family="Times New Roman,serif" font-size="14.00">HTML</text>
+</g>
+<!-- Weave&#45;&gt;HTML -->
+<g id="edge7" class="edge"><title>Weave&#45;&gt;HTML</title>
+<path fill="none" stroke="black" d="M412.035,-72C420.348,-72 429.186,-72 437.555,-72"/>
+<polygon fill="black" stroke="black" points="437.83,-75.5001 447.83,-72 437.83,-68.5001 437.83,-75.5001"/>
+</g>
+<!-- Program -->
+<g id="node8" class="node"><title>Program</title>
+<polygon fill="none" stroke="black" points="301,-36 237,-36 237,-1.06581e-014 301,-0 301,-36"/>
+<text text-anchor="middle" x="269" y="-13.4" font-family="Times New Roman,serif" font-size="14.00">Program</text>
+</g>
+<!-- Build&#45;&gt;Program -->
+<g id="edge10" class="edge"><title>Build&#45;&gt;Program</title>
+<path fill="none" stroke="black" d="M200.092,-18C208.334,-18 217.38,-18 226.128,-18"/>
+<polygon fill="black" stroke="black" points="226.196,-21.5001 236.196,-18 226.196,-14.5001 226.196,-21.5001"/>
+</g>
+</g>
+</svg>
+</div>
+</div>
+</p>
 <h2>Splitting files into chunks</h2>
 <p>
 Codnar makes the reasonable assumption that each source file can be effectively
@@ -2779,10 +2874,11 @@ Convert a sequence of marked-up classified lines to (unindented) HTML
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">markup_lines_to_html</span>(lines, klass)
+<span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">markup_lines_to_html</span>(lines, klass, css_class = <span class="Constant">nil</span>)
   implementation = <span class="Type">String</span> === klass ? <span class="Type">Kernel</span>.const_get(klass) : klass
+  css_class ||= implementation.to_s.downcase.gsub(<span class="Special">&quot;</span><span class="Constant">::</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">-</span><span class="Special">&quot;</span>)
   <span class="Statement">return</span> <span class="Type">Formatter</span>.merge_lines(lines, <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span>, <span class="Special">&quot;&quot;</span>) <span class="Statement">do</span> |<span class="Identifier">payload</span>|
-    ( <span class="Special">&quot;</span><span class="Constant">&lt;div class='</span><span class="Special">#{</span>klass.downcase<span class="Special">}</span><span class="Constant"> </span><span class="Special">#{</span>lines[<span class="Constant">0</span>].kind<span class="Special">}</span><span class="Constant"> markup'&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span> \
+    ( <span class="Special">&quot;</span><span class="Constant">&lt;div class='</span><span class="Special">#{</span>css_class<span class="Special">}</span><span class="Constant"> </span><span class="Special">#{</span>lines[<span class="Constant">0</span>].kind<span class="Special">}</span><span class="Constant"> markup'&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span> \
     + implementation.to_html(payload) \
     + <span class="Special">&quot;</span><span class="Constant">&lt;/div&gt;</span><span class="Special">&quot;</span> )
   <span class="Statement">end</span>
@@ -3059,7 +3155,7 @@ above.
 <p>
 Expand “[[chunk|template]]” to HTML embed tags. Use identifiers instead
 of names in the <tt>src</tt> field for safety, unless the template is a
-magical file template, in which case we must preserve the file path,
+magical file template, in which case we must preserve the file path.
 </p>
 </div>
 </td>
@@ -3173,6 +3269,249 @@ and eliminates the ugly additional vertical space in the final HTML.
 <a class="chunk container" href="#lib-codnar-string-extensions-rb">lib/codnar/string_extensions.rb</a>
 </li>
 </ul>
+</div>
+</div>
+</p>
+<h4>Generating diagrams using GraphViz</h4>
+<p>
+If you have <code>graphviz</code> installed, it is possible to use it to generate SVG
+diagrams that can be embedded directly into the HTML. This is implemented as an
+additional formatter; in principle, you this allows embeding the GraphViz
+directives directly in the code, but in practice people prefer keeping the
+diagrams as separate files.
+</p>
+<p>
+We pre-process the GraphViz directives using the <code>m4</code> macro processor. This
+allows dramatically reducing the amount of repeated boilerplate in the diagram
+definitions, by defining macros for node and edge styles and, if desired, more
+advanced techniques.
+</p>
+<p>
+Here is a simple test that demonstrates generating SVG from a GraphViz diagram:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="test-graphviz-diagrams-rb">
+<span>test/graphviz_diagrams.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='ruby code syntax'>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">test/spec</span><span class="Special">&quot;</span>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Test highlighting syntax using GVim.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="PreProc">class</span> <span class="Type">TestGraphVizDiagrams</span> &lt; <span class="Type">Test</span>::<span class="Type">Unit</span>::<span class="Type">TestCase</span>
+
+  <span class="Type">MINIMAL_DIAGRAM_SVG</span> = &lt;&lt;-<span class="Special">EOF</span>.unindent <span class="Comment">#! ((( svg</span>
+</pre>
+<pre class='svg code syntax'>
+    <span class="Identifier">&lt;</span><span class="Identifier">svg</span><span class="Identifier"> </span><span class="Type">width</span>=<span class="Constant">&quot;62pt&quot;</span><span class="Identifier"> </span><span class="Type">height</span>=<span class="Constant">&quot;116pt&quot;</span>
+<span class="Identifier">     </span><span class="Type">viewBox</span>=<span class="Constant">&quot;0.00 0.00 62.00 116.00&quot;</span><span class="Identifier"> </span><span class="Type">xmlns</span>=<span class="Constant">&quot;<a href="http://www.w3.org/2000/svg">http://www.w3.org/2000/svg</a>&quot;</span><span class="Identifier"> </span><span class="Type">xmlns</span><span class="Comment">:</span><span class="Type">xlink</span>=<span class="Constant">&quot;<a href="http://www.w3.org/1999/xlink">http://www.w3.org/1999/xlink</a>&quot;</span><span class="Identifier">&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Identifier">g</span><span class="Identifier"> </span><span class="Type">id</span>=<span class="Constant">&quot;graph1&quot;</span><span class="Identifier"> </span><span class="Type">class</span>=<span class="Constant">&quot;graph&quot;</span><span class="Identifier"> </span><span class="Type">transform</span>=<span class="Constant">&quot;scale(1 1) rotate(0) translate(4 112)&quot;</span><span class="Identifier">&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Identifier">title</span><span class="Identifier">&gt;</span>_anonymous_0<span class="Identifier">&lt;/title&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Identifier">polygon</span><span class="Identifier"> </span><span class="Type">fill</span>=<span class="Constant">&quot;white&quot;</span><span class="Identifier"> </span><span class="Type">stroke</span>=<span class="Constant">&quot;white&quot;</span><span class="Identifier"> </span><span class="Type">points</span>=<span class="Constant">&quot;-4,5 -4,-112 59,-112 59,5 -4,5&quot;</span><span class="Identifier">/&gt;</span>
+    <span class="Comment">&lt;!</span><span class="Comment">-- A --</span><span class="Comment">&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Identifier">g</span><span class="Identifier"> </span><span class="Type">id</span>=<span class="Constant">&quot;node1&quot;</span><span class="Identifier"> </span><span class="Type">class</span>=<span class="Constant">&quot;node&quot;</span><span class="Identifier">&gt;&lt;</span><span class="Identifier">title</span><span class="Identifier">&gt;</span>A<span class="Identifier">&lt;/title&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Identifier">ellipse</span><span class="Identifier"> </span><span class="Type">fill</span>=<span class="Constant">&quot;none&quot;</span><span class="Identifier"> </span><span class="Type">stroke</span>=<span class="Constant">&quot;black&quot;</span><span class="Identifier"> </span><span class="Type">cx</span>=<span class="Constant">&quot;27&quot;</span><span class="Identifier"> </span><span class="Type">cy</span>=<span class="Constant">&quot;-90&quot;</span><span class="Identifier"> </span><span class="Type">rx</span>=<span class="Constant">&quot;27&quot;</span><span class="Identifier"> </span><span class="Type">ry</span>=<span class="Constant">&quot;18&quot;</span><span class="Identifier">/&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Identifier">text</span><span class="Identifier"> </span><span class="Type">text-anchor</span>=<span class="Constant">&quot;middle&quot;</span><span class="Identifier"> </span><span class="Type">x</span>=<span class="Constant">&quot;27&quot;</span><span class="Identifier"> </span><span class="Type">y</span>=<span class="Constant">&quot;-85.4&quot;</span><span class="Identifier"> </span><span class="Type">font-family</span>=<span class="Constant">&quot;Times New Roman,serif&quot;</span><span class="Identifier"> </span><span class="Type">font-size</span>=<span class="Constant">&quot;14.00&quot;</span><span class="Identifier">&gt;</span>A<span class="Identifier">&lt;/text&gt;</span>
+    <span class="Identifier">&lt;/g&gt;</span>
+    <span class="Comment">&lt;!</span><span class="Comment">-- B --</span><span class="Comment">&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Identifier">g</span><span class="Identifier"> </span><span class="Type">id</span>=<span class="Constant">&quot;node3&quot;</span><span class="Identifier"> </span><span class="Type">class</span>=<span class="Constant">&quot;node&quot;</span><span class="Identifier">&gt;&lt;</span><span class="Identifier">title</span><span class="Identifier">&gt;</span>B<span class="Identifier">&lt;/title&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Identifier">ellipse</span><span class="Identifier"> </span><span class="Type">fill</span>=<span class="Constant">&quot;none&quot;</span><span class="Identifier"> </span><span class="Type">stroke</span>=<span class="Constant">&quot;black&quot;</span><span class="Identifier"> </span><span class="Type">cx</span>=<span class="Constant">&quot;27&quot;</span><span class="Identifier"> </span><span class="Type">cy</span>=<span class="Constant">&quot;-18&quot;</span><span class="Identifier"> </span><span class="Type">rx</span>=<span class="Constant">&quot;27&quot;</span><span class="Identifier"> </span><span class="Type">ry</span>=<span class="Constant">&quot;18&quot;</span><span class="Identifier">/&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Identifier">text</span><span class="Identifier"> </span><span class="Type">text-anchor</span>=<span class="Constant">&quot;middle&quot;</span><span class="Identifier"> </span><span class="Type">x</span>=<span class="Constant">&quot;27&quot;</span><span class="Identifier"> </span><span class="Type">y</span>=<span class="Constant">&quot;-13.4&quot;</span><span class="Identifier"> </span><span class="Type">font-family</span>=<span class="Constant">&quot;Times New Roman,serif&quot;</span><span class="Identifier"> </span><span class="Type">font-size</span>=<span class="Constant">&quot;14.00&quot;</span><span class="Identifier">&gt;</span>B<span class="Identifier">&lt;/text&gt;</span>
+    <span class="Identifier">&lt;/g&gt;</span>
+    <span class="Comment">&lt;!</span><span class="Comment">-- A&amp;#45;&amp;gt;B --</span><span class="Comment">&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Identifier">g</span><span class="Identifier"> </span><span class="Type">id</span>=<span class="Constant">&quot;edge2&quot;</span><span class="Identifier"> </span><span class="Type">class</span>=<span class="Constant">&quot;edge&quot;</span><span class="Identifier">&gt;&lt;</span><span class="Identifier">title</span><span class="Identifier">&gt;</span>A<span class="Type">&amp;</span><span class="Statement">#45</span><span class="Type">;&amp;</span><span class="Statement">gt</span><span class="Type">;</span>B<span class="Identifier">&lt;/title&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Identifier">path</span><span class="Identifier"> </span><span class="Type">fill</span>=<span class="Constant">&quot;none&quot;</span><span class="Identifier"> </span><span class="Type">stroke</span>=<span class="Constant">&quot;black&quot;</span><span class="Identifier"> </span><span class="Type">d</span>=<span class="Constant">&quot;M27,-71.8314C27,-64.131 27,-54.9743 27,-46.4166&quot;</span><span class="Identifier">/&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Identifier">polygon</span><span class="Identifier"> </span><span class="Type">fill</span>=<span class="Constant">&quot;black&quot;</span><span class="Identifier"> </span><span class="Type">stroke</span>=<span class="Constant">&quot;black&quot;</span><span class="Identifier"> </span><span class="Type">points</span>=<span class="Constant">&quot;30.5001,-46.4132 27,-36.4133 23.5001,-46.4133 30.5001,-46.4132&quot;</span><span class="Identifier">/&gt;</span>
+    <span class="Identifier">&lt;/g&gt;</span>
+    <span class="Identifier">&lt;/g&gt;</span>
+    <span class="Identifier">&lt;/svg&gt;</span>
+  EOF
+</pre>
+<pre class='ruby code syntax'>
+  <span class="Comment">#! ))) svg</span>
+
+  <span class="PreProc">def</span> <span class="Identifier">test_valid_diagram</span>
+    diagram = &lt;&lt;-<span class="Special">EOF</span>.unindent <span class="Comment">#! ((( dot</span>
+</pre>
+<pre class='dot code syntax'>
+      <span class="Identifier">define</span><span class="Statement">(</span>`<span class="Identifier">X</span>', `<span class="Identifier">A</span>'<span class="Statement">)</span>
+      <span class="Statement">digraph</span> <span class="Statement">{</span>
+        <span class="Identifier">X</span> <span class="Statement">-&gt;</span> <span class="Identifier">B</span><span class="Statement">;</span>
+      <span class="Statement">}</span>
+    <span class="Identifier">EOF</span>
+</pre>
+<pre class='ruby code syntax'>
+    <span class="Comment">#! ))) dot</span>
+    <span class="Type">Codnar</span>::<span class="Type">GraphViz</span>.to_html(diagram).should == <span class="Type">MINIMAL_DIAGRAM_SVG</span>
+  end
+
+  <span class="PreProc">def</span> <span class="Identifier">test_invalid_diagram</span>
+    diagram = &lt;&lt;-<span class="Special">EOF</span>.unindent <span class="Comment">#! ((( dot</span>
+</pre>
+<pre class='dot code syntax'>
+      <span class="Statement">digraph</span> <span class="Statement">{</span>
+        <span class="Identifier">A</span> <span class="Statement">-&gt;</span>
+    <span class="Identifier">EOF</span>
+</pre>
+<pre class='ruby code syntax'>
+    <span class="Comment">#! ))) dot</span>
+    <span class="Statement">lambda</span> { <span class="Type">Codnar</span>::<span class="Type">GraphViz</span>.to_html(diagram) }.should.raise
+  end
+
+end
+</pre>
+</div>
+</div>
+</p>
+<p>
+And here is the implementation:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="lib-codnar-graphviz-rb">
+<span>lib/codnar/graphviz.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='ruby code syntax'>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">open3</span><span class="Special">&quot;</span>
+
+<span class="PreProc">module</span> <span class="Type">Codnar</span>
+
+</pre>
+  <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>  </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Generate diagrams using GraphViz.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+  <span class="PreProc">class</span> <span class="Type">GraphViz</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Convert a string containing a GraphViz diagram into SVG suitable for
+embedding into the HTML documentation. We pre-process the diagram using M4
+to allow cutting down on the boilerplate (repeating the same styles in many
+nodes etc.). This should not be harmful for diagrams that do not use M4
+commands.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">to_html</span>(diagram)
+      stdin, stdout, stderr = <span class="Type">Open3</span>.popen3(<span class="Special">&quot;</span><span class="Constant">m4 | dot -Tsvg</span><span class="Special">&quot;</span>)
+      write_diagram(stdin, diagram)
+      check_for_errors(stderr)
+      <span class="Statement">return</span> clean_output(stdout)
+    <span class="PreProc">end</span>
+
+  <span class="Statement">protected</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Send the diagram to the commands pipe.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">write_diagram</span>(stdin, diagram)
+      stdin.write(diagram)
+      stdin.close
+    <span class="PreProc">end</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Ensure we got no processing errors from either m4 or dot. If we did, raise
+them, and they will be handled by the formatter wrapping code.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">check_for_errors</span>(stderr)
+      errors = stderr.read
+      <span class="Statement">raise</span> errors.sub(<span class="Special">/</span><span class="Constant">Error: &lt;stdin&gt;:</span><span class="Special">\d</span><span class="Special">+</span><span class="Constant">: </span><span class="Special">/</span>, <span class="Special">&quot;&quot;</span>) <span class="Statement">if</span> errors != <span class="Special">&quot;&quot;</span>
+    <span class="PreProc">end</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Clean the SVG we got to make it suitable for embedding in HTML.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">clean_output</span>(stdout)
+      <span class="Statement">return</span> stdout.read.sub(<span class="Special">/</span><span class="Special">.</span><span class="Special">*</span><span class="Constant">&lt;svg</span><span class="Special">/m</span>, <span class="Special">&quot;</span><span class="Constant">&lt;svg</span><span class="Special">&quot;</span>).gsub(<span class="Special">/</span><span class="Special">\r</span><span class="Special">/</span>, <span class="Special">&quot;&quot;</span>)
+    <span class="PreProc">end</span>
+
+  end
+
+end
+</pre>
 </div>
 </div>
 </p>
@@ -4382,7 +4721,7 @@ Test “splitting” documentation files.
   <span class="PreProc">def</span> <span class="Identifier">configuration</span>(kind)
     <span class="Statement">return</span> {
       <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-        <span class="Special">&quot;</span><span class="Constant">markdown</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, 'Markdown')</span><span class="Special">&quot;</span>,
+        <span class="Special">&quot;</span><span class="Constant">markdown</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Markdown, 'markdown')</span><span class="Special">&quot;</span>,
         <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
         <span class="Special">&quot;</span><span class="Constant">rdoc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, 'RDoc')</span><span class="Special">&quot;</span>,
       },
@@ -4984,7 +5323,7 @@ preserved by escaping it and wrapping it in an HTML pre element.
 <pre class='ruby code syntax'>
 <span class="Type">SPLIT_RDOC_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
   <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, 'RDoc')</span><span class="Special">&quot;</span>,
+    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, RDoc)</span><span class="Special">&quot;</span>,
     <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
   }
 )
@@ -5007,7 +5346,30 @@ preserved by escaping it and wrapping it in an HTML pre element.
 <pre class='ruby code syntax'>
 <span class="Type">SPLIT_MARKDOWN_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
   <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, 'Markdown')</span><span class="Special">&quot;</span>,
+    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Markdown, 'markdown')</span><span class="Special">&quot;</span>,
+    <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
+  }
+)
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+“Split” a documentation file containing a GraphViz diagram.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="Type">SPLIT_GRAPHVIZ_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
+  <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
+    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Codnar::GraphViz, 'graphviz')</span><span class="Special">&quot;</span>,
     <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
   }
 )
@@ -5916,7 +6278,7 @@ configuration that classifies some lines as <tt>comment</tt>.
 <pre class='ruby code syntax'>
 <span class="Type">FORMAT_MARKDOWN_COMMENTS</span> = {
   <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-    <span class="Special">&quot;</span><span class="Constant">comment</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, 'Markdown')</span><span class="Special">&quot;</span>,
+    <span class="Special">&quot;</span><span class="Constant">comment</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Markdown, 'markdown')</span><span class="Special">&quot;</span>,
     <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
   },
 }
@@ -8398,6 +8760,7 @@ convenient list of all of Codnar's parts and dependencies:
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/application</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/cache</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/formatter</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/graphviz</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/grouper</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/gvim</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/merger</span><span class="Special">&quot;</span>
@@ -10039,7 +10402,11 @@ HTML islands.
   <span class="Special">&quot;</span><span class="Constant">classify_source_code:ruby</span><span class="Special">&quot;</span>,
   <span class="Special">&quot;</span><span class="Constant">format_code_gvim_css:ruby</span><span class="Special">&quot;</span>,
   <span class="Special">&quot;</span><span class="Constant">classify_nested_code:ruby:html</span><span class="Special">&quot;</span>,
+  <span class="Special">&quot;</span><span class="Constant">classify_nested_code:ruby:dot</span><span class="Special">&quot;</span>,
+  <span class="Special">&quot;</span><span class="Constant">classify_nested_code:ruby:svg</span><span class="Special">&quot;</span>,
   <span class="Special">&quot;</span><span class="Constant">format_code_gvim_css:html</span><span class="Special">&quot;</span>,
+  <span class="Special">&quot;</span><span class="Constant">format_code_gvim_css:dot</span><span class="Special">&quot;</span>,
+  <span class="Special">&quot;</span><span class="Constant">format_code_gvim_css:svg</span><span class="Special">&quot;</span>,
   <span class="Special">&quot;</span><span class="Constant">classify_shell_comments</span><span class="Special">&quot;</span>,
   <span class="Special">&quot;</span><span class="Constant">format_rdoc_comments</span><span class="Special">&quot;</span>,
 ], [
