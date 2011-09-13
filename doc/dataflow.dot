@@ -1,0 +1,16 @@
+define(`FileNodeStyle', `shape = box')
+define(`ProcNodeStyle', `shape = ellipse')
+digraph "Codnar Dataflow" {
+  rankdir = LR;
+  Documentation [ FileNodeStyle ];
+  Sources [ FileNodeStyle ];
+  Split [ ProcNodeStyle ];
+  Chunks [ FileNodeStyle ];
+  Weave [ ProcNodeStyle ];
+  HTML [ FileNodeStyle ];
+  Build [ ProcNodeStyle ];
+  Program [ FileNodeStyle ];
+  Documentation -> Split;
+  Sources -> Split -> Chunks -> Weave -> HTML;
+  Sources -> Build -> Program;
+}

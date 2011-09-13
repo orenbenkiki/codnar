@@ -15,7 +15,11 @@ Olag::Rake::CODNAR_CONFIGURATIONS.unshift([
   "classify_source_code:ruby",
   "format_code_gvim_css:ruby",
   "classify_nested_code:ruby:html",
+  "classify_nested_code:ruby:dot",
+  "classify_nested_code:ruby:svg",
   "format_code_gvim_css:html",
+  "format_code_gvim_css:dot",
+  "format_code_gvim_css:svg",
   "classify_shell_comments",
   "format_rdoc_comments",
 ], [

@@ -14,7 +14,8 @@ into a narrative that describes the overall system.
 
 A simple <tt>gem install codnar</tt> should do the trick, assuming you have
 Ruby gems set up. If you want to use the VIM-based syntax highlighting, you
-also need to install <tt>gvim</tt>.
+also need to install <tt>gvim</tt>. Similarly, you need to install
+<tt>GraphViz</tt> to be able to embed SVG diagrams in your HTML.
 
 === Usage
 

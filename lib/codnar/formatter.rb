@@ -164,10 +164,11 @@ module Codnar
     end
 
     # Convert a sequence of marked-up classified lines to (unindented) HTML
-    def self.markup_lines_to_html(lines, klass)
+    def self.markup_lines_to_html(lines, klass, css_class = nil)
       implementation = String === klass ? Kernel.const_get(klass) : klass
+      css_class ||= implementation.to_s.downcase.gsub("::", "-")
       return Formatter.merge_lines(lines, "unindented_html", "") do |payload|
-        ( "<div class='#{klass.downcase} #{lines[0].kind} markup'>\n" \
+        ( "<div class='#{css_class} #{lines[0].kind} markup'>\n" \
         + implementation.to_html(payload) \
         + "</div>" )
       end

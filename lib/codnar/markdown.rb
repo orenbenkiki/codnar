@@ -24,7 +24,7 @@ protected
 
   # Expand "[[chunk|template]]" to HTML embed tags. Use identifiers instead of
   # names in the +src+ field for safety, unless the template is a magical file
-  # template, in which case we must preserve the file path,
+  # template, in which case we must preserve the file path.
   def self.embed_chunks(markdown)
     return markdown.gsub(/\[\[(.*?)\|(.*?)\]\]/) do
       src = $1

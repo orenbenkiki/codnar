@@ -1,3 +1,7 @@
+2011-09-13	Oren Ben-Kiki <github-oren@ben-kiki.org>
+
+	* Add support for GraphViz documentation.
+
 2011-08-25	Oren Ben-Kiki <github-oren@ben-kiki.org>
 
 	* Use OLAG for verifying number of arguments.

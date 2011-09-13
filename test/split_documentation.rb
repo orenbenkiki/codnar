@@ -69,7 +69,7 @@ protected
   def configuration(kind)
     return {
       "formatters" => {
-        "markdown" => "Formatter.markup_lines_to_html(lines, 'Markdown')",
+        "markdown" => "Formatter.markup_lines_to_html(lines, Markdown, 'markdown')",
         "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
         "rdoc" => "Formatter.markup_lines_to_html(lines, 'RDoc')",
       },

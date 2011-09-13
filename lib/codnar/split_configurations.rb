@@ -39,7 +39,7 @@ module Codnar
     # "Split" a documentation file containing pure RDoc documentation.
     SPLIT_RDOC_DOCUMENTATION = SPLIT_HTML_DOCUMENTATION.deep_merge(
       "formatters" => {
-        "doc" => "Formatter.markup_lines_to_html(lines, 'RDoc')",
+        "doc" => "Formatter.markup_lines_to_html(lines, RDoc)",
         "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
       }
     )
@@ -47,7 +47,15 @@ module Codnar
     # "Split" a documentation file containing pure Markdown documentation.
     SPLIT_MARKDOWN_DOCUMENTATION = SPLIT_HTML_DOCUMENTATION.deep_merge(
       "formatters" => {
-        "doc" => "Formatter.markup_lines_to_html(lines, 'Markdown')",
+        "doc" => "Formatter.markup_lines_to_html(lines, Markdown, 'markdown')",
+        "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
+      }
+    )
+
+    # "Split" a documentation file containing a GraphViz diagram.
+    SPLIT_GRAPHVIZ_DOCUMENTATION = SPLIT_HTML_DOCUMENTATION.deep_merge(
+      "formatters" => {
+        "doc" => "Formatter.markup_lines_to_html(lines, Codnar::GraphViz, 'graphviz')",
         "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
       }
     )
@@ -278,7 +286,7 @@ module Codnar
     # configuration that classifies some lines as +comment+.
     FORMAT_MARKDOWN_COMMENTS = {
       "formatters" => {
-        "comment" => "Formatter.markup_lines_to_html(lines, 'Markdown')",
+        "comment" => "Formatter.markup_lines_to_html(lines, Markdown, 'markdown')",
         "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
       },
     }
