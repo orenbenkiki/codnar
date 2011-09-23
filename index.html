@@ -352,16 +352,6 @@ table.layout td.html {
   background-color: Beige;
 }
 
-/* Colors for GVim classes */
-
-span.Constant   { color: Crimson; }
-span.Identifier { color: Teal; }
-span.PreProc    { color: Indigo; }
-span.Special    { color: Navy; }
-span.Statement  { color: Maroon; }
-span.Type       { color: Green; }
-span.Comment    { color: Purple; }
-
 /* Fonts */
 
 body {
@@ -373,6 +363,14 @@ pre {
 div.chunk.name {
   font-weight: bold;
 }
+/* Colors for GVim classes */
+span.Constant   { color: Crimson; }
+span.Identifier { color: Teal; }
+span.PreProc    { color: Indigo; }
+span.Special    { color: Navy; }
+span.Statement  { color: Maroon; }
+span.Type       { color: Green; }
+span.Comment    { color: Purple; }
 </style>
 </head>
 <body>
@@ -687,7 +685,7 @@ number of Git commits by running <tt>rake version</tt>.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.67</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.68</span><span class="Special">&quot;</span>
 
 end
 </pre>
@@ -2939,16 +2937,16 @@ Test expanding RDoc text.
 <span class="PreProc">class</span> <span class="Type">TestExpandRDoc</span> &lt; <span class="Type">Test</span>::<span class="Type">Unit</span>::<span class="Type">TestCase</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_emphasis_text</span>
-    <span class="Type">RDoc</span>.to_html(<span class="Special">&quot;</span><span class="Constant">_text_</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;em&gt;text&lt;/em&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+    <span class="Type">Codnar</span>::<span class="Type">RDoc</span>.to_html(<span class="Special">&quot;</span><span class="Constant">_text_</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;em&gt;text&lt;/em&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_strong_text</span>
-    <span class="Type">RDoc</span>.to_html(<span class="Special">&quot;</span><span class="Constant">*text*</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;b&gt;text&lt;/b&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+    <span class="Type">Codnar</span>::<span class="Type">RDoc</span>.to_html(<span class="Special">&quot;</span><span class="Constant">*text*</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;b&gt;text&lt;/b&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_indented_pre</span>
-    <span class="Type">RDoc</span>.to_html(<span class="Special">&quot;</span><span class="Constant">base</span><span class="Special">\n</span><span class="Constant">  indented</span><span class="Special">\n</span><span class="Constant">    more</span><span class="Special">\n</span><span class="Constant">back</span><span class="Special">\n</span><span class="Special">&quot;</span>).should \
-      == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">base</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;pre&gt;</span><span class="Special">\n</span><span class="Constant">indented</span><span class="Special">\n</span><span class="Constant">  more</span><span class="Special">\n</span><span class="Constant">&lt;/pre&gt;</span><span class="Special">\n</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">back</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+    <span class="Type">Codnar</span>::<span class="Type">RDoc</span>.to_html(<span class="Special">&quot;</span><span class="Constant">base</span><span class="Special">\n</span><span class="Constant">  indented</span><span class="Special">\n</span><span class="Constant">    more</span><span class="Special">\n</span><span class="Constant">back</span><span class="Special">\n</span><span class="Special">&quot;</span>).should \
+                      == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">base</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;pre&gt;</span><span class="Special">\n</span><span class="Constant">indented</span><span class="Special">\n</span><span class="Constant">  more</span><span class="Special">\n</span><span class="Constant">&lt;/pre&gt;</span><span class="Special">\n</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">back</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
 <span class="PreProc">end</span>
@@ -2967,28 +2965,32 @@ And here is the implementation:
 </a>
 </div>
 <div class="chunk html">
-<table class='layout'>
-<tr>
-<td class='indentation'>
-<pre></pre>
-</td>
-<td class='html'>
-<div class='rdoc comment markup'>
-<p>
-Extend the RDoc module.
-</p>
-</div>
-</td>
-</tr>
-</table>
 <pre class='ruby code syntax'>
-<span class="PreProc">module</span> <span class="Type">RDoc</span>
+<span class="PreProc">module</span> <span class="Type">Codnar</span>
 
 </pre>
   <table class='layout'>
 <tr>
 <td class='indentation'>
 <pre>  </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Convert RDoc to HTML.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+  <span class="PreProc">module</span> <span class="Type">RDoc</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
 </td>
 <td class='html'>
 <div class='rdoc comment markup'>
@@ -3000,9 +3002,11 @@ Process a RDoc String and return the resulting HTML.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">to_html</span>(rdoc)
-    <span class="Statement">return</span> ::<span class="Type">RDoc</span>::<span class="Type">Markup</span>::<span class="Type">ToHtml</span>.new.convert(rdoc).clean_markup_html
-  <span class="PreProc">end</span>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">to_html</span>(rdoc)
+      <span class="Statement">return</span> ::<span class="Type">RDoc</span>::<span class="Type">Markup</span>::<span class="Type">ToHtml</span>.new.convert(rdoc).clean_markup_html
+    <span class="PreProc">end</span>
+
+  end
 
 end
 </pre>
@@ -3046,23 +3050,23 @@ Test expanding Markdown text.
 <span class="PreProc">class</span> <span class="Type">TestExpandMarkdown</span> &lt; <span class="Type">Test</span>::<span class="Type">Unit</span>::<span class="Type">TestCase</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_emphasis_text</span>
-    <span class="Type">Markdown</span>.to_html(<span class="Special">&quot;</span><span class="Constant">*text*</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;em&gt;text&lt;/em&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+    <span class="Type">Codnar</span>::<span class="Type">Markdown</span>.to_html(<span class="Special">&quot;</span><span class="Constant">*text*</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;em&gt;text&lt;/em&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_strong_text</span>
-    <span class="Type">Markdown</span>.to_html(<span class="Special">&quot;</span><span class="Constant">**text**</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;strong&gt;text&lt;/strong&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+    <span class="Type">Codnar</span>::<span class="Type">Markdown</span>.to_html(<span class="Special">&quot;</span><span class="Constant">**text**</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;strong&gt;text&lt;/strong&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_embed_chunk</span>
-    <span class="Type">Markdown</span>.to_html(<span class="Special">&quot;</span><span class="Constant">[[Chunk|template]]</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;embed src='chunk' type='x-codnar/template'/&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+    <span class="Type">Codnar</span>::<span class="Type">Markdown</span>.to_html(<span class="Special">&quot;</span><span class="Constant">[[Chunk|template]]</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;embed src='chunk' type='x-codnar/template'/&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_embed_anchor</span>
-    <span class="Type">Markdown</span>.to_html(<span class="Special">&quot;</span><span class="Constant">[[#Name]]</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;a id='name'/&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+    <span class="Type">Codnar</span>::<span class="Type">Markdown</span>.to_html(<span class="Special">&quot;</span><span class="Constant">[[#Name]]</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;a id='name'/&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_embed_link</span>
-    <span class="Type">Markdown</span>.to_html(<span class="Special">&quot;</span><span class="Constant">[Label](#Name)</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;a href=\&quot;#name\&quot;&gt;Label&lt;/a&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+    <span class="Type">Codnar</span>::<span class="Type">Markdown</span>.to_html(<span class="Special">&quot;</span><span class="Constant">[Label](#Name)</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;a href=\&quot;#name\&quot;&gt;Label&lt;/a&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
 <span class="PreProc">end</span>
@@ -3081,28 +3085,32 @@ And here is the implementation:
 </a>
 </div>
 <div class="chunk html">
-<table class='layout'>
-<tr>
-<td class='indentation'>
-<pre></pre>
-</td>
-<td class='html'>
-<div class='rdoc comment markup'>
-<p>
-Extend the Markdown class.
-</p>
-</div>
-</td>
-</tr>
-</table>
 <pre class='ruby code syntax'>
-<span class="PreProc">class</span> <span class="Type">Markdown</span>
+<span class="PreProc">module</span> <span class="Type">Codnar</span>
 
 </pre>
   <table class='layout'>
 <tr>
 <td class='indentation'>
 <pre>  </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Convert Markdown to HTML.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+  <span class="PreProc">module</span> <span class="Type">Markdown</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
 </td>
 <td class='html'>
 <div class='rdoc comment markup'>
@@ -3134,21 +3142,21 @@ above.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">to_html</span>(markdown)
-    markdown = <span class="Type">Markdown</span>.embed_chunks(markdown)
-    markdown = <span class="Type">Markdown</span>.id_anchors(markdown)
-    html = <span class="Type">RDiscount</span>.new(markdown).to_html
-    html = <span class="Type">Markdown</span>.id_links(html)
-    <span class="Statement">return</span> html.clean_markup_html
-  <span class="PreProc">end</span>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">to_html</span>(markdown)
+      markdown = embed_chunks(markdown)
+      markdown = id_anchors(markdown)
+      html = <span class="Type">RDiscount</span>.new(markdown).to_html
+      html = id_links(html)
+      <span class="Statement">return</span> html.clean_markup_html
+    <span class="PreProc">end</span>
 
-<span class="Statement">protected</span>
+  <span class="Statement">protected</span>
 
 </pre>
-  <table class='layout'>
+    <table class='layout'>
 <tr>
 <td class='indentation'>
-<pre>  </pre>
+<pre>    </pre>
 </td>
 <td class='html'>
 <div class='rdoc comment markup'>
@@ -3162,20 +3170,20 @@ magical file template, in which case we must preserve the file path.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">embed_chunks</span>(markdown)
-    <span class="Statement">return</span> markdown.gsub(<span class="Special">/</span><span class="Special">\[\[</span><span class="Special">(</span><span class="Special">.</span><span class="Special">*?</span><span class="Special">)</span><span class="Special">\|</span><span class="Special">(</span><span class="Special">.</span><span class="Special">*?</span><span class="Special">)</span><span class="Special">\]\]</span><span class="Special">/</span>) <span class="Statement">do</span>
-      src = <span class="Identifier">$1</span>
-      template = <span class="Identifier">$2</span>
-      src = src.to_id <span class="Statement">unless</span> <span class="Type">Codnar</span>::<span class="Type">Weaver</span>::<span class="Type">FILE_TEMPLATE_PROCESSORS</span>.include?(template)
-      <span class="Special">&quot;</span><span class="Constant">&lt;embed src='</span><span class="Special">#{</span>src<span class="Special">}</span><span class="Constant">' type='x-codnar/</span><span class="Special">#{</span>template<span class="Special">}</span><span class="Constant">'/&gt;</span><span class="Special">&quot;</span>
-    <span class="Statement">end</span>
-  <span class="PreProc">end</span>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">embed_chunks</span>(markdown)
+      <span class="Statement">return</span> markdown.gsub(<span class="Special">/</span><span class="Special">\[\[</span><span class="Special">(</span><span class="Special">.</span><span class="Special">*?</span><span class="Special">)</span><span class="Special">\|</span><span class="Special">(</span><span class="Special">.</span><span class="Special">*?</span><span class="Special">)</span><span class="Special">\]\]</span><span class="Special">/</span>) <span class="Statement">do</span>
+        src = <span class="Identifier">$1</span>
+        template = <span class="Identifier">$2</span>
+        src = src.to_id <span class="Statement">unless</span> <span class="Type">Codnar</span>::<span class="Type">Weaver</span>::<span class="Type">FILE_TEMPLATE_PROCESSORS</span>.include?(template)
+        <span class="Special">&quot;</span><span class="Constant">&lt;embed src='</span><span class="Special">#{</span>src<span class="Special">}</span><span class="Constant">' type='x-codnar/</span><span class="Special">#{</span>template<span class="Special">}</span><span class="Constant">'/&gt;</span><span class="Special">&quot;</span>
+      <span class="Statement">end</span>
+    <span class="PreProc">end</span>
 
 </pre>
-  <table class='layout'>
+    <table class='layout'>
 <tr>
 <td class='indentation'>
-<pre>  </pre>
+<pre>    </pre>
 </td>
 <td class='html'>
 <div class='rdoc comment markup'>
@@ -3188,15 +3196,15 @@ identifier.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">id_anchors</span>(markdown)
-    <span class="Statement">return</span> markdown.gsub(<span class="Special">/</span><span class="Special">\[\[</span><span class="Constant">#</span><span class="Special">(</span><span class="Special">.</span><span class="Special">*?</span><span class="Special">)</span><span class="Special">\]\]</span><span class="Special">/</span>) { <span class="Special">&quot;</span><span class="Constant">&lt;a id='</span><span class="Special">#{</span><span class="Identifier">$1</span>.to_id<span class="Special">}</span><span class="Constant">'/&gt;</span><span class="Special">&quot;</span> }
-  <span class="PreProc">end</span>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">id_anchors</span>(markdown)
+      <span class="Statement">return</span> markdown.gsub(<span class="Special">/</span><span class="Special">\[\[</span><span class="Constant">#</span><span class="Special">(</span><span class="Special">.</span><span class="Special">*?</span><span class="Special">)</span><span class="Special">\]\]</span><span class="Special">/</span>) { <span class="Special">&quot;</span><span class="Constant">&lt;a id='</span><span class="Special">#{</span><span class="Identifier">$1</span>.to_id<span class="Special">}</span><span class="Constant">'/&gt;</span><span class="Special">&quot;</span> }
+    <span class="PreProc">end</span>
 
 </pre>
-  <table class='layout'>
+    <table class='layout'>
 <tr>
 <td class='indentation'>
-<pre>  </pre>
+<pre>    </pre>
 </td>
 <td class='html'>
 <div class='rdoc comment markup'>
@@ -3209,9 +3217,11 @@ links.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">id_links</span>(html)
-    <span class="Statement">return</span> html.gsub(<span class="Special">/</span><span class="Constant">href=</span><span class="Special">(</span><span class="Special">[</span><span class="Constant">&quot;'</span><span class="Special">]</span><span class="Special">)</span><span class="Constant">#</span><span class="Special">(</span><span class="Special">.</span><span class="Special">*?</span><span class="Special">)(</span><span class="Special">[</span><span class="Constant">&quot;'</span><span class="Special">]</span><span class="Special">)</span><span class="Special">/</span>) { <span class="Special">&quot;</span><span class="Constant">href=</span><span class="Special">#{</span><span class="Identifier">$1</span><span class="Special">}</span><span class="Constant">#</span><span class="Special">#{</span><span class="Identifier">$2</span>.to_id<span class="Special">}#{</span><span class="Identifier">$3</span><span class="Special">}</span><span class="Special">&quot;</span> }
-  <span class="PreProc">end</span>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">id_links</span>(html)
+      <span class="Statement">return</span> html.gsub(<span class="Special">/</span><span class="Constant">href=</span><span class="Special">(</span><span class="Special">[</span><span class="Constant">&quot;'</span><span class="Special">]</span><span class="Special">)</span><span class="Constant">#</span><span class="Special">(</span><span class="Special">.</span><span class="Special">*?</span><span class="Special">)(</span><span class="Special">[</span><span class="Constant">&quot;'</span><span class="Special">]</span><span class="Special">)</span><span class="Special">/</span>) { <span class="Special">&quot;</span><span class="Constant">href=</span><span class="Special">#{</span><span class="Identifier">$1</span><span class="Special">}</span><span class="Constant">#</span><span class="Special">#{</span><span class="Identifier">$2</span>.to_id<span class="Special">}#{</span><span class="Identifier">$3</span><span class="Special">}</span><span class="Special">&quot;</span> }
+    <span class="PreProc">end</span>
+
+  end
 
 end
 </pre>
@@ -3394,8 +3404,6 @@ And here is the implementation:
 </div>
 <div class="chunk html">
 <pre class='ruby code syntax'>
-<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">open3</span><span class="Special">&quot;</span>
-
 <span class="PreProc">module</span> <span class="Type">Codnar</span>
 
 </pre>
@@ -3517,11 +3525,11 @@ end
 </p>
 <h4>Syntax highlighting using GVIM</h4>
 <p>
-If you have <code>gvim</code> istalled, it is possible to use it to generate syntax
-highlighting. This is a <em>slow</em> operation, as <code>gvim</code> was never meant to be used
-as a command-line tool. However, what it lacks in speed it compensates for in
-scope; almost any language you can think of has a <code>gvim</code> syntax highlighting
-definition. Here is a simple test that demonstrates using <code>gvim</code> for syntax
+If you have GVim istalled, it is possible to use it to generate syntax
+highlighting. This is a <em>slow</em> operation, as GVim was never meant to be used as
+a command-line tool. However, what it lacks in speed it compensates for in
+scope; almost any language you can think of has a GVim syntax highlighting
+definition. Here is a simple test that demonstrates using GVim for syntax
 highlighting:
 </p>
 <p>
@@ -4233,6 +4241,135 @@ end
 </div>
 </div>
 </p>
+<h4>Syntax highlighting using CodeRay</h4>
+<p>
+<a href="http://coderay.rubychan.de/">CodeRay</a> is a Ruby gem that knows how to
+highlight the syntax of many popular languages. It is much faster than using
+GVim`but doesn't offer the huge range of programming languages offered by GVim
+(for example, it does not currently offer shell script highlighting). If your
+languages are covered by it, it may serve as a convenient replacement to the
+slow GVim approach.
+</p>
+<p>
+Here is a simple test that demonstrates using CodeRay for syntax highlighting:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="test-coderay-highlight-syntax-rb">
+<span>test/coderay_highlight_syntax.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='ruby code syntax'>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">test/spec</span><span class="Special">&quot;</span>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Test highlighting syntax using CodeRay.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="PreProc">class</span> <span class="Type">TestCodeRayHighlightSyntax</span> &lt; <span class="Type">Test</span>::<span class="Type">Unit</span>::<span class="Type">TestCase</span>
+
+  <span class="PreProc">def</span> <span class="Identifier">test_coderay_lines</span>
+    <span class="Type">Codnar</span>::<span class="Type">CodeRay</span>.lines_to_html([
+      { <span class="Special">&quot;</span><span class="Constant">kind</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">ruby_code</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">number</span><span class="Special">&quot;</span> =&gt; <span class="Constant">1</span>, <span class="Special">&quot;</span><span class="Constant">indentation</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;&quot;</span>,   <span class="Special">&quot;</span><span class="Constant">payload</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">def foo</span><span class="Special">&quot;</span>  },
+      { <span class="Special">&quot;</span><span class="Constant">kind</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">ruby_code</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">number</span><span class="Special">&quot;</span> =&gt; <span class="Constant">2</span>, <span class="Special">&quot;</span><span class="Constant">indentation</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">  </span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">payload</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">return 1</span><span class="Special">&quot;</span> },
+      { <span class="Special">&quot;</span><span class="Constant">kind</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">ruby_code</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">number</span><span class="Special">&quot;</span> =&gt; <span class="Constant">3</span>, <span class="Special">&quot;</span><span class="Constant">indentation</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;&quot;</span>,   <span class="Special">&quot;</span><span class="Constant">payload</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">end</span><span class="Special">&quot;</span>      },
+    ], <span class="Special">&quot;</span><span class="Constant">ruby</span><span class="Special">&quot;</span>).should == [
+      { <span class="Special">&quot;</span><span class="Constant">kind</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">html</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">number</span><span class="Special">&quot;</span> =&gt; <span class="Constant">1</span>,
+        <span class="Special">&quot;</span><span class="Constant">payload</span><span class="Special">&quot;</span> =&gt; &lt;&lt;-<span class="Special">EOF</span>.unindent.chomp
+<span class="Constant">          &lt;div class=&quot;CodeRay&quot;&gt;</span>
+<span class="Constant">            &lt;div class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span style=&quot;color:#080;font-weight:bold&quot;&gt;def&lt;/span&gt; &lt;span style=&quot;color:#06B;font-weight:bold&quot;&gt;foo&lt;/span&gt;</span>
+<span class="Constant">            &lt;span style=&quot;color:#080;font-weight:bold&quot;&gt;return&lt;/span&gt; &lt;span style=&quot;color:#00D&quot;&gt;1&lt;/span&gt;</span>
+<span class="Constant">          &lt;span style=&quot;color:#080;font-weight:bold&quot;&gt;end&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;</span>
+<span class="Constant">          &lt;/div&gt;</span>
+<span class="Constant">        </span><span class="Special">EOF</span>
+      },
+    ]
+  <span class="PreProc">end</span>
+
+<span class="PreProc">end</span>
+</pre>
+</div>
+</div>
+</p>
+<p>
+And here is the implementation:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="lib-codnar-coderay-rb">
+<span>lib/codnar/coderay.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='ruby code syntax'>
+<span class="PreProc">module</span> <span class="Type">Codnar</span>
+
+</pre>
+  <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>  </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Extend the CodeRay module.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+  <span class="PreProc">module</span> <span class="Type">CodeRay</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Convert a sequence of classified code lines to HTML using CodeRay syntax
+highlighting. The options control the way CodeRay behaves (e.g.,
+&lt;tt&gt;:css
+</p>
+<h1>&gt; :class&lt;/tt&gt;).</h1>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">lines_to_html</span>(lines, syntax, options = {})
+      <span class="Statement">return</span> <span class="Type">Formatter</span>.merge_lines(lines, <span class="Special">&quot;</span><span class="Constant">html</span><span class="Special">&quot;</span>) <span class="Statement">do</span> |<span class="Identifier">payload</span>|
+        ::<span class="Type">CodeRay</span>.scan(payload, syntax).div(options).chomp
+      <span class="Statement">end</span>
+    <span class="PreProc">end</span>
+
+  end
+
+end
+</pre>
+</div>
+</div>
+</p>
 <h4>Syntax highlighting using Sunlight</h4>
 <p>
 <a href="http://sunlightjs.com/">Sunlight</a> offers a different approach for syntax
@@ -4242,9 +4379,8 @@ the DOM and convert it to highlighted HTML in the browser. This takes virtually
 no time when splitting the code, but requires recomputing highlighting for all
 the code chunks every time the HTML file is loaded. This can be pretty slow,
 especially if using a browser with a slow Javascript engine, like IE. However,
-given how slow GVIM is, this is a reasonable trade-off, at least for small
-projects. Since Sunlight is a new project, it doesn't offer the extensive
-coverage of different programming languages supported by GVIM.
+this may be a reasonable trade-off, at least for small projects. Since Sunlight
+is a new project, it supports a limited range of programming languages.
 </p>
 <p>
 Here is a simple test that demonstrates using Sunlight for syntax highlighting:
@@ -4440,7 +4576,7 @@ Test splitting code files.
       <span class="Special">&quot;</span><span class="Constant">code</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.cast_lines(lines, 'ruby')</span><span class="Special">&quot;</span>,
       <span class="Special">&quot;</span><span class="Constant">comment</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.cast_lines(lines, 'rdoc')</span><span class="Special">&quot;</span>,
       <span class="Special">&quot;</span><span class="Constant">ruby</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">GVim.lines_to_html(lines, 'ruby')</span><span class="Special">&quot;</span>,
-      <span class="Special">&quot;</span><span class="Constant">rdoc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, 'RDoc')</span><span class="Special">&quot;</span>,
+      <span class="Special">&quot;</span><span class="Constant">rdoc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Codnar::RDoc, 'rdoc')</span><span class="Special">&quot;</span>,
       <span class="Special">&quot;</span><span class="Constant">begin_chunk</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">[]</span><span class="Special">&quot;</span>,
       <span class="Special">&quot;</span><span class="Constant">end_chunk</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">[]</span><span class="Special">&quot;</span>,
       <span class="Special">&quot;</span><span class="Constant">nested_chunk</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.nested_chunk_lines_to_html(lines)</span><span class="Special">&quot;</span>,
@@ -4723,7 +4859,7 @@ Test “splitting” documentation files.
       <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
         <span class="Special">&quot;</span><span class="Constant">markdown</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Markdown, 'markdown')</span><span class="Special">&quot;</span>,
         <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
-        <span class="Special">&quot;</span><span class="Constant">rdoc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, 'RDoc')</span><span class="Special">&quot;</span>,
+        <span class="Special">&quot;</span><span class="Constant">rdoc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Codnar::RDoc, 'rdoc')</span><span class="Special">&quot;</span>,
       },
       <span class="Special">&quot;</span><span class="Constant">syntax</span><span class="Special">&quot;</span> =&gt; {
         <span class="Special">&quot;</span><span class="Constant">start_state</span><span class="Special">&quot;</span> =&gt; kind,
@@ -4757,7 +4893,7 @@ box".
 If one is willing to give up altogether on syntax highlighting and comment
 formatting, the system would be applicable as-is to any programming language.
 Properly highlighting almost any known programming language syntax would be a
-simple matter of passing the correct syntax parameter to GVIM.
+simple matter of passing the correct syntax parameter to GVim.
 </p>
 <p>
 Properly formatting comments in additional mark-up formats would be trickier.
@@ -4842,6 +4978,12 @@ Application.
 </pre>
 <pre class='nested chunk'>
     <a class='nested chunk' href='#gvim-syntax-highlighting-formatting-configurations'>GVim syntax highlighting formatting configurations</a>
+</pre>
+<pre class='ruby code syntax'>
+
+</pre>
+<pre class='nested chunk'>
+    <a class='nested chunk' href='#coderay-syntax-highlighting-formatting-configurations'>CodeRay syntax highlighting formatting configurations</a>
 </pre>
 <pre class='ruby code syntax'>
 
@@ -5323,7 +5465,7 @@ preserved by escaping it and wrapping it in an HTML pre element.
 <pre class='ruby code syntax'>
 <span class="Type">SPLIT_RDOC_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
   <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, RDoc)</span><span class="Special">&quot;</span>,
+    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Codnar::RDoc, 'rdoc')</span><span class="Special">&quot;</span>,
     <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
   }
 )
@@ -5346,7 +5488,7 @@ preserved by escaping it and wrapping it in an HTML pre element.
 <pre class='ruby code syntax'>
 <span class="Type">SPLIT_MARKDOWN_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
   <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Markdown, 'markdown')</span><span class="Special">&quot;</span>,
+    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Codnar::Markdown, 'markdown')</span><span class="Special">&quot;</span>,
     <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
   }
 )
@@ -6254,7 +6396,7 @@ configuration that classifies some lines as <tt>comment</tt>.
 <pre class='ruby code syntax'>
 <span class="Type">FORMAT_RDOC_COMMENTS</span> = {
   <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-    <span class="Special">&quot;</span><span class="Constant">comment</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, 'RDoc')</span><span class="Special">&quot;</span>,
+    <span class="Special">&quot;</span><span class="Constant">comment</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Codnar::RDoc, 'rdoc')</span><span class="Special">&quot;</span>,
     <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
   },
 }
@@ -6436,7 +6578,7 @@ is very easy using GVim for syntax highlighting, as demonstrated here:
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Format code using GVim’s Ruby syntax highlighting, using explicit HTML
+Format code using GVim’s syntax highlighting, using explicit HTML
 constructs. Assumes some previous configuration already classified the code
 lines.
 </p>
@@ -6446,7 +6588,7 @@ lines.
 </table>
 <pre class='ruby code syntax'>
 <span class="Type">FORMAT_CODE_GVIM_HTML</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">syntax</span>|
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.gvim_code_format(syntax)
+  <span class="Statement">return</span> <span class="Type">Configuration</span>.klass_code_format(<span class="Special">'</span><span class="Constant">GVim</span><span class="Special">'</span>, syntax, <span class="Special">&quot;</span><span class="Constant">[]</span><span class="Special">&quot;</span>)
 <span class="Statement">end</span>
 
 </pre>
@@ -6458,9 +6600,9 @@ lines.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Format code using GVim’s Ruby syntax highlighting, using CSS classes
-instead of explicit font and color styles. Assumes some previous
-configuration already classified the code lines.
+Format code using GVim’s syntax highlighting, using CSS classes instead
+of explicit font and color styles. Assumes some previous configuration
+already classified the code lines.
 </p>
 </div>
 </td>
@@ -6468,7 +6610,7 @@ configuration already classified the code lines.
 </table>
 <pre class='ruby code syntax'>
 <span class="Type">FORMAT_CODE_GVIM_CSS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">syntax</span>|
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.gvim_code_format(syntax, <span class="Special">&quot;</span><span class="Constant">'+:let html_use_css=1'</span><span class="Special">&quot;</span>)
+  <span class="Statement">return</span> <span class="Type">Configuration</span>.klass_code_format(<span class="Special">'</span><span class="Constant">GVim</span><span class="Special">'</span>, syntax, <span class="Special">&quot;</span><span class="Constant">[ '+:let html_use_css=1' ]</span><span class="Special">&quot;</span>)
 <span class="Statement">end</span>
 
 </pre>
@@ -6487,10 +6629,10 @@ Return a configuration for highlighting a specific syntax using GVim.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">gvim_code_format</span>(syntax, extra_commands = <span class="Special">&quot;&quot;</span>)
+<span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">klass_code_format</span>(klass, syntax, options)
   <span class="Statement">return</span> {
     <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-      <span class="Special">&quot;</span><span class="Special">#{</span>syntax<span class="Special">}</span><span class="Constant">_code</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">GVim.lines_to_html(lines, '</span><span class="Special">#{</span>syntax<span class="Special">}</span><span class="Constant">', [ </span><span class="Special">#{</span>extra_commands<span class="Special">}</span><span class="Constant"> ])</span><span class="Special">&quot;</span>,
+      <span class="Special">&quot;</span><span class="Special">#{</span>syntax<span class="Special">}</span><span class="Constant">_code</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Special">#{</span>klass<span class="Special">}</span><span class="Constant">.lines_to_html(lines, '</span><span class="Special">#{</span>syntax<span class="Special">}</span><span class="Constant">', </span><span class="Special">#{</span>options<span class="Special">}</span><span class="Constant">)</span><span class="Special">&quot;</span>,
     },
   }
 <span class="PreProc">end</span>
@@ -6508,21 +6650,57 @@ Return a configuration for highlighting a specific syntax using GVim.
 </div>
 </p>
 <p>
-Here is a simple test demonstrating highlighting code syntax using <code>gvim</code>:
+If you choose to use CSS classes instead of directly embedding fonts and colors
+into the generated HTML, you will need a CSS stylesheet with the relevant
+classes. Here is the default CSS stylesheet used by GVim:
 </p>
 <p>
 <div class="named_with_containers chunk">
 <div class="chunk name">
-<a name="test-format-code-gvim-configurations-rb">
-<span>test/format_code_gvim_configurations.rb</span>
+<a name="lib-codnar-data-gvim-css">
+<span>lib/codnar/data/gvim.css</span>
+</a>
+</div>
+<div class="chunk html">
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='markdown comment markup'>
+<p>
+Colors for GVim classes
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='css code syntax'>
+<span class="Statement">span</span><span class="Identifier">.Constant</span>   <span class="Identifier">{</span> <span class="Type">color</span>: Crimson; <span class="Identifier">}</span>
+<span class="Statement">span</span><span class="Identifier">.Identifier</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">Teal</span>; <span class="Identifier">}</span>
+<span class="Statement">span</span><span class="Identifier">.PreProc</span>    <span class="Identifier">{</span> <span class="Type">color</span>: Indigo; <span class="Identifier">}</span>
+<span class="Statement">span</span><span class="Identifier">.Special</span>    <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">Navy</span>; <span class="Identifier">}</span>
+<span class="Statement">span</span><span class="Identifier">.Statement</span>  <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">Maroon</span>; <span class="Identifier">}</span>
+<span class="Statement">span</span><span class="Identifier">.Type</span>       <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">Green</span>; <span class="Identifier">}</span>
+<span class="Statement">span</span><span class="Identifier">.Comment</span>    <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">Purple</span>; <span class="Identifier">}</span>
+</pre>
+</div>
+</div>
+</p>
+<h4>Syntax highlighting using CodeRay</h4>
+<p>
+For supported programming languages, you may choose to use CodeRay instead of GVim.
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="coderay-syntax-highlighting-formatting-configurations">
+<span>CodeRay syntax highlighting formatting configurations</span>
 </a>
 </div>
 <div class="chunk html">
 <pre class='ruby code syntax'>
-<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar</span><span class="Special">&quot;</span>
-<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">olag/test</span><span class="Special">&quot;</span>
-<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">test/spec</span><span class="Special">&quot;</span>
-<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">test_with_configurations</span><span class="Special">&quot;</span>
 
 </pre>
 <table class='layout'>
@@ -6533,70 +6711,215 @@ Here is a simple test demonstrating highlighting code syntax using <code>gvim</c
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Test built-in split code formatting configurations using GVim.
+Format code using CodeRay’s syntax highlighting, using explicit HTML
+constructs. Assumes some previous configuration already classified the code
+lines.
 </p>
 </div>
 </td>
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="PreProc">class</span> <span class="Type">TestGVimFormatCodeConfigurations</span> &lt; <span class="Type">Test</span>::<span class="Type">Unit</span>::<span class="Type">TestCase</span>
+<span class="Type">FORMAT_CODE_CODERAY_HTML</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">syntax</span>|
+  <span class="Statement">return</span> <span class="Type">Configuration</span>.klass_code_format(<span class="Special">'</span><span class="Constant">CodeRay</span><span class="Special">'</span>, syntax, <span class="Special">&quot;</span><span class="Constant">{}</span><span class="Special">&quot;</span>)
+<span class="Statement">end</span>
 
-  <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithConfigurations</span>
-  <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithErrors</span>
-  <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithTempfile</span>
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Format code using CodeRay’s syntax highlighting, using CSS classes
+instead of explicit font and color styles. Assumes some previous
+configuration already classified the code lines.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="Type">FORMAT_CODE_CODERAY_CSS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">syntax</span>|
+  <span class="Statement">return</span> <span class="Type">Configuration</span>.klass_code_format(<span class="Special">'</span><span class="Constant">CodeRay</span><span class="Special">'</span>, syntax, <span class="Special">&quot;</span><span class="Constant">{ :css =&gt; :class }</span><span class="Special">&quot;</span>)
+<span class="Statement">end</span>
 
-  <span class="Type">CODE_TEXT</span> = &lt;&lt;-<span class="Special">EOF</span>.unindent
-<span class="Constant">    int x;</span>
-<span class="Constant">  </span><span class="Special">EOF</span>
+</pre>
+</div>
+<div class="chunk containers">
+<span class="chunk containers header">Contained in:</span>
+<ul class="chunk containers">
+<li class="chunk container">
+<a class="chunk container" href="#lib-codnar-split-configurations-rb">lib/codnar/split_configurations.rb</a>
+</li>
+</ul>
+</div>
+</div>
+</p>
+<p>
+If you choose to use CSS classes instead of directly embedding fonts and colors
+into the generated HTML, you will need a CSS stylesheet with the relevant
+classes. Here is the default CSS stylesheet used by CodeRay:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="lib-codnar-data-coderay-css">
+<span>lib/codnar/data/coderay.css</span>
+</a>
+</div>
+<div class="chunk html">
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='markdown comment markup'>
+<p>
+Extracted from CodeRay output
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='css code syntax'>
 
-  <span class="Type">GVIM_HTML</span> = &lt;&lt;-<span class="Special">EOF</span>.unindent.chomp
-<span class="Constant">    &lt;div class='c code syntax' bgcolor=\&quot;#ffffff\&quot; text=\&quot;#000000\&quot;&gt;</span>
-<span class="Constant">    &lt;font face=\&quot;monospace\&quot;&gt;</span>
-<span class="Constant">    &lt;font color=\&quot;#00ff00\&quot;&gt;int&lt;/font&gt;&amp;nbsp;x;&lt;br /&gt;</span>
-<span class="Constant">    &lt;/font&gt;</span>
-<span class="Constant">    &lt;/div&gt;</span>
-<span class="Constant">  </span><span class="Special">EOF</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.line-numbers</span> <span class="Statement">a</span> <span class="Identifier">{</span>
+  <span class="Type">text-decoration</span>: <span class="Type">inherit</span>;
+  <span class="Type">color</span>: <span class="Type">inherit</span>;
+<span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">{</span>
+  <span class="Type">background-color</span>: hsl(<span class="Constant">0</span>,<span class="Constant">0%</span>,<span class="Constant">95%</span>);
+  <span class="Type">border</span>: <span class="Constant">1px</span> <span class="Type">solid</span> <span class="Constant">silver</span>;
+  <span class="Type">color</span>: <span class="Constant">black</span>;
+<span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Statement">pre</span> <span class="Identifier">{</span>
+  <span class="Type">margin</span>: <span class="Constant">0px</span>;
+<span class="Identifier">}</span>
 
-  <span class="PreProc">def</span> <span class="Identifier">test_html_code</span>
-    check_any_code(<span class="Type">GVIM_HTML</span>, <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">FORMAT_CODE_GVIM_HTML</span>.call(<span class="Special">&quot;</span><span class="Constant">c</span><span class="Special">&quot;</span>))
-  <span class="PreProc">end</span>
+<span class="Statement">span</span><span class="Identifier">.CodeRay</span> <span class="Identifier">{</span> <span class="Type">white-space</span>: <span class="Type">pre</span>; <span class="Type">border</span>: <span class="Constant">0px</span>; <span class="Type">padding</span>: <span class="Constant">2px</span>; <span class="Identifier">}</span>
 
-  <span class="Type">GVIM_CSS</span> = &lt;&lt;-<span class="Special">EOF</span>.unindent.chomp
-<span class="Constant">    &lt;pre class='c code syntax'&gt;</span>
-<span class="Constant">    &lt;span class=\&quot;Type\&quot;&gt;int&lt;/span&gt; x;</span>
-<span class="Constant">    &lt;/pre&gt;</span>
-<span class="Constant">  </span><span class="Special">EOF</span>
+<span class="Statement">table</span><span class="Identifier">.CodeRay</span> <span class="Identifier">{</span> <span class="Type">border-collapse</span>: <span class="Type">collapse</span>; <span class="Type">width</span>: <span class="Constant">100%</span>; <span class="Type">padding</span>: <span class="Constant">2px</span>; <span class="Identifier">}</span>
+<span class="Statement">table</span><span class="Identifier">.CodeRay</span> <span class="Statement">td</span> <span class="Identifier">{</span> <span class="Type">padding</span>: <span class="Constant">2px</span> <span class="Constant">4px</span>; <span class="Type">vertical-align</span>: <span class="Type">top</span>; <span class="Identifier">}</span>
 
-  <span class="PreProc">def</span> <span class="Identifier">test_css_code</span>
-    check_any_code(<span class="Type">GVIM_CSS</span>, <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">FORMAT_CODE_GVIM_CSS</span>.call(<span class="Special">&quot;</span><span class="Constant">c</span><span class="Special">&quot;</span>))
-  <span class="PreProc">end</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.line-numbers</span> <span class="Identifier">{</span>
+  <span class="Type">background-color</span>: hsl(<span class="Constant">180</span>,<span class="Constant">65%</span>,<span class="Constant">90%</span>);
+  <span class="Type">color</span>: <span class="Constant">gray</span>;
+  <span class="Type">text-align</span>: <span class="Type">right</span>;
+  -webkit-user-select: <span class="Type">none</span>;
+  -moz-user-select: <span class="Type">none</span>;
+  user-select: <span class="Type">none</span>;
+<span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.line-numbers</span> <span class="Statement">a</span> <span class="Identifier">{</span>
+  <span class="Type">background-color</span>: hsl(<span class="Constant">180</span>,<span class="Constant">65%</span>,<span class="Constant">90%</span>) <span class="Special">!important</span>;
+  <span class="Type">color</span>: <span class="Constant">gray</span> <span class="Special">!important</span>;
+  <span class="Type">text-decoration</span>: <span class="Type">none</span> <span class="Special">!important</span>;
+<span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.line-numbers</span> <span class="Statement">a</span>:target <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">blue</span> <span class="Special">!important</span>; <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.line-numbers</span> <span class="Identifier">.highlighted</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">red</span> <span class="Special">!important</span>; <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.line-numbers</span> <span class="Identifier">.highlighted</span> <span class="Statement">a</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">red</span> <span class="Special">!important</span>; <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Statement">span</span><span class="Identifier">.line-numbers</span> <span class="Identifier">{</span> <span class="Type">padding</span>: <span class="Constant">0px</span> <span class="Constant">4px</span>; <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.line</span> <span class="Identifier">{</span> <span class="Type">display</span>: <span class="Type">block</span>; <span class="Type">float</span>: <span class="Type">left</span>; <span class="Type">width</span>: <span class="Constant">100%</span>; <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.code</span> <span class="Identifier">{</span> <span class="Type">width</span>: <span class="Constant">100%</span>; <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.code</span> <span class="Statement">pre</span> <span class="Identifier">{</span> <span class="Type">overflow</span>: <span class="Type">auto</span>; <span class="Identifier">}</span>
 
-<span class="Statement">protected</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.debug</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">white</span> <span class="Special">!important</span>; <span class="Type">background</span>: <span class="Constant">blue</span> <span class="Special">!important</span>; <span class="Identifier">}</span>
 
-  <span class="PreProc">def</span> <span class="Identifier">check_any_code</span>(html, configuration)
-    check_split_file(<span class="Type">CODE_TEXT</span>,
-                     <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">CLASSIFY_SOURCE_CODE</span>.call(<span class="Special">&quot;</span><span class="Constant">c</span><span class="Special">&quot;</span>),
-                     configuration) <span class="Statement">do</span> |<span class="Identifier">path</span>|
-      [ {
-        <span class="Special">&quot;</span><span class="Constant">name</span><span class="Special">&quot;</span> =&gt; path,
-        <span class="Special">&quot;</span><span class="Constant">locations</span><span class="Special">&quot;</span> =&gt; [ { <span class="Special">&quot;</span><span class="Constant">file</span><span class="Special">&quot;</span> =&gt; path, <span class="Special">&quot;</span><span class="Constant">line</span><span class="Special">&quot;</span> =&gt; <span class="Constant">1</span> } ],
-        <span class="Special">&quot;</span><span class="Constant">containers</span><span class="Special">&quot;</span> =&gt; [],
-        <span class="Special">&quot;</span><span class="Constant">contained</span><span class="Special">&quot;</span> =&gt; [],
-        <span class="Special">&quot;</span><span class="Constant">html</span><span class="Special">&quot;</span> =&gt; html,
-      } ]
-    <span class="Statement">end</span>
-  <span class="PreProc">end</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.annotation</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#007</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.attribute-name</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#b48</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.attribute-value</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#700</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.binary</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#509</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.char</span> <span class="Identifier">.content</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#D20</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.char</span> <span class="Identifier">.delimiter</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#710</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.char</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#D20</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.class</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#B06</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.class-variable</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#369</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.color</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#0A0</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.comment</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#777</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.comment</span> <span class="Identifier">.char</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#444</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.comment</span> <span class="Identifier">.delimiter</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#444</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.complex</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#A08</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.constant</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#036</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.decorator</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#B0B</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.definition</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#099</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.delimiter</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">black</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.directive</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#088</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.doc</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#970</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.doc-string</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#D42</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.doctype</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#34b</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.entity</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#800</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.error</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#F00</span>; <span class="Type">background-color</span>:<span class="Constant">#FAA</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.escape</span>  <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#666</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.exception</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#C00</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.float</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#60E</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.function</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#06B</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.global-variable</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#d70</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.hex</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#02b</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.imaginary</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#f00</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.include</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#B44</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.inline</span> <span class="Identifier">{</span> <span class="Type">background-color</span>: hsla(<span class="Constant">0</span>,<span class="Constant">0%</span>,<span class="Constant">0%</span>,<span class="Constant">0.07</span>); <span class="Type">color</span>: <span class="Constant">black</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.inline-delimiter</span> <span class="Identifier">{</span> <span class="Type">font-weight</span>: <span class="Type">bold</span>; <span class="Type">color</span>: <span class="Constant">#666</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.instance-variable</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#33B</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.integer</span>  <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#00D</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.key</span> <span class="Identifier">.char</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#60f</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.key</span> <span class="Identifier">.delimiter</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#404</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.key</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#606</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.keyword</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#080</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.label</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#970</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.local-variable</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#963</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.namespace</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#707</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.octal</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#40E</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.operator</span> <span class="Identifier">{</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.predefined</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#369</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.predefined-constant</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#069</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.predefined-type</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#0a5</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.preprocessor</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#579</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.pseudo-class</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#00C</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.regexp</span> <span class="Identifier">.content</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#808</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.regexp</span> <span class="Identifier">.delimiter</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#404</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.regexp</span> <span class="Identifier">.modifier</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#C2C</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.regexp</span> <span class="Identifier">{</span> <span class="Type">background-color</span>:hsla(<span class="Constant">300</span>,<span class="Constant">100%</span>,<span class="Constant">50%</span>,<span class="Constant">0.06</span>); <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.reserved</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#080</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.shell</span> <span class="Identifier">.content</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#2B2</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.shell</span> <span class="Identifier">.delimiter</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#161</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.shell</span> <span class="Identifier">{</span> <span class="Type">background-color</span>:hsla(<span class="Constant">120</span>,<span class="Constant">100%</span>,<span class="Constant">50%</span>,<span class="Constant">0.06</span>); <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.string</span> <span class="Identifier">.char</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#b0b</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.string</span> <span class="Identifier">.content</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#D20</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.string</span> <span class="Identifier">.delimiter</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#710</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.string</span> <span class="Identifier">.modifier</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#E40</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.string</span> <span class="Identifier">{</span> <span class="Type">background-color</span>:hsla(<span class="Constant">0</span>,<span class="Constant">100%</span>,<span class="Constant">50%</span>,<span class="Constant">0.05</span>); <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.symbol</span> <span class="Identifier">.content</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#A60</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.symbol</span> <span class="Identifier">.delimiter</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#630</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.symbol</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#A60</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.tag</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#070</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.type</span> <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#339</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.value</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#088</span>; <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.variable</span>  <span class="Identifier">{</span> <span class="Type">color</span>:<span class="Constant">#037</span> <span class="Identifier">}</span>
 
-<span class="PreProc">end</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.insert</span> <span class="Identifier">{</span> <span class="Type">background</span>: hsla(<span class="Constant">120</span>,<span class="Constant">100%</span>,<span class="Constant">50%</span>,<span class="Constant">0.12</span>) <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.delete</span> <span class="Identifier">{</span> <span class="Type">background</span>: hsla(<span class="Constant">0</span>,<span class="Constant">100%</span>,<span class="Constant">50%</span>,<span class="Constant">0.12</span>) <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.change</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#bbf</span>; <span class="Type">background</span>: <span class="Constant">#007</span>; <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.head</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#f8f</span>; <span class="Type">background</span>: <span class="Constant">#505</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.head</span> <span class="Identifier">.filename</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">white</span>; <span class="Identifier">}</span>
+
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.delete</span> <span class="Identifier">.eyecatcher</span> <span class="Identifier">{</span> <span class="Type">background-color</span>: hsla(<span class="Constant">0</span>,<span class="Constant">100%</span>,<span class="Constant">50%</span>,<span class="Constant">0.2</span>); <span class="Type">border</span>: <span class="Constant">1px</span> <span class="Type">solid</span> hsla(<span class="Constant">0</span>,<span class="Constant">100%</span>,<span class="Constant">45%</span>,<span class="Constant">0.5</span>); <span class="Type">margin</span>: <span class="Constant">-1px</span>; <span class="Type">border-bottom</span>: <span class="Type">none</span>; <span class="Type">border-top</span>-<span class="Type">left</span>-radius: <span class="Constant">5px</span>; <span class="Type">border-top</span>-<span class="Type">right</span>-radius: <span class="Constant">5px</span>; <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.insert</span> <span class="Identifier">.eyecatcher</span> <span class="Identifier">{</span> <span class="Type">background-color</span>: hsla(<span class="Constant">120</span>,<span class="Constant">100%</span>,<span class="Constant">50%</span>,<span class="Constant">0.2</span>); <span class="Type">border</span>: <span class="Constant">1px</span> <span class="Type">solid</span> hsla(<span class="Constant">120</span>,<span class="Constant">100%</span>,<span class="Constant">25%</span>,<span class="Constant">0.5</span>); <span class="Type">margin</span>: <span class="Constant">-1px</span>; <span class="Type">border-top</span>: <span class="Type">none</span>; <span class="Type">border-bottom</span>-<span class="Type">left</span>-radius: <span class="Constant">5px</span>; <span class="Type">border-bottom</span>-<span class="Type">right</span>-radius: <span class="Constant">5px</span>; <span class="Identifier">}</span>
+
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.insert</span> <span class="Identifier">.insert</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#0c0</span>; <span class="Type">background</span>:<span class="Constant">transparent</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.delete</span> <span class="Identifier">.delete</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#c00</span>; <span class="Type">background</span>:<span class="Constant">transparent</span>; <span class="Type">font-weight</span>:<span class="Type">bold</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.change</span> <span class="Identifier">.change</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#88f</span> <span class="Identifier">}</span>
+<span class="Identifier">.CodeRay</span> <span class="Identifier">.head</span> <span class="Identifier">.head</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">#f4f</span> <span class="Identifier">}</span>
 </pre>
 </div>
 </div>
 </p>
 <h4>Syntax highlighting using Sunlight</h4>
 <p>
-For small projects in languages supported by Sunlight, you may choose to use
-it instead of GVIM
+For small projects in supported languages, you may choose to use Sunlight
+instead of GVim.
 </p>
 <p>
 <div class="named_with_containers chunk">
@@ -6668,13 +6991,14 @@ Return a configuration for highlighting a specific syntax using Sunlight.
 </div>
 </p>
 <p>
-Here is a simple test demonstrating highlighting code syntax using Sunlight:
+Here is a simple test demonstrating highlighting code syntax using the
+different configurations (GVim, CodeRay, or Sunlight):
 </p>
 <p>
 <div class="named_with_containers chunk">
 <div class="chunk name">
-<a name="test-format-code-sunlight-configurations-rb">
-<span>test/format_code_sunlight_configurations.rb</span>
+<a name="test-format-code-configurations-rb">
+<span>test/format_code_configurations.rb</span>
 </a>
 </div>
 <div class="chunk html">
@@ -6693,39 +7017,73 @@ Here is a simple test demonstrating highlighting code syntax using Sunlight:
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Test built-in split code formatting configurations using Sunlight.
+Test built-in split code formatting configurations.
 </p>
 </div>
 </td>
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="PreProc">class</span> <span class="Type">TestSunlightFormatCodeConfigurations</span> &lt; <span class="Type">Test</span>::<span class="Type">Unit</span>::<span class="Type">TestCase</span>
+<span class="PreProc">class</span> <span class="Type">TestFormatCodeConfigurations</span> &lt; <span class="Type">Test</span>::<span class="Type">Unit</span>::<span class="Type">TestCase</span>
 
   <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithConfigurations</span>
   <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithErrors</span>
   <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithTempfile</span>
 
-  <span class="Type">CODE_TEXT</span> = &lt;&lt;-<span class="Special">EOF</span>.unindent
-<span class="Constant">    local = $global;</span>
-<span class="Constant">  </span><span class="Special">EOF</span>
+  <span class="PreProc">def</span> <span class="Identifier">test_gvim_html_code</span>
+    check_any_code(&lt;&lt;-<span class="Special">EOF</span>.unindent.chomp, <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">FORMAT_CODE_GVIM_HTML</span>.call(<span class="Special">&quot;</span><span class="Constant">c</span><span class="Special">&quot;</span>))
+<span class="Constant">      &lt;div class='c code syntax' bgcolor=\&quot;#ffffff\&quot; text=\&quot;#000000\&quot;&gt;</span>
+<span class="Constant">      &lt;font face=\&quot;monospace\&quot;&gt;</span>
+<span class="Constant">      &lt;font color=\&quot;#00ff00\&quot;&gt;int&lt;/font&gt;&amp;nbsp;x;&lt;br /&gt;</span>
+<span class="Constant">      &lt;/font&gt;</span>
+<span class="Constant">      &lt;/div&gt;</span>
+<span class="Constant">    </span><span class="Special">EOF</span>
+  <span class="PreProc">end</span>
 
-  <span class="Type">SUNLIGHT_HTML</span> = &lt;&lt;-<span class="Special">EOF</span>.unindent.chomp
-<span class="Constant">    &lt;pre class='sunlight-highlight-ruby'&gt;</span>
-<span class="Constant">    local = $global;</span>
-<span class="Constant">    &lt;/pre&gt;</span>
-<span class="Constant">  </span><span class="Special">EOF</span>
+  <span class="PreProc">def</span> <span class="Identifier">test_gvim_css_code</span>
+    check_any_code(&lt;&lt;-<span class="Special">EOF</span>.unindent.chomp, <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">FORMAT_CODE_GVIM_CSS</span>.call(<span class="Special">&quot;</span><span class="Constant">c</span><span class="Special">&quot;</span>))
+<span class="Constant">      &lt;pre class='c code syntax'&gt;</span>
+<span class="Constant">      &lt;span class=\&quot;Type\&quot;&gt;int&lt;/span&gt; x;</span>
+<span class="Constant">      &lt;/pre&gt;</span>
+<span class="Constant">    </span><span class="Special">EOF</span>
+  <span class="PreProc">end</span>
+
+  <span class="PreProc">def</span> <span class="Identifier">test_coderay_html_code</span>
+    check_any_code(&lt;&lt;-<span class="Special">EOF</span>.unindent.chomp, <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">FORMAT_CODE_CODERAY_HTML</span>.call(<span class="Special">&quot;</span><span class="Constant">c</span><span class="Special">&quot;</span>))
+<span class="Constant">      &lt;div class=&quot;CodeRay&quot;&gt;</span>
+<span class="Constant">        &lt;div class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span style=&quot;color:#0a5;font-weight:bold&quot;&gt;int&lt;/span&gt; x;&lt;/pre&gt;&lt;/div&gt;</span>
+<span class="Constant">      &lt;/div&gt;</span>
+<span class="Constant">    </span><span class="Special">EOF</span>
+  <span class="PreProc">end</span>
+
+  <span class="PreProc">def</span> <span class="Identifier">test_coderay_css_code</span>
+    check_any_code(&lt;&lt;-<span class="Special">EOF</span>.unindent.chomp, <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">FORMAT_CODE_CODERAY_CSS</span>.call(<span class="Special">&quot;</span><span class="Constant">c</span><span class="Special">&quot;</span>))
+<span class="Constant">      &lt;div class=&quot;CodeRay&quot;&gt;</span>
+<span class="Constant">        &lt;div class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;predefined-type&quot;&gt;int&lt;/span&gt; x;&lt;/pre&gt;&lt;/div&gt;</span>
+<span class="Constant">      &lt;/div&gt;</span>
+<span class="Constant">    </span><span class="Special">EOF</span>
+  <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_sunlight_code</span>
-    check_split_file(<span class="Type">CODE_TEXT</span>,
-                     <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">CLASSIFY_SOURCE_CODE</span>.call(<span class="Special">&quot;</span><span class="Constant">ruby</span><span class="Special">&quot;</span>),
-                     <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">FORMAT_CODE_SUNLIGHT</span>.call(<span class="Special">&quot;</span><span class="Constant">ruby</span><span class="Special">&quot;</span>)) <span class="Statement">do</span> |<span class="Identifier">path</span>|
+    check_any_code(&lt;&lt;-<span class="Special">EOF</span>.unindent.chomp, <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">FORMAT_CODE_SUNLIGHT</span>.call(<span class="Special">&quot;</span><span class="Constant">c</span><span class="Special">&quot;</span>))
+<span class="Constant">      &lt;pre class='sunlight-highlight-c'&gt;</span>
+<span class="Constant">      int x;</span>
+<span class="Constant">      &lt;/pre&gt;</span>
+<span class="Constant">    </span><span class="Special">EOF</span>
+  <span class="PreProc">end</span>
+
+<span class="Statement">protected</span>
+
+  <span class="PreProc">def</span> <span class="Identifier">check_any_code</span>(html, configuration)
+    check_split_file(<span class="Special">&quot;</span><span class="Constant">int x;</span><span class="Special">\n</span><span class="Special">&quot;</span>,
+                     <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">CLASSIFY_SOURCE_CODE</span>.call(<span class="Special">&quot;</span><span class="Constant">c</span><span class="Special">&quot;</span>),
+                     configuration) <span class="Statement">do</span> |<span class="Identifier">path</span>|
       [ {
         <span class="Special">&quot;</span><span class="Constant">name</span><span class="Special">&quot;</span> =&gt; path,
         <span class="Special">&quot;</span><span class="Constant">locations</span><span class="Special">&quot;</span> =&gt; [ { <span class="Special">&quot;</span><span class="Constant">file</span><span class="Special">&quot;</span> =&gt; path, <span class="Special">&quot;</span><span class="Constant">line</span><span class="Special">&quot;</span> =&gt; <span class="Constant">1</span> } ],
         <span class="Special">&quot;</span><span class="Constant">containers</span><span class="Special">&quot;</span> =&gt; [],
         <span class="Special">&quot;</span><span class="Constant">contained</span><span class="Special">&quot;</span> =&gt; [],
-        <span class="Special">&quot;</span><span class="Constant">html</span><span class="Special">&quot;</span> =&gt; <span class="Type">SUNLIGHT_HTML</span>,
+        <span class="Special">&quot;</span><span class="Constant">html</span><span class="Special">&quot;</span> =&gt; html,
       } ]
     <span class="Statement">end</span>
   <span class="PreProc">end</span>
@@ -8735,10 +9093,12 @@ convenient list of all of Codnar's parts and dependencies:
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">andand</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">base64</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">cgi</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">coderay</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">digest/sha2</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">erb</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">fileutils</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">irb</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">open3</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">rdiscount</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">rdoc/markup/to_html</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">tempfile</span><span class="Special">&quot;</span>
@@ -8752,6 +9112,7 @@ convenient list of all of Codnar's parts and dependencies:
 
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/version</span><span class="Special">&quot;</span>
 
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/coderay</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/hash_extensions</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/markdown</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/rdoc</span><span class="Special">&quot;</span>
@@ -10320,6 +10681,7 @@ spec = <span class="Type">Gem</span>::<span class="Type">Specification</span>.ne
 <span class="Constant">    into a narrative that describes the overall system.</span>
 <span class="Constant">  </span><span class="Special">EOF</span>
   spec.add_dependency(<span class="Special">&quot;</span><span class="Constant">andand</span><span class="Special">&quot;</span>)
+  spec.add_dependency(<span class="Special">&quot;</span><span class="Constant">coderay</span><span class="Special">&quot;</span>)
   spec.add_dependency(<span class="Special">&quot;</span><span class="Constant">rdiscount</span><span class="Special">&quot;</span>)
 <span class="Statement">end</span>
 
@@ -11009,31 +11371,6 @@ Colors
 <span class="Statement">table</span><span class="Identifier">.layout</span> <span class="Statement">td</span><span class="Identifier">.html</span> <span class="Identifier">{</span>
   <span class="Type">background-color</span>: Beige;
 <span class="Identifier">}</span>
-
-</pre>
-<table class='layout'>
-<tr>
-<td class='indentation'>
-<pre></pre>
-</td>
-<td class='html'>
-<div class='markdown comment markup'>
-<p>
-Colors for GVim classes
-</p>
-</div>
-</td>
-</tr>
-</table>
-<pre class='css code syntax'>
-
-<span class="Statement">span</span><span class="Identifier">.Constant</span>   <span class="Identifier">{</span> <span class="Type">color</span>: Crimson; <span class="Identifier">}</span>
-<span class="Statement">span</span><span class="Identifier">.Identifier</span> <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">Teal</span>; <span class="Identifier">}</span>
-<span class="Statement">span</span><span class="Identifier">.PreProc</span>    <span class="Identifier">{</span> <span class="Type">color</span>: Indigo; <span class="Identifier">}</span>
-<span class="Statement">span</span><span class="Identifier">.Special</span>    <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">Navy</span>; <span class="Identifier">}</span>
-<span class="Statement">span</span><span class="Identifier">.Statement</span>  <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">Maroon</span>; <span class="Identifier">}</span>
-<span class="Statement">span</span><span class="Identifier">.Type</span>       <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">Green</span>; <span class="Identifier">}</span>
-<span class="Statement">span</span><span class="Identifier">.Comment</span>    <span class="Identifier">{</span> <span class="Type">color</span>: <span class="Constant">Purple</span>; <span class="Identifier">}</span>
 
 </pre>
 <table class='layout'>
