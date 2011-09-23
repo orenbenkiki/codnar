@@ -1,0 +1,8 @@
+/* Colors for GVim classes */
+span.Constant   { color: Crimson; }
+span.Identifier { color: Teal; }
+span.PreProc    { color: Indigo; }
+span.Special    { color: Navy; }
+span.Statement  { color: Maroon; }
+span.Type       { color: Green; }
+span.Comment    { color: Purple; }

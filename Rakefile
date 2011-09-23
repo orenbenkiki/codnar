@@ -64,6 +64,7 @@ spec = Gem::Specification.new do |spec|
     into a narrative that describes the overall system.
   EOF
   spec.add_dependency("andand")
+  spec.add_dependency("coderay")
   spec.add_dependency("rdiscount")
 end
 

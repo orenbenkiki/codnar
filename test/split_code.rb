@@ -38,7 +38,7 @@ protected
       "code" => "Formatter.cast_lines(lines, 'ruby')",
       "comment" => "Formatter.cast_lines(lines, 'rdoc')",
       "ruby" => "GVim.lines_to_html(lines, 'ruby')",
-      "rdoc" => "Formatter.markup_lines_to_html(lines, 'RDoc')",
+      "rdoc" => "Formatter.markup_lines_to_html(lines, Codnar::RDoc, 'rdoc')",
       "begin_chunk" => "[]",
       "end_chunk" => "[]",
       "nested_chunk" => "Formatter.nested_chunk_lines_to_html(lines)",

@@ -71,7 +71,7 @@ protected
       "formatters" => {
         "markdown" => "Formatter.markup_lines_to_html(lines, Markdown, 'markdown')",
         "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
-        "rdoc" => "Formatter.markup_lines_to_html(lines, 'RDoc')",
+        "rdoc" => "Formatter.markup_lines_to_html(lines, Codnar::RDoc, 'rdoc')",
       },
       "syntax" => {
         "start_state" => kind,

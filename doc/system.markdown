@@ -183,11 +183,11 @@ And here is the implementation:
 
 #### Syntax highlighting using GVIM ####
 
-If you have `gvim` istalled, it is possible to use it to generate syntax
-highlighting. This is a *slow* operation, as `gvim` was never meant to be used
-as a command-line tool. However, what it lacks in speed it compensates for in
-scope; almost any language you can think of has a `gvim` syntax highlighting
-definition. Here is a simple test that demonstrates using `gvim` for syntax
+If you have GVim istalled, it is possible to use it to generate syntax
+highlighting. This is a *slow* operation, as GVim was never meant to be used as
+a command-line tool. However, what it lacks in speed it compensates for in
+scope; almost any language you can think of has a GVim syntax highlighting
+definition. Here is a simple test that demonstrates using GVim for syntax
 highlighting:
 
 [[test/gvim_highlight_syntax.rb|named_chunk_with_containers]]
@@ -208,6 +208,23 @@ And here is the implementation:
 
 [[lib/codnar/cache.rb|named_chunk_with_containers]]
 
+#### Syntax highlighting using CodeRay ####
+
+[CodeRay](http://coderay.rubychan.de/) is a Ruby gem that knows how to
+highlight the syntax of many popular languages. It is much faster than using
+GVim`but doesn't offer the huge range of programming languages offered by GVim
+(for example, it does not currently offer shell script highlighting). If your
+languages are covered by it, it may serve as a convenient replacement to the
+slow GVim approach.
+
+Here is a simple test that demonstrates using CodeRay for syntax highlighting:
+
+[[test/coderay_highlight_syntax.rb|named_chunk_with_containers]]
+
+And here is the implementation:
+
+[[lib/codnar/coderay.rb|named_chunk_with_containers]]
+
 #### Syntax highlighting using Sunlight ####
 
 [Sunlight](http://sunlightjs.com/) offers a different approach for syntax
@@ -217,9 +234,8 @@ the DOM and convert it to highlighted HTML in the browser. This takes virtually
 no time when splitting the code, but requires recomputing highlighting for all
 the code chunks every time the HTML file is loaded. This can be pretty slow,
 especially if using a browser with a slow Javascript engine, like IE. However,
-given how slow GVIM is, this is a reasonable trade-off, at least for small
-projects. Since Sunlight is a new project, it doesn't offer the extensive
-coverage of different programming languages supported by GVIM.
+this may be a reasonable trade-off, at least for small projects. Since Sunlight
+is a new project, it supports a limited range of programming languages.
 
 Here is a simple test that demonstrates using Sunlight for syntax highlighting:
 
@@ -267,7 +283,7 @@ box".
 If one is willing to give up altogether on syntax highlighting and comment
 formatting, the system would be applicable as-is to any programming language.
 Properly highlighting almost any known programming language syntax would be a
-simple matter of passing the correct syntax parameter to GVIM.
+simple matter of passing the correct syntax parameter to GVim.
 
 Properly formatting comments in additional mark-up formats would be trickier.
 First, a proper pattern needs to be established for extracting the comments
@@ -377,20 +393,35 @@ is very easy using GVim for syntax highlighting, as demonstrated here:
 
 [[GVim syntax highlighting formatting configurations|named_chunk_with_containers]]
 
-Here is a simple test demonstrating highlighting code syntax using `gvim`:
+If you choose to use CSS classes instead of directly embedding fonts and colors
+into the generated HTML, you will need a CSS stylesheet with the relevant
+classes. Here is the default CSS stylesheet used by GVim:
 
-[[test/format_code_gvim_configurations.rb|named_chunk_with_containers]]
+[[lib/codnar/data/gvim.css|named_chunk_with_containers]]
+
+#### Syntax highlighting using CodeRay ####
+
+For supported programming languages, you may choose to use CodeRay instead of GVim.
+
+[[CodeRay syntax highlighting formatting configurations|named_chunk_with_containers]]
+
+If you choose to use CSS classes instead of directly embedding fonts and colors
+into the generated HTML, you will need a CSS stylesheet with the relevant
+classes. Here is the default CSS stylesheet used by CodeRay:
+
+[[lib/codnar/data/coderay.css|named_chunk_with_containers]]
 
 #### Syntax highlighting using Sunlight ####
 
-For small projects in languages supported by Sunlight, you may choose to use
-it instead of GVIM
+For small projects in supported languages, you may choose to use Sunlight
+instead of GVim.
 
 [[Sunlight syntax highlighting formatting configurations|named_chunk_with_containers]]
 
-Here is a simple test demonstrating highlighting code syntax using Sunlight:
+Here is a simple test demonstrating highlighting code syntax using the
+different configurations (GVim, CodeRay, or Sunlight):
 
-[[test/format_code_sunlight_configurations.rb|named_chunk_with_containers]]
+[[test/format_code_configurations.rb|named_chunk_with_containers]]
 
 #### Chunk splitting ####
 

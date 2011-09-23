@@ -39,7 +39,7 @@ module Codnar
     # "Split" a documentation file containing pure RDoc documentation.
     SPLIT_RDOC_DOCUMENTATION = SPLIT_HTML_DOCUMENTATION.deep_merge(
       "formatters" => {
-        "doc" => "Formatter.markup_lines_to_html(lines, RDoc)",
+        "doc" => "Formatter.markup_lines_to_html(lines, Codnar::RDoc, 'rdoc')",
         "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
       }
     )
@@ -47,7 +47,7 @@ module Codnar
     # "Split" a documentation file containing pure Markdown documentation.
     SPLIT_MARKDOWN_DOCUMENTATION = SPLIT_HTML_DOCUMENTATION.deep_merge(
       "formatters" => {
-        "doc" => "Formatter.markup_lines_to_html(lines, Markdown, 'markdown')",
+        "doc" => "Formatter.markup_lines_to_html(lines, Codnar::Markdown, 'markdown')",
         "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
       }
     )
@@ -277,7 +277,7 @@ module Codnar
     # configuration that classifies some lines as +comment+.
     FORMAT_RDOC_COMMENTS = {
       "formatters" => {
-        "comment" => "Formatter.markup_lines_to_html(lines, 'RDoc')",
+        "comment" => "Formatter.markup_lines_to_html(lines, Codnar::RDoc, 'rdoc')",
         "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
       },
     }
@@ -295,27 +295,45 @@ module Codnar
     
     # {{{ GVim syntax highlighting formatting configurations
 
-    # Format code using GVim's Ruby syntax highlighting, using explicit HTML
+    # Format code using GVim's syntax highlighting, using explicit HTML
     # constructs. Assumes some previous configuration already classified the
     # code lines.
     FORMAT_CODE_GVIM_HTML = lambda do |syntax|
-      return Configuration.gvim_code_format(syntax)
+      return Configuration.klass_code_format('GVim', syntax, "[]")
     end
 
-    # Format code using GVim's Ruby syntax highlighting, using CSS classes
-    # instead of explicit font and color styles. Assumes some previous
-    # configuration already classified the code lines.
+    # Format code using GVim's syntax highlighting, using CSS classes instead
+    # of explicit font and color styles. Assumes some previous configuration
+    # already classified the code lines.
     FORMAT_CODE_GVIM_CSS = lambda do |syntax|
-      return Configuration.gvim_code_format(syntax, "'+:let html_use_css=1'")
+      return Configuration.klass_code_format('GVim', syntax, "[ '+:let html_use_css=1' ]")
     end
 
     # Return a configuration for highlighting a specific syntax using GVim.
-    def self.gvim_code_format(syntax, extra_commands = "")
+    def self.klass_code_format(klass, syntax, options)
       return {
         "formatters" => {
-          "#{syntax}_code" => "GVim.lines_to_html(lines, '#{syntax}', [ #{extra_commands} ])",
+          "#{syntax}_code" => "#{klass}.lines_to_html(lines, '#{syntax}', #{options})",
         },
       }
+    end
+
+    # }}}
+
+    # {{{ CodeRay syntax highlighting formatting configurations
+
+    # Format code using CodeRay's syntax highlighting, using explicit HTML
+    # constructs. Assumes some previous configuration already classified the
+    # code lines.
+    FORMAT_CODE_CODERAY_HTML = lambda do |syntax|
+      return Configuration.klass_code_format('CodeRay', syntax, "{}")
+    end
+
+    # Format code using CodeRay's syntax highlighting, using CSS classes
+    # instead of explicit font and color styles. Assumes some previous
+    # configuration already classified the code lines.
+    FORMAT_CODE_CODERAY_CSS = lambda do |syntax|
+      return Configuration.klass_code_format('CodeRay', syntax, "{ :css => :class }")
     end
 
     # }}}
