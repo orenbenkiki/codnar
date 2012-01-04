@@ -329,13 +329,17 @@ that demonstrates "splitting" documentation:
 
 And here are the actual configurations:
 
-[[Documentation "splitting" configurations|named_chunk_with_containers]]
+[[lib/codnar/configuration/documentation.rb|named_chunk_with_containers]]
 
 #### Source code lines classification ####
 
 Splitting source code files is a more complex affair, which does typically
-require combining several configurations. The basic configuration marks all
-lines as belonging to some code syntax, as a single chunk:
+require combining several configurations.
+
+[[lib/codnar/configuration/code.rb|named_chunk_with_containers]]
+
+The basic configuration marks all lines as belonging to some code syntax, as a
+single chunk:
 
 [[Source code lines classification configurations|named_chunk_with_containers]]
 
@@ -349,7 +353,15 @@ Here is a simple test demonstrating using source code lines classifications:
 
 [[test/split_code_configurations.rb|named_chunk_with_containers]]
 
-#### Simple comment classification ####
+#### Classifying comment lines ####
+
+Classifying comment lines is the most complex part of splitting source code
+files, requiring the use of one or more configurations specific to the language
+used.
+
+[[lib/codnar/configuration/comments.rb|named_chunk_with_containers]]
+
+##### Simple comment classification #####
 
 Many languages use a simple comment syntax, where some prefix indicates a
 comment that spans until the end of the line (e.g., shell `#` comments or C++
@@ -361,18 +373,30 @@ Here is a simple test demonstrating using simple comment classifications:
 
 [[test/split_simple_comment_configurations.rb|named_chunk_with_containers]]
 
-#### Complex comment classification ####
+##### Denoted comment classification #####
 
-Other languages use a complex multi-line comment syntax, where some prefix
+Sometimes some simple comments require special treatment if they are denoted by
+some leading prefix. For example, Haskell simple comments start with `--` but
+Haddock (documentation) comments start with `-- |`, `-- ^` etc.
+
+[[Denoted comment classification configurations|named_chunk_with_containers]]
+
+Here is a simple test demonstrating using denoted comment classifications:
+
+[[test/split_denoted_comment_configurations.rb|named_chunk_with_containers]]
+
+##### Delimited comment classification #####
+
+Other languages use a delimited multi-line comment syntax, where some prefix
 indicates the beginning of the comment, some suffix indicates the end, and by
 convention some prefix is expected for the inner comment lines (e.g., C's
 "`/*`", "` *`", "`*/`" comments or HTML's "`<!--`", "` -`", "`-->`" comments).
 
-[[Complex comment classification configurations|named_chunk_with_containers]]
+[[Delimited comment classification configurations|named_chunk_with_containers]]
 
-Here is a simple test demonstrating using complex comment classifications:
+Here is a simple test demonstrating using delimited comment classifications:
 
-[[test/split_complex_comment_configurations.rb|named_chunk_with_containers]]
+[[test/split_delimited_comment_configurations.rb|named_chunk_with_containers]]
 
 #### Comment formatting ####
 
@@ -386,10 +410,18 @@ Here is a simple test demonstrating formatting comment contents:
 
 [[test/format_comment_configurations.rb|named_chunk_with_containers]]
 
-#### Syntax highlighting using GVim ####
+#### Syntax highlighting ####
 
-Supporting a specific programming language (other than dealing with comments)
-is very easy using GVim for syntax highlighting, as demonstrated here:
+Highlighting the syntax of the source code embedded in the documentation
+improved readability. Codnar provides several ways to achieve this.
+
+[[lib/codnar/configuration/highlighting.rb|named_chunk_with_containers]]
+
+##### Syntax highlighting using GVim #####
+
+Supporting almost any known programming language (other than dealing with
+comments) is very easy using GVim for syntax highlighting, as demonstrated
+here:
 
 [[GVim syntax highlighting formatting configurations|named_chunk_with_containers]]
 
@@ -399,7 +431,7 @@ classes. Here is the default CSS stylesheet used by GVim:
 
 [[lib/codnar/data/gvim.css|named_chunk_with_containers]]
 
-#### Syntax highlighting using CodeRay ####
+##### Syntax highlighting using CodeRay #####
 
 For supported programming languages, you may choose to use CodeRay instead of GVim.
 
@@ -411,7 +443,7 @@ classes. Here is the default CSS stylesheet used by CodeRay:
 
 [[lib/codnar/data/coderay.css|named_chunk_with_containers]]
 
-#### Syntax highlighting using Sunlight ####
+##### Syntax highlighting using Sunlight #####
 
 For small projects in supported languages, you may choose to use Sunlight
 instead of GVim.

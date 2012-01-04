@@ -113,11 +113,21 @@ module Codnar
 
     # {{{ Scanner state shorthands
 
+    # A pattern that matches any line and extracts no data; is meant to be used
+    # for catch-all transitions that transfer the scanning to a different
+    # state. It is used if no explicit pattern is specified in a transition
+    # (that is, you can think of this as the +nil+ pattern).
+    CATCH_ALL_PATTERN = {
+      "kind" => nil,
+      "groups" => [],
+      "regexp" => //
+    }
+
     # Expand all the shorthands used in the state.
     def expand_state_shorthands(name, state)
       fill_name(name, state, "State")
       state.transitions.each do |transition|
-        pattern = transition.pattern = lookup(@syntax.patterns, "pattern", transition.pattern)
+        pattern = transition.pattern = lookup(@syntax.patterns, "pattern", transition.pattern || CATCH_ALL_PATTERN)
         transition.kind ||= pattern.andand.kind
         transition.next_state = lookup(@syntax.states, "state", transition.next_state || state)
       end
@@ -146,10 +156,21 @@ module Codnar
 
     # Scan the next file line.
     def scan_line(line)
-      @state.transitions.each do |transition|
-        return if transition.pattern && transition.next_state && classify_matching_line(line, transition)
+      until state_classified_line(line)
+        # Do nothing
       end
-      unclassified_line(line, @state.name)
+    end
+
+    # Scan the current line using the current state transitions. Return true if
+    # the line was classified, of false if we need to try and classify it again
+    # using the updated (next) state.
+    def state_classified_line(line)
+      @state.transitions.each do |transition|
+        match = transition.pattern.andand.regexp.andand.match(line) if transition.next_state
+        return classify_matching_line(line, transition, match) if match
+      end
+      classify_error_line(line, @state.name)
+      return true
     end
 
     # }}}
@@ -157,15 +178,15 @@ module Codnar
     # {{{ Scanner line processing
 
     # Handle a file line, only if it matches the pattern.
-    def classify_matching_line(line, transition)
-      match = (pattern = transition.pattern).regexp.match(line)
-      return false unless match
-      @lines << Scanner.extracted_groups(match, pattern.groups).update({
+    def classify_matching_line(line, transition, match)
+      @state = transition.next_state
+      kind = transition.kind
+      return false unless kind # A +nil+ kind indicates the next state will classify the line.
+      @lines << Scanner.extracted_groups(match, transition.pattern.groups || []).update({
         "line" => line,
-        "kind" => transition.kind,
+        "kind" => kind,
         "number" => @errors.line_number
       })
-      @state = transition.next_state
       return true
     end
 
@@ -181,7 +202,7 @@ module Codnar
     end
 
     # Handle a file line that couldn't be classified.
-    def unclassified_line(line, state_name)
+    def classify_error_line(line, state_name)
       @lines << {
         "line" => line,
         "indentation" => line.indentation,

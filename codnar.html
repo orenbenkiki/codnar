@@ -685,7 +685,7 @@ number of Git commits by running <tt>rake version</tt>.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.68</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.69</span><span class="Special">&quot;</span>
 
 end
 </pre>
@@ -1259,6 +1259,31 @@ Fill in the name field for state or pattern object.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
+A pattern that matches any line and extracts no data; is meant to be used
+for catch-all transitions that transfer the scanning to a different state.
+It is used if no explicit pattern is specified in a transition (that is,
+you can think of this as the <tt>nil</tt> pattern).
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="Type">CATCH_ALL_PATTERN</span> = {
+  <span class="Special">&quot;</span><span class="Constant">kind</span><span class="Special">&quot;</span> =&gt; <span class="Constant">nil</span>,
+  <span class="Special">&quot;</span><span class="Constant">groups</span><span class="Special">&quot;</span> =&gt; [],
+  <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">//</span>
+}
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
 Expand all the shorthands used in the state.
 </p>
 </div>
@@ -1269,7 +1294,7 @@ Expand all the shorthands used in the state.
 <span class="PreProc">def</span> <span class="Identifier">expand_state_shorthands</span>(name, state)
   fill_name(name, state, <span class="Special">&quot;</span><span class="Constant">State</span><span class="Special">&quot;</span>)
   state.transitions.each <span class="Statement">do</span> |<span class="Identifier">transition</span>|
-    pattern = transition.pattern = lookup(<span class="Identifier">@syntax</span>.patterns, <span class="Special">&quot;</span><span class="Constant">pattern</span><span class="Special">&quot;</span>, transition.pattern)
+    pattern = transition.pattern = lookup(<span class="Identifier">@syntax</span>.patterns, <span class="Special">&quot;</span><span class="Constant">pattern</span><span class="Special">&quot;</span>, transition.pattern || <span class="Type">CATCH_ALL_PATTERN</span>)
     transition.kind ||= pattern.andand.kind
     transition.next_state = lookup(<span class="Identifier">@syntax</span>.states, <span class="Special">&quot;</span><span class="Constant">state</span><span class="Special">&quot;</span>, transition.next_state || state)
   <span class="Statement">end</span>
@@ -1428,10 +1453,51 @@ Scan the next file line.
 </table>
 <pre class='ruby code syntax'>
 <span class="PreProc">def</span> <span class="Identifier">scan_line</span>(line)
+  <span class="Statement">until</span> state_classified_line(line)
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Do nothing
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+  end
+end
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Scan the current line using the current state transitions. Return true if
+the line was classified, of false if we need to try and classify it again
+using the updated (next) state.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="PreProc">def</span> <span class="Identifier">state_classified_line</span>(line)
   <span class="Identifier">@state</span>.transitions.each <span class="Statement">do</span> |<span class="Identifier">transition</span>|
-    <span class="Statement">return</span> <span class="Statement">if</span> transition.pattern &amp;&amp; transition.next_state &amp;&amp; classify_matching_line(line, transition)
+    match = transition.pattern.andand.regexp.andand.match(line) <span class="Statement">if</span> transition.next_state
+    <span class="Statement">return</span> classify_matching_line(line, transition, match) <span class="Statement">if</span> match
   <span class="Statement">end</span>
-  unclassified_line(line, <span class="Identifier">@state</span>.name)
+  classify_error_line(line, <span class="Identifier">@state</span>.name)
+  <span class="Statement">return</span> <span class="Constant">true</span>
 <span class="PreProc">end</span>
 
 </pre>
@@ -1476,15 +1542,15 @@ Handle a file line, only if it matches the pattern.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="PreProc">def</span> <span class="Identifier">classify_matching_line</span>(line, transition)
-  match = (pattern = transition.pattern).regexp.match(line)
-  <span class="Statement">return</span> <span class="Constant">false</span> <span class="Statement">unless</span> match
-  <span class="Identifier">@lines</span> &lt;&lt; <span class="Type">Scanner</span>.extracted_groups(match, pattern.groups).update({
+<span class="PreProc">def</span> <span class="Identifier">classify_matching_line</span>(line, transition, match)
+  <span class="Identifier">@state</span> = transition.next_state
+  kind = transition.kind
+  <span class="Statement">return</span> <span class="Constant">false</span> <span class="Statement">unless</span> kind <span class="Comment"># A +nil+ kind indicates the next state will classify the line.</span>
+  <span class="Identifier">@lines</span> &lt;&lt; <span class="Type">Scanner</span>.extracted_groups(match, transition.pattern.groups || []).update({
     <span class="Special">&quot;</span><span class="Constant">line</span><span class="Special">&quot;</span> =&gt; line,
-    <span class="Special">&quot;</span><span class="Constant">kind</span><span class="Special">&quot;</span> =&gt; transition.kind,
+    <span class="Special">&quot;</span><span class="Constant">kind</span><span class="Special">&quot;</span> =&gt; kind,
     <span class="Special">&quot;</span><span class="Constant">number</span><span class="Special">&quot;</span> =&gt; <span class="Identifier">@errors</span>.line_number
   })
-  <span class="Identifier">@state</span> = transition.next_state
   <span class="Statement">return</span> <span class="Constant">true</span>
 <span class="PreProc">end</span>
 
@@ -1530,7 +1596,7 @@ Handle a file line that couldn’t be classified.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="PreProc">def</span> <span class="Identifier">unclassified_line</span>(line, state_name)
+<span class="PreProc">def</span> <span class="Identifier">classify_error_line</span>(line, state_name)
   <span class="Identifier">@lines</span> &lt;&lt; {
     <span class="Special">&quot;</span><span class="Constant">line</span><span class="Special">&quot;</span> =&gt; line,
     <span class="Special">&quot;</span><span class="Constant">indentation</span><span class="Special">&quot;</span> =&gt; line.indentation,
@@ -4939,67 +5005,12 @@ Application.
 <pre class='ruby code syntax'>
   <span class="PreProc">module</span> <span class="Type">Configuration</span>
 
-</pre>
-<pre class='nested chunk'>
-    <a class='nested chunk' href='#documentation-splitting-configurations'>Documentation &quot;splitting&quot; configurations</a>
-</pre>
-<pre class='ruby code syntax'>
+    <span class="PreProc">include</span> <span class="Type">Documentation</span>
+    <span class="PreProc">include</span> <span class="Type">Code</span>
+    <span class="PreProc">include</span> <span class="Type">Comments</span>
+    <span class="PreProc">include</span> <span class="Type">Highlighting</span>
 
-</pre>
-<pre class='nested chunk'>
-    <a class='nested chunk' href='#source-code-lines-classification-configurations'>Source code lines classification configurations</a>
-</pre>
-<pre class='ruby code syntax'>
-
-</pre>
-<pre class='nested chunk'>
-    <a class='nested chunk' href='#nested-foreign-syntax-code-islands-configurations'>Nested foreign syntax code islands configurations</a>
-</pre>
-<pre class='ruby code syntax'>
-
-</pre>
-<pre class='nested chunk'>
-    <a class='nested chunk' href='#simple-comment-classification-configurations'>Simple comment classification configurations</a>
-</pre>
-<pre class='ruby code syntax'>
-
-</pre>
-<pre class='nested chunk'>
-    <a class='nested chunk' href='#complex-comment-classification-configurations'>Complex comment classification configurations</a>
-</pre>
-<pre class='ruby code syntax'>
-
-</pre>
-<pre class='nested chunk'>
-    <a class='nested chunk' href='#comment-formatting-configurations'>Comment formatting configurations</a>
-</pre>
-<pre class='ruby code syntax'>
-
-</pre>
-<pre class='nested chunk'>
-    <a class='nested chunk' href='#gvim-syntax-highlighting-formatting-configurations'>GVim syntax highlighting formatting configurations</a>
-</pre>
-<pre class='ruby code syntax'>
-
-</pre>
-<pre class='nested chunk'>
-    <a class='nested chunk' href='#coderay-syntax-highlighting-formatting-configurations'>CodeRay syntax highlighting formatting configurations</a>
-</pre>
-<pre class='ruby code syntax'>
-
-</pre>
-<pre class='nested chunk'>
-    <a class='nested chunk' href='#sunlight-syntax-highlighting-formatting-configurations'>Sunlight syntax highlighting formatting configurations</a>
-</pre>
-<pre class='ruby code syntax'>
-
-</pre>
-<pre class='nested chunk'>
-    <a class='nested chunk' href='#chunk-splitting-configurations'>Chunk splitting configurations</a>
-</pre>
-<pre class='ruby code syntax'>
-
-  end
+  <span class="PreProc">end</span>
 
 end
 </pre>
@@ -5380,18 +5391,39 @@ And here are the actual configurations:
 <p>
 <div class="named_with_containers chunk">
 <div class="chunk name">
-<a name="documentation-splitting-configurations">
-<span>Documentation &quot;splitting&quot; configurations</span>
+<a name="lib-codnar-configuration-documentation-rb">
+<span>lib/codnar/configuration/documentation.rb</span>
 </a>
 </div>
 <div class="chunk html">
 <pre class='ruby code syntax'>
+<span class="PreProc">module</span> <span class="Type">Codnar</span>
+
+  <span class="PreProc">module</span> <span class="Type">Configuration</span>
 
 </pre>
-<table class='layout'>
+    <table class='layout'>
 <tr>
 <td class='indentation'>
-<pre></pre>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Configurations for “splitting” documentation files.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">module</span> <span class="Type">Documentation</span>
+
+</pre>
+      <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>      </pre>
 </td>
 <td class='html'>
 <div class='rdoc comment markup'>
@@ -5410,25 +5442,25 @@ processing on the input. It isn’t the most useful configuration.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="Type">SPLIT_HTML_DOCUMENTATION</span> = {
-  <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.cast_lines(lines, 'html')</span><span class="Special">&quot;</span>,
-  },
-  <span class="Special">&quot;</span><span class="Constant">syntax</span><span class="Special">&quot;</span> =&gt; {
-    <span class="Special">&quot;</span><span class="Constant">patterns</span><span class="Special">&quot;</span> =&gt; {
-      <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">^(.*)$</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">groups</span><span class="Special">&quot;</span> =&gt; [ <span class="Special">&quot;</span><span class="Constant">payload</span><span class="Special">&quot;</span> ] },
-    },
-    <span class="Special">&quot;</span><span class="Constant">states</span><span class="Special">&quot;</span> =&gt; {
-      <span class="Special">&quot;</span><span class="Constant">start</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">transitions</span><span class="Special">&quot;</span> =&gt; [ { <span class="Special">&quot;</span><span class="Constant">pattern</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> } ] },
-    },
-  },
-}
+      <span class="Type">SPLIT_HTML_DOCUMENTATION</span> = {
+        <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
+          <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.cast_lines(lines, 'html')</span><span class="Special">&quot;</span>,
+        },
+        <span class="Special">&quot;</span><span class="Constant">syntax</span><span class="Special">&quot;</span> =&gt; {
+          <span class="Special">&quot;</span><span class="Constant">patterns</span><span class="Special">&quot;</span> =&gt; {
+            <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">^(.*)$</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">groups</span><span class="Special">&quot;</span> =&gt; [ <span class="Special">&quot;</span><span class="Constant">payload</span><span class="Special">&quot;</span> ] },
+          },
+          <span class="Special">&quot;</span><span class="Constant">states</span><span class="Special">&quot;</span> =&gt; {
+            <span class="Special">&quot;</span><span class="Constant">start</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">transitions</span><span class="Special">&quot;</span> =&gt; [ { <span class="Special">&quot;</span><span class="Constant">pattern</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> } ] },
+          },
+        },
+      }
 
 </pre>
-<table class='layout'>
+      <table class='layout'>
 <tr>
 <td class='indentation'>
-<pre></pre>
+<pre>      </pre>
 </td>
 <td class='html'>
 <div class='rdoc comment markup'>
@@ -5441,17 +5473,17 @@ preserved by escaping it and wrapping it in an HTML pre element.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="Type">SPLIT_PRE_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
-  <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.lines_to_pre_html(lines, :class =&gt; :doc)</span><span class="Special">&quot;</span>,
-  }
-)
+      <span class="Type">SPLIT_PRE_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
+        <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
+          <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.lines_to_pre_html(lines, :class =&gt; :doc)</span><span class="Special">&quot;</span>,
+        }
+      )
 
 </pre>
-<table class='layout'>
+      <table class='layout'>
 <tr>
 <td class='indentation'>
-<pre></pre>
+<pre>      </pre>
 </td>
 <td class='html'>
 <div class='rdoc comment markup'>
@@ -5463,18 +5495,18 @@ preserved by escaping it and wrapping it in an HTML pre element.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="Type">SPLIT_RDOC_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
-  <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Codnar::RDoc, 'rdoc')</span><span class="Special">&quot;</span>,
-    <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
-  }
-)
+      <span class="Type">SPLIT_RDOC_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
+        <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
+          <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Codnar::RDoc, 'rdoc')</span><span class="Special">&quot;</span>,
+          <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
+        }
+      )
 
 </pre>
-<table class='layout'>
+      <table class='layout'>
 <tr>
 <td class='indentation'>
-<pre></pre>
+<pre>      </pre>
 </td>
 <td class='html'>
 <div class='rdoc comment markup'>
@@ -5486,18 +5518,18 @@ preserved by escaping it and wrapping it in an HTML pre element.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="Type">SPLIT_MARKDOWN_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
-  <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Codnar::Markdown, 'markdown')</span><span class="Special">&quot;</span>,
-    <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
-  }
-)
+      <span class="Type">SPLIT_MARKDOWN_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
+        <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
+          <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Codnar::Markdown, 'markdown')</span><span class="Special">&quot;</span>,
+          <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
+        }
+      )
 
 </pre>
-<table class='layout'>
+      <table class='layout'>
 <tr>
 <td class='indentation'>
-<pre></pre>
+<pre>      </pre>
 </td>
 <td class='html'>
 <div class='rdoc comment markup'>
@@ -5509,30 +5541,82 @@ preserved by escaping it and wrapping it in an HTML pre element.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="Type">SPLIT_GRAPHVIZ_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
-  <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
-    <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Codnar::GraphViz, 'graphviz')</span><span class="Special">&quot;</span>,
-    <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
-  }
-)
+      <span class="Type">SPLIT_GRAPHVIZ_DOCUMENTATION</span> = <span class="Type">SPLIT_HTML_DOCUMENTATION</span>.deep_merge(
+        <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
+          <span class="Special">&quot;</span><span class="Constant">doc</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Codnar::GraphViz, 'graphviz')</span><span class="Special">&quot;</span>,
+          <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
+        }
+      )
 
+    end
+
+  end
+
+end
 </pre>
-</div>
-<div class="chunk containers">
-<span class="chunk containers header">Contained in:</span>
-<ul class="chunk containers">
-<li class="chunk container">
-<a class="chunk container" href="#lib-codnar-split-configurations-rb">lib/codnar/split_configurations.rb</a>
-</li>
-</ul>
 </div>
 </div>
 </p>
 <h4>Source code lines classification</h4>
 <p>
 Splitting source code files is a more complex affair, which does typically
-require combining several configurations. The basic configuration marks all
-lines as belonging to some code syntax, as a single chunk:
+require combining several configurations.
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="lib-codnar-configuration-code-rb">
+<span>lib/codnar/configuration/code.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='ruby code syntax'>
+<span class="PreProc">module</span> <span class="Type">Codnar</span>
+
+  <span class="PreProc">module</span> <span class="Type">Configuration</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Configurations for splitting source code.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">module</span> <span class="Type">Code</span>
+
+</pre>
+<pre class='nested chunk'>
+      <a class='nested chunk' href='#source-code-lines-classification-configurations'>Source code lines classification configurations</a>
+</pre>
+<pre class='ruby code syntax'>
+
+</pre>
+<pre class='nested chunk'>
+      <a class='nested chunk' href='#nested-foreign-syntax-code-islands-configurations'>Nested foreign syntax code islands configurations</a>
+</pre>
+<pre class='ruby code syntax'>
+
+    end
+
+  end
+
+end
+</pre>
+</div>
+</div>
+</p>
+<p>
+The basic configuration marks all lines as belonging to some code syntax, as a
+single chunk:
 </p>
 <p>
 <div class="named_with_containers chunk">
@@ -5591,7 +5675,7 @@ configuration(s).
 <span class="chunk containers header">Contained in:</span>
 <ul class="chunk containers">
 <li class="chunk container">
-<a class="chunk container" href="#lib-codnar-split-configurations-rb">lib/codnar/split_configurations.rb</a>
+<a class="chunk container" href="#lib-codnar-configuration-code-rb">lib/codnar/configuration/code.rb</a>
 </li>
 </ul>
 </div>
@@ -5674,7 +5758,7 @@ nested code may not contain deeper nested code using a third syntax.
 <span class="chunk containers header">Contained in:</span>
 <ul class="chunk containers">
 <li class="chunk container">
-<a class="chunk container" href="#lib-codnar-split-configurations-rb">lib/codnar/split_configurations.rb</a>
+<a class="chunk container" href="#lib-codnar-configuration-code-rb">lib/codnar/configuration/code.rb</a>
 </li>
 </ul>
 </div>
@@ -5792,7 +5876,77 @@ Test combinations of the built-in split code configurations.
 </div>
 </div>
 </p>
-<h4>Simple comment classification</h4>
+<h4>Classifying comment lines</h4>
+<p>
+Classifying comment lines is the most complex part of splitting source code
+files, requiring the use of one or more configurations specific to the language
+used.
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="lib-codnar-configuration-comments-rb">
+<span>lib/codnar/configuration/comments.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='ruby code syntax'>
+<span class="PreProc">module</span> <span class="Type">Codnar</span>
+
+  <span class="PreProc">module</span> <span class="Type">Configuration</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Configurations for splitting source code with comments.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">module</span> <span class="Type">Comments</span>
+
+</pre>
+<pre class='nested chunk'>
+      <a class='nested chunk' href='#simple-comment-classification-configurations'>Simple comment classification configurations</a>
+</pre>
+<pre class='ruby code syntax'>
+
+</pre>
+<pre class='nested chunk'>
+      <a class='nested chunk' href='#denoted-comment-classification-configurations'>Denoted comment classification configurations</a>
+</pre>
+<pre class='ruby code syntax'>
+
+</pre>
+<pre class='nested chunk'>
+      <a class='nested chunk' href='#delimited-comment-classification-configurations'>Delimited comment classification configurations</a>
+</pre>
+<pre class='ruby code syntax'>
+
+</pre>
+<pre class='nested chunk'>
+      <a class='nested chunk' href='#comment-formatting-configurations'>Comment formatting configurations</a>
+</pre>
+<pre class='ruby code syntax'>
+
+    end
+
+  end
+
+end
+</pre>
+</div>
+</div>
+</p>
+<h5>Simple comment classification</h5>
 <p>
 Many languages use a simple comment syntax, where some prefix indicates a
 comment that spans until the end of the line (e.g., shell <code>#</code> comments or C++
@@ -5837,7 +5991,7 @@ useful.
 </table>
 <pre class='ruby code syntax'>
 <span class="Type">CLASSIFY_SIMPLE_COMMENTS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">prefix</span>|
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.simple_comments(prefix)
+  <span class="Statement">return</span> <span class="Type">Comments</span>.simple_comments(prefix)
 <span class="Statement">end</span>
 
 </pre>
@@ -5857,7 +6011,7 @@ Classify simple shell (“#”) comment lines.
 </table>
 <pre class='ruby code syntax'>
 <span class="Type">CLASSIFY_SHELL_COMMENTS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span>
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.simple_comments(<span class="Special">&quot;</span><span class="Constant">#</span><span class="Special">&quot;</span>)
+  <span class="Statement">return</span> <span class="Type">Comments</span>.simple_comments(<span class="Special">&quot;</span><span class="Constant">#</span><span class="Special">&quot;</span>)
 <span class="Statement">end</span>
 
 </pre>
@@ -5877,7 +6031,7 @@ Classify simple C++ (“//”) comment lines.
 </table>
 <pre class='ruby code syntax'>
 <span class="Type">CLASSIFY_CPP_COMMENTS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span>
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.simple_comments(<span class="Special">&quot;</span><span class="Constant">//</span><span class="Special">&quot;</span>)
+  <span class="Statement">return</span> <span class="Type">Comments</span>.simple_comments(<span class="Special">&quot;</span><span class="Constant">//</span><span class="Special">&quot;</span>)
 <span class="Statement">end</span>
 
 </pre>
@@ -5922,7 +6076,7 @@ comments).
 <span class="chunk containers header">Contained in:</span>
 <ul class="chunk containers">
 <li class="chunk container">
-<a class="chunk container" href="#lib-codnar-split-configurations-rb">lib/codnar/split_configurations.rb</a>
+<a class="chunk container" href="#lib-codnar-configuration-comments-rb">lib/codnar/configuration/comments.rb</a>
 </li>
 </ul>
 </div>
@@ -6024,18 +6178,17 @@ end
 </div>
 </div>
 </p>
-<h4>Complex comment classification</h4>
+<h5>Denoted comment classification</h5>
 <p>
-Other languages use a complex multi-line comment syntax, where some prefix
-indicates the beginning of the comment, some suffix indicates the end, and by
-convention some prefix is expected for the inner comment lines (e.g., C's
-"<code>/*</code>", "<code>*</code>", "<code>*/</code>" comments or HTML's "<code>&lt;!--</code>", "<code>-</code>", "<code>--&gt;</code>" comments).
+Sometimes some simple comments require special treatment if they are denoted by
+some leading prefix. For example, Haskell simple comments start with <code>--</code> but
+Haddock (documentation) comments start with <code>-- |</code>, <code>-- ^</code> etc.
 </p>
 <p>
 <div class="named_with_containers chunk">
 <div class="chunk name">
-<a name="complex-comment-classification-configurations">
-<span>Complex comment classification configurations</span>
+<a name="denoted-comment-classification-configurations">
+<span>Denoted comment classification configurations</span>
 </a>
 </div>
 <div class="chunk html">
@@ -6050,7 +6203,273 @@ convention some prefix is expected for the inner comment lines (e.g., C's
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Classify complex comment lines. It accepts a restricted format: each
+Classify denoted comment lines. Denoted comments are similar to simple
+comments, except that the 1st simple comment line must start with a
+specific prefix (e.g., in haddock, comment lines start with ‘–’ but
+haddoc comments start with ‘– |’, ‘– ^’, etc.). The comment
+continues in additional simple comment lines.
+</p>
+<p>
+This configuration is typically complemented by an additional one
+specifying how to format the (stripped!) comments; by default they are just
+displayed as-is using an HTML <tt>pre</tt> element, which isn’t very
+useful.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="Type">CLASSIFY_DENOTED_COMMENTS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">start_prefix</span>, <span class="Identifier">continue_prefix</span>|
+  <span class="Statement">return</span> <span class="Type">Comments</span>.denoted_comments(start_prefix, continue_prefix)
+<span class="Statement">end</span>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Classify denoted haddock (“–”) comment lines.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="Type">CLASSIFY_HADDOCK_COMMENTS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span>
+  <span class="Statement">return</span> <span class="Type">Comments</span>.denoted_comments(<span class="Special">&quot;</span><span class="Constant">-- [|^$]</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">--</span><span class="Special">&quot;</span>)
+<span class="Statement">end</span>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Configuration for classifying lines to comments and code based on a start
+comment prefix and continuation comment prefix (e.g., “– |” and
+“–” for haddock).
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">denoted_comments</span>(start_prefix, continue_prefix)
+</pre>
+  <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>  </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Ruby coverage somehow barfs if we inline this. Go figure.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+  start_transition = {
+    <span class="Special">&quot;</span><span class="Constant">pattern</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">comment_start_</span><span class="Special">#{</span>start_prefix<span class="Special">}</span><span class="Special">&quot;</span>,
+    <span class="Special">&quot;</span><span class="Constant">next_state</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">comment_continue_</span><span class="Special">#{</span>continue_prefix<span class="Special">}</span><span class="Special">&quot;</span>,
+    <span class="Special">&quot;</span><span class="Constant">kind</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">comment</span><span class="Special">&quot;</span>
+  }
+  <span class="Statement">return</span> {
+    <span class="Special">&quot;</span><span class="Constant">syntax</span><span class="Special">&quot;</span> =&gt; {
+      <span class="Special">&quot;</span><span class="Constant">patterns</span><span class="Special">&quot;</span> =&gt; {
+        <span class="Special">&quot;</span><span class="Constant">comment_start_</span><span class="Special">#{</span>start_prefix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">^(</span><span class="Special">\\</span><span class="Constant">s*)</span><span class="Special">#{</span>start_prefix<span class="Special">}</span><span class="Special">\\</span><span class="Constant">s?(.*)$</span><span class="Special">&quot;</span> },
+        <span class="Special">&quot;</span><span class="Constant">comment_continue_</span><span class="Special">#{</span>continue_prefix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">^(</span><span class="Special">\\</span><span class="Constant">s*)</span><span class="Special">#{</span>continue_prefix<span class="Special">}</span><span class="Special">\\</span><span class="Constant">s?(.*)$</span><span class="Special">&quot;</span> },
+      },
+      <span class="Special">&quot;</span><span class="Constant">states</span><span class="Special">&quot;</span> =&gt; {
+        <span class="Special">&quot;</span><span class="Constant">start</span><span class="Special">&quot;</span> =&gt; {
+          <span class="Special">&quot;</span><span class="Constant">transitions</span><span class="Special">&quot;</span> =&gt; [ start_transition, [] ],
+        },
+        <span class="Special">&quot;</span><span class="Constant">comment_continue_</span><span class="Special">#{</span>continue_prefix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; {
+          <span class="Special">&quot;</span><span class="Constant">transitions</span><span class="Special">&quot;</span> =&gt; [ {
+              <span class="Special">&quot;</span><span class="Constant">pattern</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">comment_continue_</span><span class="Special">#{</span>continue_prefix<span class="Special">}</span><span class="Special">&quot;</span>,
+              <span class="Special">&quot;</span><span class="Constant">kind</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">comment</span><span class="Special">&quot;</span> },
+            { <span class="Special">&quot;</span><span class="Constant">next_state</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">start</span><span class="Special">&quot;</span> }
+          ],
+        },
+      },
+    },
+  }
+end
+
+</pre>
+</div>
+<div class="chunk containers">
+<span class="chunk containers header">Contained in:</span>
+<ul class="chunk containers">
+<li class="chunk container">
+<a class="chunk container" href="#lib-codnar-configuration-comments-rb">lib/codnar/configuration/comments.rb</a>
+</li>
+</ul>
+</div>
+</div>
+</p>
+<p>
+Here is a simple test demonstrating using denoted comment classifications:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="test-split-denoted-comment-configurations-rb">
+<span>test/split_denoted_comment_configurations.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='ruby code syntax'>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">olag/test</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">test/spec</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">test_with_configurations</span><span class="Special">&quot;</span>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Test built-in split denoted comment configurations.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="PreProc">class</span> <span class="Type">TestSplitDenotedCommentsConfigurations</span> &lt; <span class="Type">Test</span>::<span class="Type">Unit</span>::<span class="Type">TestCase</span>
+
+  <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithConfigurations</span>
+  <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithErrors</span>
+  <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithTempfile</span>
+
+  <span class="PreProc">def</span> <span class="Identifier">test_custom_comments</span>
+    check_any_comment(<span class="Special">&quot;</span><span class="Constant">// @</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">//</span><span class="Special">&quot;</span>, <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">CLASSIFY_DENOTED_COMMENTS</span>.call(<span class="Special">&quot;</span><span class="Constant">// @</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">//</span><span class="Special">&quot;</span>))
+  <span class="PreProc">end</span>
+
+  <span class="PreProc">def</span> <span class="Identifier">test_haddoc_comments</span>
+    check_any_comment(<span class="Special">&quot;</span><span class="Constant">-- |</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">--</span><span class="Special">&quot;</span>, <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">CLASSIFY_HADDOCK_COMMENTS</span>.call)
+  <span class="PreProc">end</span>
+
+<span class="Statement">protected</span>
+
+</pre>
+  <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>  </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+The “&lt;&lt;&lt;” will be replaced by the start comment prefix, and
+the “&gt;&gt;&gt;” will be replaced by the continue comment prefix.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+  <span class="Type">ANY_COMMENT_CODE</span> = &lt;&lt;-<span class="Special">EOF</span>.unindent
+<span class="Constant">    &gt;&gt;&gt; Not start comment</span>
+<span class="Constant">    &lt;&lt;&lt; Start comment</span>
+<span class="Constant">    &gt;&gt;&gt; Continue comment</span>
+<span class="Constant">    Not a comment</span>
+<span class="Constant">  </span><span class="Special">EOF</span>
+
+</pre>
+  <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>  </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+The “&gt;&gt;&gt;” will be replaced by the continue comment prefix.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+  <span class="Type">ANY_COMMENT_HTML</span> = &lt;&lt;-<span class="Special">EOF</span>.unindent.chomp <span class="Comment"># ((( html</span>
+</pre>
+<pre class='html code syntax'>
+    <span class="Identifier">&lt;</span><span class="Statement">pre</span><span class="Identifier"> </span><span class="Type">class</span><span class="Identifier">=</span><span class="Constant">'code'</span><span class="Identifier">&gt;</span>
+    <span class="Error">&gt;&gt;&gt;</span> Not start comment
+    <span class="Identifier">&lt;/</span><span class="Statement">pre</span><span class="Identifier">&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Statement">pre</span><span class="Identifier"> </span><span class="Type">class</span><span class="Identifier">=</span><span class="Constant">'comment'</span><span class="Identifier">&gt;</span>
+    Start comment
+    Continue comment
+    <span class="Identifier">&lt;/</span><span class="Statement">pre</span><span class="Identifier">&gt;</span>
+    <span class="Identifier">&lt;</span><span class="Statement">pre</span><span class="Identifier"> </span><span class="Type">class</span><span class="Identifier">=</span><span class="Constant">'code'</span><span class="Identifier">&gt;</span>
+    Not a comment
+    <span class="Identifier">&lt;/</span><span class="Statement">pre</span><span class="Identifier">&gt;</span>
+  EOF
+  # )))
+
+  def check_any_comment(start_prefix, continue_prefix, configuration)
+    check_split_file(ANY_COMMENT_CODE.gsub(&quot;<span class="Identifier">&lt;</span><span class="Error">&lt;</span><span class="Identifier">&lt;</span><span class="Constant">&quot;, start_prefix).gsub(&quot;</span><span class="Identifier">&gt;</span><span class="Error">&gt;&gt;</span>&quot;, continue_prefix),
+                     Codnar::Configuration::CLASSIFY_SOURCE_CODE.call(&quot;any&quot;),
+                     Codnar::Configuration::FORMAT_PRE_COMMENTS,
+                     configuration) do |path|
+      [ {
+        &quot;name&quot; =<span class="Error">&gt;</span> path,
+        &quot;locations&quot; =<span class="Error">&gt;</span> [ { &quot;file&quot; =<span class="Error">&gt;</span> path, &quot;line&quot; =<span class="Error">&gt;</span> 1 } ],
+        &quot;containers&quot; =<span class="Error">&gt;</span> [],
+        &quot;contained&quot; =<span class="Error">&gt;</span> [],
+        &quot;html&quot; =<span class="Error">&gt;</span> ANY_COMMENT_HTML.gsub(&quot;<span class="Error">&gt;&gt;&gt;</span>&quot;, continue_prefix),
+      } ]
+    end
+  end
+
+end
+</pre>
+</div>
+</div>
+</p>
+<h5>Delimited comment classification</h5>
+<p>
+Other languages use a delimited multi-line comment syntax, where some prefix
+indicates the beginning of the comment, some suffix indicates the end, and by
+convention some prefix is expected for the inner comment lines (e.g., C's
+"<code>/*</code>", "<code>*</code>", "<code>*/</code>" comments or HTML's "<code>&lt;!--</code>", "<code>-</code>", "<code>--&gt;</code>" comments).
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="delimited-comment-classification-configurations">
+<span>Delimited comment classification configurations</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='ruby code syntax'>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Classify delimited comment lines. It accepts a restricted format: each
 comment is expected to start with some exact prefix (e.g. “/*” for C
 style comments or “&lt;!–” for HTML style comments). The following
 space, if any, is stripped from the payload. Following lines are also
@@ -6075,8 +6494,8 @@ useful.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="Type">CLASSIFY_COMPLEX_COMMENTS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">prefix</span>, <span class="Identifier">inner</span>, <span class="Identifier">suffix</span>|
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.complex_comments(prefix, inner, suffix)
+<span class="Type">CLASSIFY_DELIMITED_COMMENTS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">prefix</span>, <span class="Identifier">inner</span>, <span class="Identifier">suffix</span>|
+  <span class="Statement">return</span> <span class="Type">Comments</span>.delimited_comments(prefix, inner, suffix)
 <span class="Statement">end</span>
 
 </pre>
@@ -6088,7 +6507,7 @@ useful.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Classify complex C (“/*”, “ *”, “ */”) style comments.
+Classify delimited C (“/*”, “ *”, “ */”) style comments.
 </p>
 </div>
 </td>
@@ -6113,7 +6532,7 @@ need to escape special characters such as “*”.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.complex_comments(<span class="Special">&quot;</span><span class="Constant">/</span><span class="Special">\\</span><span class="Constant">*</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> </span><span class="Special">\\</span><span class="Constant">*</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> </span><span class="Special">\\</span><span class="Constant">*/</span><span class="Special">&quot;</span>)
+  <span class="Statement">return</span> <span class="Type">Comments</span>.delimited_comments(<span class="Special">&quot;</span><span class="Constant">/</span><span class="Special">\\</span><span class="Constant">*</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> </span><span class="Special">\\</span><span class="Constant">*</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> </span><span class="Special">\\</span><span class="Constant">*/</span><span class="Special">&quot;</span>)
 end
 
 </pre>
@@ -6125,7 +6544,7 @@ end
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Classify complex HTML (“&lt;!–”, “ -”, “–&gt;”) style
+Classify delimited HTML (“&lt;!–”, “ -”, “–&gt;”) style
 comments.
 </p>
 </div>
@@ -6134,7 +6553,7 @@ comments.
 </table>
 <pre class='ruby code syntax'>
 <span class="Type">CLASSIFY_HTML_COMMENTS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span>
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.complex_comments(<span class="Special">&quot;</span><span class="Constant">&lt;!--</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> -</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">--&gt;</span><span class="Special">&quot;</span>)
+  <span class="Statement">return</span> <span class="Type">Comments</span>.delimited_comments(<span class="Special">&quot;</span><span class="Constant">&lt;!--</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> -</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">--&gt;</span><span class="Special">&quot;</span>)
 <span class="Statement">end</span>
 
 </pre>
@@ -6146,17 +6565,17 @@ comments.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Configuration for classifying lines to comments and code based on a complex
-start prefix, inner line prefix and final suffix (e.g., “/*”, “ *”,
-“ */” for C-style comments or “&lt;!–”, “ -”, “–&gt;”
-for HTML style comments).
+Configuration for classifying lines to comments and code based on a
+delimited start prefix, inner line prefix and final suffix (e.g., “/*”,
+“ *”, “ */” for C-style comments or “&lt;!–”, “ -”,
+“–&gt;” for HTML style comments).
 </p>
 </div>
 </td>
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">complex_comments</span>(prefix, inner, suffix)
+<span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">delimited_comments</span>(prefix, inner, suffix)
   <span class="Statement">return</span> {
     <span class="Special">&quot;</span><span class="Constant">syntax</span><span class="Special">&quot;</span> =&gt; {
       <span class="Special">&quot;</span><span class="Constant">patterns</span><span class="Special">&quot;</span> =&gt; {
@@ -6196,20 +6615,20 @@ for HTML style comments).
 <span class="chunk containers header">Contained in:</span>
 <ul class="chunk containers">
 <li class="chunk container">
-<a class="chunk container" href="#lib-codnar-split-configurations-rb">lib/codnar/split_configurations.rb</a>
+<a class="chunk container" href="#lib-codnar-configuration-comments-rb">lib/codnar/configuration/comments.rb</a>
 </li>
 </ul>
 </div>
 </div>
 </p>
 <p>
-Here is a simple test demonstrating using complex comment classifications:
+Here is a simple test demonstrating using delimited comment classifications:
 </p>
 <p>
 <div class="named_with_containers chunk">
 <div class="chunk name">
-<a name="test-split-complex-comment-configurations-rb">
-<span>test/split_complex_comment_configurations.rb</span>
+<a name="test-split-delimited-comment-configurations-rb">
+<span>test/split_delimited_comment_configurations.rb</span>
 </a>
 </div>
 <div class="chunk html">
@@ -6228,14 +6647,14 @@ Here is a simple test demonstrating using complex comment classifications:
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Test built-in split complex comment configurations.
+Test built-in split delimited comment configurations.
 </p>
 </div>
 </td>
 </tr>
 </table>
 <pre class='ruby code syntax'>
-<span class="PreProc">class</span> <span class="Type">TestSplitComplexCommentsConfigurations</span> &lt; <span class="Type">Test</span>::<span class="Type">Unit</span>::<span class="Type">TestCase</span>
+<span class="PreProc">class</span> <span class="Type">TestSplitDelimitedCommentsConfigurations</span> &lt; <span class="Type">Test</span>::<span class="Type">Unit</span>::<span class="Type">TestCase</span>
 
   <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithConfigurations</span>
   <span class="PreProc">include</span> <span class="Type">Test</span>::<span class="Type">WithErrors</span>
@@ -6259,7 +6678,7 @@ need to escape special characters such as “{” and “|”.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-    check_any_comment([ <span class="Special">&quot;</span><span class="Constant">@{</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> |</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> }@</span><span class="Special">&quot;</span> ], <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">CLASSIFY_COMPLEX_COMMENTS</span>.call(<span class="Special">&quot;</span><span class="Constant">@</span><span class="Special">\\</span><span class="Constant">{</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> </span><span class="Special">\\</span><span class="Constant">|</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> </span><span class="Special">\\</span><span class="Constant">}@</span><span class="Special">&quot;</span>))
+    check_any_comment([ <span class="Special">&quot;</span><span class="Constant">@{</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> |</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> }@</span><span class="Special">&quot;</span> ], <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">CLASSIFY_DELIMITED_COMMENTS</span>.call(<span class="Special">&quot;</span><span class="Constant">@</span><span class="Special">\\</span><span class="Constant">{</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> </span><span class="Special">\\</span><span class="Constant">|</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> </span><span class="Special">\\</span><span class="Constant">}@</span><span class="Special">&quot;</span>))
   end
 
   <span class="PreProc">def</span> <span class="Identifier">test_c_comments</span>
@@ -6281,9 +6700,9 @@ need to escape special characters such as “{” and “|”.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-The “&lt;&lt;&lt;” will be replaced by the complex comment prefix, the
+The “&lt;&lt;&lt;” will be replaced by the start comment prefix, the
 “&lt;&gt;” will be replaced by the inner line comment prefix, and the
-“&gt;&gt;&gt;” will be replaced by the complex comment suffix.
+“&gt;&gt;&gt;” will be replaced by the end comment suffix.
 </p>
 </div>
 </td>
@@ -6291,12 +6710,12 @@ The “&lt;&lt;&lt;” will be replaced by the complex comment prefix, the
 </table>
 <pre class='ruby code syntax'>
   <span class="Type">ANY_COMMENT_CODE</span> = &lt;&lt;-<span class="Special">EOF</span>.unindent
-<span class="Constant">    /-- One-line comment --/</span>
+<span class="Constant">    &lt;&lt;&lt; One-line comment &gt;&gt;&gt;</span>
 <span class="Constant">    Code</span>
-<span class="Constant">    /--</span>
-<span class="Constant">     - Multi-line</span>
-<span class="Constant">     - comment.</span>
-<span class="Constant">    --/</span>
+<span class="Constant">    &lt;&lt;&lt;</span>
+<span class="Constant">    &lt;&gt; Multi-line</span>
+<span class="Constant">    &lt;&gt; comment.</span>
+<span class="Constant">    &gt;&gt;&gt;</span>
 <span class="Constant">  </span><span class="Special">EOF</span>
 
   <span class="Type">ANY_COMMENT_HTML</span> = &lt;&lt;-<span class="Special">EOF</span>.unindent.chomp <span class="Comment"># ((( html</span>
@@ -6319,21 +6738,21 @@ The “&lt;&lt;&lt;” will be replaced by the complex comment prefix, the
 
   def check_any_comment(patterns, configuration)
     prefix, inner, suffix = patterns
-    check_split_file(ANY_COMMENT_CODE.gsub(&quot;/--&quot;, prefix).gsub(&quot;--/&quot;, suffix).gsub(&quot; -&quot;, inner),
-                     Codnar::Configuration::CLASSIFY_SOURCE_CODE.call(&quot;any&quot;),
-                     Codnar::Configuration::FORMAT_PRE_COMMENTS,
-                     configuration) do |path|
-      [ {
-        &quot;name&quot; =<span class="Error">&gt;</span> path,
-        &quot;locations&quot; =<span class="Error">&gt;</span> [ { &quot;file&quot; =<span class="Error">&gt;</span> path, &quot;line&quot; =<span class="Error">&gt;</span> 1 } ],
-        &quot;containers&quot; =<span class="Error">&gt;</span> [],
-        &quot;contained&quot; =<span class="Error">&gt;</span> [],
-        &quot;html&quot; =<span class="Error">&gt;</span> ANY_COMMENT_HTML.gsub(&quot;/--&quot;, prefix).gsub(&quot;--/&quot;, suffix).gsub(&quot; -&quot;, inner),
-      } ]
-    end
-  end
+    check_split_file(ANY_COMMENT_CODE.gsub(&quot;<span class="Identifier">&lt;</span><span class="Error">&lt;</span><span class="Identifier">&lt;</span><span class="Constant">&quot;, prefix).gsub(&quot;</span><span class="Identifier">&gt;</span><span class="Error">&gt;&gt;</span>&quot;, suffix).gsub(&quot;<span class="Identifier">&lt;&gt;</span><span class="Constant">&quot;, inner),</span>
+<span class="Constant">                     Codnar::Configuration::CLASSIFY_SOURCE_CODE.call(&quot;</span><span class="Identifier">any</span><span class="Constant">&quot;),</span>
+<span class="Constant">                     Codnar::Configuration::FORMAT_PRE_COMMENTS,</span>
+<span class="Constant">                     configuration) do |path|</span>
+<span class="Constant">      [ {</span>
+<span class="Constant">        &quot;</span><span class="Type">name</span><span class="Constant">&quot; =&gt; path,</span>
+<span class="Constant">        &quot;</span><span class="Identifier">locations</span><span class="Constant">&quot; =&gt; [ { &quot;</span><span class="Identifier">file</span><span class="Constant">&quot; =&gt; path, &quot;</span><span class="Identifier">line</span><span class="Constant">&quot; =&gt; 1 } ],</span>
+<span class="Constant">        &quot;</span><span class="Identifier">containers</span><span class="Constant">&quot; =&gt; [],</span>
+<span class="Constant">        &quot;</span><span class="Identifier">contained</span><span class="Constant">&quot; =&gt; [],</span>
+<span class="Constant">        &quot;</span><span class="Identifier">html</span><span class="Constant">&quot; =&gt; ANY_COMMENT_HTML.gsub(&quot;</span><span class="Identifier">/--</span><span class="Constant">&quot;, prefix).gsub(&quot;</span><span class="Identifier">--/</span><span class="Constant">&quot;, suffix).gsub(&quot;</span><span class="Identifier"> -</span><span class="Constant">&quot;, inner),</span>
+<span class="Constant">      } ]</span>
+<span class="Constant">    end</span>
+<span class="Constant">  end</span>
 
-end
+<span class="Constant">end</span>
 </pre>
 </div>
 </div>
@@ -6431,7 +6850,7 @@ configuration that classifies some lines as <tt>comment</tt>.
 <span class="chunk containers header">Contained in:</span>
 <ul class="chunk containers">
 <li class="chunk container">
-<a class="chunk container" href="#lib-codnar-split-configurations-rb">lib/codnar/split_configurations.rb</a>
+<a class="chunk container" href="#lib-codnar-configuration-comments-rb">lib/codnar/configuration/comments.rb</a>
 </li>
 </ul>
 </div>
@@ -6554,10 +6973,80 @@ Test built-in split comment formatting configurations.
 </div>
 </div>
 </p>
-<h4>Syntax highlighting using GVim</h4>
+<h4>Syntax highlighting</h4>
 <p>
-Supporting a specific programming language (other than dealing with comments)
-is very easy using GVim for syntax highlighting, as demonstrated here:
+Highlighting the syntax of the source code embedded in the documentation
+improved readability. Codnar provides several ways to achieve this.
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="lib-codnar-configuration-highlighting-rb">
+<span>lib/codnar/configuration/highlighting.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='ruby code syntax'>
+<span class="PreProc">module</span> <span class="Type">Codnar</span>
+
+  <span class="PreProc">module</span> <span class="Type">Configuration</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Configurations for highlighting source code lines.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">module</span> <span class="Type">Highlighting</span>
+
+</pre>
+<pre class='nested chunk'>
+      <a class='nested chunk' href='#gvim-syntax-highlighting-formatting-configurations'>GVim syntax highlighting formatting configurations</a>
+</pre>
+<pre class='ruby code syntax'>
+
+</pre>
+<pre class='nested chunk'>
+      <a class='nested chunk' href='#coderay-syntax-highlighting-formatting-configurations'>CodeRay syntax highlighting formatting configurations</a>
+</pre>
+<pre class='ruby code syntax'>
+
+</pre>
+<pre class='nested chunk'>
+      <a class='nested chunk' href='#sunlight-syntax-highlighting-formatting-configurations'>Sunlight syntax highlighting formatting configurations</a>
+</pre>
+<pre class='ruby code syntax'>
+
+</pre>
+<pre class='nested chunk'>
+      <a class='nested chunk' href='#chunk-splitting-configurations'>Chunk splitting configurations</a>
+</pre>
+<pre class='ruby code syntax'>
+
+    end
+
+  end
+
+end
+</pre>
+</div>
+</div>
+</p>
+<h5>Syntax highlighting using GVim</h5>
+<p>
+Supporting almost any known programming language (other than dealing with
+comments) is very easy using GVim for syntax highlighting, as demonstrated
+here:
 </p>
 <p>
 <div class="named_with_containers chunk">
@@ -6588,7 +7077,7 @@ lines.
 </table>
 <pre class='ruby code syntax'>
 <span class="Type">FORMAT_CODE_GVIM_HTML</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">syntax</span>|
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.klass_code_format(<span class="Special">'</span><span class="Constant">GVim</span><span class="Special">'</span>, syntax, <span class="Special">&quot;</span><span class="Constant">[]</span><span class="Special">&quot;</span>)
+  <span class="Statement">return</span> <span class="Type">Highlighting</span>.klass_code_format(<span class="Special">'</span><span class="Constant">GVim</span><span class="Special">'</span>, syntax, <span class="Special">&quot;</span><span class="Constant">[]</span><span class="Special">&quot;</span>)
 <span class="Statement">end</span>
 
 </pre>
@@ -6610,7 +7099,7 @@ already classified the code lines.
 </table>
 <pre class='ruby code syntax'>
 <span class="Type">FORMAT_CODE_GVIM_CSS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">syntax</span>|
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.klass_code_format(<span class="Special">'</span><span class="Constant">GVim</span><span class="Special">'</span>, syntax, <span class="Special">&quot;</span><span class="Constant">[ '+:let html_use_css=1' ]</span><span class="Special">&quot;</span>)
+  <span class="Statement">return</span> <span class="Type">Highlighting</span>.klass_code_format(<span class="Special">'</span><span class="Constant">GVim</span><span class="Special">'</span>, syntax, <span class="Special">&quot;</span><span class="Constant">[ '+:let html_use_css=1' ]</span><span class="Special">&quot;</span>)
 <span class="Statement">end</span>
 
 </pre>
@@ -6643,7 +7132,7 @@ Return a configuration for highlighting a specific syntax using GVim.
 <span class="chunk containers header">Contained in:</span>
 <ul class="chunk containers">
 <li class="chunk container">
-<a class="chunk container" href="#lib-codnar-split-configurations-rb">lib/codnar/split_configurations.rb</a>
+<a class="chunk container" href="#lib-codnar-configuration-highlighting-rb">lib/codnar/configuration/highlighting.rb</a>
 </li>
 </ul>
 </div>
@@ -6688,7 +7177,7 @@ Colors for GVim classes
 </div>
 </div>
 </p>
-<h4>Syntax highlighting using CodeRay</h4>
+<h5>Syntax highlighting using CodeRay</h5>
 <p>
 For supported programming languages, you may choose to use CodeRay instead of GVim.
 </p>
@@ -6721,7 +7210,7 @@ lines.
 </table>
 <pre class='ruby code syntax'>
 <span class="Type">FORMAT_CODE_CODERAY_HTML</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">syntax</span>|
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.klass_code_format(<span class="Special">'</span><span class="Constant">CodeRay</span><span class="Special">'</span>, syntax, <span class="Special">&quot;</span><span class="Constant">{}</span><span class="Special">&quot;</span>)
+  <span class="Statement">return</span> <span class="Type">Highlighting</span>.klass_code_format(<span class="Special">'</span><span class="Constant">CodeRay</span><span class="Special">'</span>, syntax, <span class="Special">&quot;</span><span class="Constant">{}</span><span class="Special">&quot;</span>)
 <span class="Statement">end</span>
 
 </pre>
@@ -6743,7 +7232,7 @@ configuration already classified the code lines.
 </table>
 <pre class='ruby code syntax'>
 <span class="Type">FORMAT_CODE_CODERAY_CSS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">syntax</span>|
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.klass_code_format(<span class="Special">'</span><span class="Constant">CodeRay</span><span class="Special">'</span>, syntax, <span class="Special">&quot;</span><span class="Constant">{ :css =&gt; :class }</span><span class="Special">&quot;</span>)
+  <span class="Statement">return</span> <span class="Type">Highlighting</span>.klass_code_format(<span class="Special">'</span><span class="Constant">CodeRay</span><span class="Special">'</span>, syntax, <span class="Special">&quot;</span><span class="Constant">{ :css =&gt; :class }</span><span class="Special">&quot;</span>)
 <span class="Statement">end</span>
 
 </pre>
@@ -6752,7 +7241,7 @@ configuration already classified the code lines.
 <span class="chunk containers header">Contained in:</span>
 <ul class="chunk containers">
 <li class="chunk container">
-<a class="chunk container" href="#lib-codnar-split-configurations-rb">lib/codnar/split_configurations.rb</a>
+<a class="chunk container" href="#lib-codnar-configuration-highlighting-rb">lib/codnar/configuration/highlighting.rb</a>
 </li>
 </ul>
 </div>
@@ -6916,7 +7405,7 @@ Extracted from CodeRay output
 </div>
 </div>
 </p>
-<h4>Syntax highlighting using Sunlight</h4>
+<h5>Syntax highlighting using Sunlight</h5>
 <p>
 For small projects in supported languages, you may choose to use Sunlight
 instead of GVim.
@@ -6951,7 +7440,7 @@ splitting the file.
 </table>
 <pre class='ruby code syntax'>
 <span class="Type">FORMAT_CODE_SUNLIGHT</span> = <span class="Statement">lambda</span> <span class="Statement">do</span> |<span class="Identifier">syntax</span>|
-  <span class="Statement">return</span> <span class="Type">Configuration</span>.sunlight_code_format(syntax)
+  <span class="Statement">return</span> <span class="Type">Highlighting</span>.sunlight_code_format(syntax)
 <span class="Statement">end</span>
 
 </pre>
@@ -6984,7 +7473,7 @@ Return a configuration for highlighting a specific syntax using Sunlight.
 <span class="chunk containers header">Contained in:</span>
 <ul class="chunk containers">
 <li class="chunk container">
-<a class="chunk container" href="#lib-codnar-split-configurations-rb">lib/codnar/split_configurations.rb</a>
+<a class="chunk container" href="#lib-codnar-configuration-highlighting-rb">lib/codnar/configuration/highlighting.rb</a>
 </li>
 </ul>
 </div>
@@ -7156,7 +7645,7 @@ designations. Assumes other configurations handle the actual content lines.
 <span class="chunk containers header">Contained in:</span>
 <ul class="chunk containers">
 <li class="chunk container">
-<a class="chunk container" href="#lib-codnar-split-configurations-rb">lib/codnar/split_configurations.rb</a>
+<a class="chunk container" href="#lib-codnar-configuration-highlighting-rb">lib/codnar/configuration/highlighting.rb</a>
 </li>
 </ul>
 </div>
@@ -9128,6 +9617,10 @@ convenient list of all of Codnar's parts and dependencies:
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/split</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/reader</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/scanner</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/configuration/code</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/configuration/comments</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/configuration/documentation</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/configuration/highlighting</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/split_configurations</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/splitter</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/sunlight</span><span class="Special">&quot;</span>

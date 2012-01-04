@@ -3,8 +3,8 @@ require "olag/test"
 require "test/spec"
 require "test_with_configurations"
 
-# Test built-in split complex comment configurations.
-class TestSplitComplexCommentsConfigurations < Test::Unit::TestCase
+# Test built-in split delimited comment configurations.
+class TestSplitDelimitedCommentsConfigurations < Test::Unit::TestCase
 
   include Test::WithConfigurations
   include Test::WithErrors
@@ -13,7 +13,7 @@ class TestSplitComplexCommentsConfigurations < Test::Unit::TestCase
   def test_custom_comments
     # Since the prefix/inner/suffix passed to the configuration are regexps,
     # we need to escape special characters such as "{" and "|".
-    check_any_comment([ "@{", " |", " }@" ], Codnar::Configuration::CLASSIFY_COMPLEX_COMMENTS.call("@\\{", " \\|", " \\}@"))
+    check_any_comment([ "@{", " |", " }@" ], Codnar::Configuration::CLASSIFY_DELIMITED_COMMENTS.call("@\\{", " \\|", " \\}@"))
   end
 
   def test_c_comments
@@ -26,16 +26,16 @@ class TestSplitComplexCommentsConfigurations < Test::Unit::TestCase
 
 protected
 
-  # The "<<<" will be replaced by the complex comment prefix,
+  # The "<<<" will be replaced by the start comment prefix,
   # the "<>" will be replaced by the inner line comment prefix,
-  # and the ">>>" will be replaced by the complex comment suffix.
+  # and the ">>>" will be replaced by the end comment suffix.
   ANY_COMMENT_CODE = <<-EOF.unindent
-    /-- One-line comment --/
+    <<< One-line comment >>>
     Code
-    /--
-     - Multi-line
-     - comment.
-    --/
+    <<<
+    <> Multi-line
+    <> comment.
+    >>>
   EOF
 
   ANY_COMMENT_HTML = <<-EOF.unindent.chomp # ((( html
@@ -56,7 +56,7 @@ protected
 
   def check_any_comment(patterns, configuration)
     prefix, inner, suffix = patterns
-    check_split_file(ANY_COMMENT_CODE.gsub("/--", prefix).gsub("--/", suffix).gsub(" -", inner),
+    check_split_file(ANY_COMMENT_CODE.gsub("<<<", prefix).gsub(">>>", suffix).gsub("<>", inner),
                      Codnar::Configuration::CLASSIFY_SOURCE_CODE.call("any"),
                      Codnar::Configuration::FORMAT_PRE_COMMENTS,
                      configuration) do |path|
