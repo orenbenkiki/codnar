@@ -685,7 +685,7 @@ number of Git commits by running <tt>rake version</tt>.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.70</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.71</span><span class="Special">&quot;</span>
 
 end
 </pre>
@@ -6516,7 +6516,9 @@ useful.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Classify denoted haddock (“–”) comment lines.
+Classify denoted haddock (“–”) comment lines. Note that non-haddock
+comment lines are not captured; they would treated as code and handled by
+syntax highlighting, if any.
 </p>
 </div>
 </td>
