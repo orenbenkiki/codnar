@@ -685,7 +685,7 @@ number of Git commits by running <tt>rake version</tt>.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.69</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.70</span><span class="Special">&quot;</span>
 
 end
 </pre>
@@ -1018,7 +1018,9 @@ equal to [ “indentation”, “payload” ].
 </li><li>
 <p>
 The kind field of a transition can be ommitted; by default it is assumed to
-be identical to the pattern kind.
+be identical to the pattern kind. If it ends up <tt>nil</tt>, this
+indicates that there’s no kind assigned by the pattern, and the current
+line should be classified again by the next state.
 </p>
 </li><li>
 <p>
@@ -3012,7 +3014,7 @@ Test expanding RDoc text.
 
   <span class="PreProc">def</span> <span class="Identifier">test_indented_pre</span>
     <span class="Type">Codnar</span>::<span class="Type">RDoc</span>.to_html(<span class="Special">&quot;</span><span class="Constant">base</span><span class="Special">\n</span><span class="Constant">  indented</span><span class="Special">\n</span><span class="Constant">    more</span><span class="Special">\n</span><span class="Constant">back</span><span class="Special">\n</span><span class="Special">&quot;</span>).should \
-                      == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">base</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;pre&gt;</span><span class="Special">\n</span><span class="Constant">indented</span><span class="Special">\n</span><span class="Constant">  more</span><span class="Special">\n</span><span class="Constant">&lt;/pre&gt;</span><span class="Special">\n</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">back</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+                      == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">base</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;pre&gt;indented</span><span class="Special">\n</span><span class="Constant">  more&lt;/pre&gt;</span><span class="Special">\n</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">back</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
 <span class="PreProc">end</span>
@@ -3295,9 +3297,289 @@ end
 </div>
 </p>
 </li>
+<li>
+<p>
+Haddock, a specific markup syntax used in comments to document Haskell code.
+Here is a simple test that demonstrates using Haddock:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="test-expand-haddock-rb">
+<span>test/expand_haddock.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='ruby code syntax'>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">test/spec</span><span class="Special">&quot;</span>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Test expanding Haddock text.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="PreProc">class</span> <span class="Type">TestExpandHaddock</span> &lt; <span class="Type">Test</span>::<span class="Type">Unit</span>::<span class="Type">TestCase</span>
+
+  <span class="PreProc">def</span> <span class="Identifier">test_normal_text</span>
+    <span class="Type">Codnar</span>::<span class="Type">Haddock</span>.to_html(<span class="Special">&quot;</span><span class="Constant">normal</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;normal</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+  <span class="PreProc">end</span>
+
+  <span class="PreProc">def</span> <span class="Identifier">test_identifier_text</span>
+    <span class="Type">Codnar</span>::<span class="Type">Haddock</span>.to_html(<span class="Special">&quot;</span><span class="Constant">'Int'</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;&lt;code&gt;Int&lt;/code&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+  <span class="PreProc">end</span>
+
+  <span class="PreProc">def</span> <span class="Identifier">test_emphasis_text</span>
+    <span class="Type">Codnar</span>::<span class="Type">Haddock</span>.to_html(<span class="Special">&quot;</span><span class="Constant">/emphasis/</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;&lt;em&gt;emphasis&lt;/em&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+  <span class="PreProc">end</span>
+
+  <span class="PreProc">def</span> <span class="Identifier">test_code_text</span>
+    <span class="Type">Codnar</span>::<span class="Type">Haddock</span>.to_html(<span class="Special">&quot;</span><span class="Constant">@code@</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;pre&gt;code&lt;/pre&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+  <span class="PreProc">end</span>
+
+<span class="PreProc">end</span>
+</pre>
+</div>
+</div>
+</p>
+<p>
+And here is the implementation:
+</p>
+<p>
+<div class="named_with_containers chunk">
+<div class="chunk name">
+<a name="lib-codnar-haddock-rb">
+<span>lib/codnar/haddock.rb</span>
+</a>
+</div>
+<div class="chunk html">
+<pre class='ruby code syntax'>
+<span class="PreProc">module</span> <span class="Type">Codnar</span>
+
+</pre>
+  <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>  </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Convert Haddoc to HTML.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+  <span class="PreProc">class</span> <span class="Type">Haddock</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Process a Haddock String and return the resulting HTML.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">to_html</span>(haddock)
+      with_temporary_directory <span class="Statement">do</span> |<span class="Identifier">path</span>|
+        write_temporary_file(path, haddock)
+        run_haddock(path)
+        html = read_html_file(path)
+        clean_html(html)
+      <span class="Statement">end</span>
+    <span class="PreProc">end</span>
+
+  <span class="Statement">protected</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Run a block using a temporary directory, that is then removed. TODO: This
+should be in some more generic place.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">with_temporary_directory</span>
+      path = create_temporary_directory
+      result = <span class="Statement">yield</span> path
+      <span class="Type">FileUtils</span>.rm_rf(path)
+      <span class="Statement">return</span> result
+    <span class="PreProc">end</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Create a temporary directory to run Haddock in.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">create_temporary_directory</span>
+      file = <span class="Type">Tempfile</span>.open(<span class="Special">&quot;</span><span class="Constant">dir</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">.</span><span class="Special">&quot;</span>)
+      path = file.path
+      <span class="Type">File</span>.delete(path)
+      <span class="Type">Dir</span>.mkdir(path)
+      <span class="Statement">return</span> path
+    <span class="PreProc">end</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Minimal header to insert before the Haddock String to trick Haddock into
+generating HTML from it.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="Type">HADDOCK_HEADER</span> = &lt;&lt;-<span class="Special">EOF</span>.unindent
+<span class="Constant">      module Wrapper where</span>
+<span class="Constant">      -- $doc</span>
+<span class="Constant">    </span><span class="Special">EOF</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Write the Haddock String into a wrapper Haskell file so we’ll be able to
+run Haddock to generate HTML from it.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">write_temporary_file</span>(path, haddock)
+      <span class="Type">File</span>.open(path + <span class="Special">&quot;</span><span class="Constant">/wrapper.hs</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) <span class="Statement">do</span> |<span class="Identifier">file</span>|
+        file.write(<span class="Type">HADDOCK_HEADER</span>)
+        file.write(<span class="Special">&quot;</span><span class="Constant">-- </span><span class="Special">&quot;</span> + haddock.gsub(<span class="Special">&quot;</span><span class="Special">\n</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Special">\n</span><span class="Constant">-- </span><span class="Special">&quot;</span>))
+      <span class="Statement">end</span>
+    <span class="PreProc">end</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Run Haddock to convert the wrapper Haskell file into HTML documentation.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">run_haddock</span>(path)
+      system(<span class="Special">&quot;</span><span class="Constant">cd </span><span class="Special">#{</span>path<span class="Special">}</span><span class="Constant"> &amp;&amp; haddock --html wrapper.hs &gt; haddock.out 2&gt;&amp;1</span><span class="Special">&quot;</span>)
+    <span class="PreProc">end</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Read the HTML generated by Haddock.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">read_html_file</span>(path)
+      <span class="Statement">return</span> <span class="Type">File</span>.read(path + <span class="Special">&quot;</span><span class="Constant">/Wrapper.html</span><span class="Special">&quot;</span>)
+    <span class="PreProc">end</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Extract the clean generated HTML from Haddock’s output.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">clean_html</span>(html)
+      html.gsub!(<span class="Special">&quot;</span><span class="Special">\r\n</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Special">\n</span><span class="Special">&quot;</span>)
+      html.sub!(<span class="Special">/</span><span class="Special">.</span><span class="Special">*</span><span class="Constant">&lt;div class=&quot;doc&quot;&gt;</span><span class="Special">/m</span>, <span class="Special">''</span>)
+      html.sub!(<span class="Special">/</span><span class="Constant">&lt;</span><span class="Special">\/</span><span class="Constant">div&gt;&lt;</span><span class="Special">\/</span><span class="Constant">div&gt;&lt;</span><span class="Special">\/</span><span class="Constant">div&gt;&lt;div id=&quot;footer&quot;&gt;</span><span class="Special">.</span><span class="Special">*</span><span class="Special">/m</span>, <span class="Special">&quot;</span><span class="Special">\n</span><span class="Special">&quot;</span>)
+      <span class="Statement">return</span> html
+    <span class="PreProc">end</span>
+
+  end
+
+end
+</pre>
+</div>
+</div>
+</p>
+</li>
 </ul>
 <p>
-In both cases, the HTML generated by the markup format conversion is a bit
+In all cases, the HTML generated by the markup format conversion is a bit
 messy. We therefore clean it up:
 </p>
 <p>
@@ -3329,10 +3611,11 @@ and eliminates the ugly additional vertical space in the final HTML.
 </table>
 <pre class='ruby code syntax'>
 <span class="PreProc">def</span> <span class="Identifier">clean_markup_html</span>
-  <span class="Statement">return</span> gsub(<span class="Special">/</span><span class="Special">\n</span><span class="Special">*</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Special">*</span><span class="Special">/</span>, <span class="Special">&quot;</span><span class="Special">\n</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>) \
+  <span class="Statement">return</span> gsub(<span class="Special">&quot;</span><span class="Special">\r\n</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Special">\n</span><span class="Special">&quot;</span>) \
+        .gsub(<span class="Special">/</span><span class="Special">\n</span><span class="Special">*</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Special">*</span><span class="Special">/</span>, <span class="Special">&quot;</span><span class="Special">\n</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>) \
         .gsub(<span class="Special">/</span><span class="Special">\n</span><span class="Special">*</span><span class="Constant">&lt;</span><span class="Special">\/</span><span class="Constant">p&gt;</span><span class="Special">\n</span><span class="Special">*</span><span class="Special">/</span>, <span class="Special">&quot;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>) \
-        .gsub(<span class="Special">/</span><span class="Special">\n</span><span class="Special">*</span><span class="Constant">&lt;pre&gt;</span><span class="Special">\n</span><span class="Special">*</span><span class="Special">/</span>, <span class="Special">&quot;</span><span class="Special">\n</span><span class="Constant">&lt;pre&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>) \
-        .gsub(<span class="Special">/</span><span class="Special">\n</span><span class="Special">*</span><span class="Constant">&lt;</span><span class="Special">\/</span><span class="Constant">pre&gt;</span><span class="Special">\n</span><span class="Special">*</span><span class="Special">/</span>, <span class="Special">&quot;</span><span class="Special">\n</span><span class="Constant">&lt;/pre&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>) \
+        .gsub(<span class="Special">/</span><span class="Special">\n</span><span class="Special">*</span><span class="Constant">&lt;pre&gt;</span><span class="Special">\n</span><span class="Special">+</span><span class="Special">/</span>, <span class="Special">&quot;</span><span class="Special">\n</span><span class="Constant">&lt;pre&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>) \
+        .gsub(<span class="Special">/</span><span class="Special">\n</span><span class="Special">+</span><span class="Constant">&lt;</span><span class="Special">\/</span><span class="Constant">pre&gt;</span><span class="Special">\n</span><span class="Special">*</span><span class="Special">/</span>, <span class="Special">&quot;</span><span class="Special">\n</span><span class="Constant">&lt;/pre&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>) \
         .sub(<span class="Special">/</span><span class="Special">^</span><span class="Special">\n</span><span class="Special">*</span><span class="Special">/</span>, <span class="Special">&quot;&quot;</span>)
 <span class="PreProc">end</span>
 
@@ -6845,6 +7128,30 @@ configuration that classifies some lines as <tt>comment</tt>.
 }
 
 </pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Format comments that use the Haddock notation. Is used to complement a
+configuration that classifies some lines as <tt>comment</tt>.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="Type">FORMAT_HADDOCK_COMMENTS</span> = {
+  <span class="Special">&quot;</span><span class="Constant">formatters</span><span class="Special">&quot;</span> =&gt; {
+    <span class="Special">&quot;</span><span class="Constant">comment</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.markup_lines_to_html(lines, Haddock, 'haddock')</span><span class="Special">&quot;</span>,
+    <span class="Special">&quot;</span><span class="Constant">unindented_html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">Formatter.unindented_lines_to_html(lines)</span><span class="Special">&quot;</span>,
+  },
+}
+
+</pre>
 </div>
 <div class="chunk containers">
 <span class="chunk containers header">Contained in:</span>
@@ -9602,6 +9909,7 @@ convenient list of all of Codnar's parts and dependencies:
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/version</span><span class="Special">&quot;</span>
 
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/coderay</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/haddock</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/hash_extensions</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/markdown</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/rdoc</span><span class="Special">&quot;</span>

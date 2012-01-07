@@ -13,10 +13,11 @@ class String
   # empty lines for no apparent reason. Cleaning it up seems to be safe enough,
   # and eliminates the ugly additional vertical space in the final HTML.
   def clean_markup_html
-    return gsub(/\n*<p>\n*/, "\n<p>\n") \
+    return gsub("\r\n", "\n") \
+          .gsub(/\n*<p>\n*/, "\n<p>\n") \
           .gsub(/\n*<\/p>\n*/, "\n</p>\n") \
-          .gsub(/\n*<pre>\n*/, "\n<pre>\n") \
-          .gsub(/\n*<\/pre>\n*/, "\n</pre>\n") \
+          .gsub(/\n*<pre>\n+/, "\n<pre>\n") \
+          .gsub(/\n+<\/pre>\n*/, "\n</pre>\n") \
           .sub(/^\n*/, "")
   end
 

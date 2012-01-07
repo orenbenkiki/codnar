@@ -1,3 +1,7 @@
+2012-01-07	Oren Ben-Kiki <github-oren@ben-kiki.org>
+
+	* Add support for Haddock comments.
+
 2012-01-04	Oren Ben-Kiki <github-oren@ben-kiki.org>
 
 	* Support additional ("denoted") kind of comments.

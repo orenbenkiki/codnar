@@ -21,6 +21,7 @@ require "olag/string_unindent"
 require "codnar/version"
 
 require "codnar/coderay"
+require "codnar/haddock"
 require "codnar/hash_extensions"
 require "codnar/markdown"
 require "codnar/rdoc"

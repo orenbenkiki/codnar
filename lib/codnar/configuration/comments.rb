@@ -214,6 +214,15 @@ module Codnar
         },
       }
 
+      # Format comments that use the Haddock notation. Is used to complement a
+      # configuration that classifies some lines as +comment+.
+      FORMAT_HADDOCK_COMMENTS = {
+        "formatters" => {
+          "comment" => "Formatter.markup_lines_to_html(lines, Haddock, 'haddock')",
+          "unindented_html" => "Formatter.unindented_lines_to_html(lines)",
+        },
+      }
+
       # }}}
 
     end

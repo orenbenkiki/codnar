@@ -14,7 +14,7 @@ class TestExpandRDoc < Test::Unit::TestCase
 
   def test_indented_pre
     Codnar::RDoc.to_html("base\n  indented\n    more\nback\n").should \
-                      == "<p>\nbase\n</p>\n<pre>\nindented\n  more\n</pre>\n<p>\nback\n</p>\n"
+                      == "<p>\nbase\n</p>\n<pre>indented\n  more</pre>\n<p>\nback\n</p>\n"
   end
 
 end

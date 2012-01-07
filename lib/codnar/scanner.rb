@@ -34,7 +34,9 @@ module Codnar
     # - The pattern groups field can be ommitted or contain +nil+ if it is
     #   equal to [ "indentation", "payload" ].
     # - The kind field of a transition can be ommitted; by default it is
-    #   assumed to be identical to the pattern kind.
+    #   assumed to be identical to the pattern kind. If it ends up +nil+, this
+    #   indicates that there's no kind assigned by the pattern, and the current
+    #   line should be classified again by the next state.
     # - The next state of a transition can be ommitted; by default it is
     #   assumed to be identical to the containing state.
     # - The start state can be ommitted; by default it is assumed to be named
