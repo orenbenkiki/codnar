@@ -72,7 +72,9 @@ module Codnar
         return Comments.denoted_comments(start_prefix, continue_prefix)
       end
 
-      # Classify denoted haddock ("--") comment lines.
+      # Classify denoted haddock ("--") comment lines. Note that non-haddock
+      # comment lines are not captured; they would treated as code and handled
+      # by syntax highlighting, if any.
       CLASSIFY_HADDOCK_COMMENTS = lambda do
         return Comments.denoted_comments("-- [|^$]", "--")
       end

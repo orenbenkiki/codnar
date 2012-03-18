@@ -685,7 +685,7 @@ number of Git commits by running <tt>rake version</tt>.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.70</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.71</span><span class="Special">&quot;</span>
 
 end
 </pre>
@@ -6516,7 +6516,9 @@ useful.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Classify denoted haddock (“–”) comment lines.
+Classify denoted haddock (“–”) comment lines. Note that non-haddock
+comment lines are not captured; they would treated as code and handled by
+syntax highlighting, if any.
 </p>
 </div>
 </td>
@@ -11841,7 +11843,7 @@ Create nested UL/LI lists for the table of content.
   <span class="Identifier">var</span> container;
   <span class="Identifier">var</span> indices = <span class="Identifier">[]</span>;
   <span class="Identifier">var</span> h_elements = all_h_elements();
-  <span class="Statement">for</span> (<span class="Identifier">var</span> e <span class="Statement">in</span> h_elements) <span class="Identifier">{</span>
+  <span class="Statement">for</span> (<span class="Identifier">var</span> e = 0; e &lt; h_elements.length; e++) <span class="Identifier">{</span>
     h = h_elements<span class="Identifier">[</span>e<span class="Identifier">]</span>;
     <span class="Identifier">var</span> level = h.tagName.substring(1, 2) - 1;
     container = pop_container(container, indices, level);
@@ -12251,7 +12253,7 @@ function contents_lists() {
   var container;
   var indices = [];
   var h_elements = all_h_elements();
-  for (var e in h_elements) {
+  for (var e = 0; e < h_elements.length; e++) {
     h = h_elements[e];
     var level = h.tagName.substring(1, 2) - 1;
     container = pop_container(container, indices, level);

@@ -1,3 +1,7 @@
+2012-03-18	Oren Ben-Kiki <github-oren@ben-kiki.org>
+
+	* Fix JS issue; remove unneeded files.
+
 2012-01-07	Oren Ben-Kiki <github-oren@ben-kiki.org>
 
 	* Add support for Haddock comments.
