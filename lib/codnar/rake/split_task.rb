@@ -57,6 +57,12 @@ module Codnar
         ::Rake::Task.define_task(:clean => "clean_codnar")
       end
 
+      # For some reason, <tt>include ::Rake::DSL</tt> doesn't give us this and
+      # life is too short...
+      def self.desc(description)
+        ::Rake.application.last_description = description
+      end
+
       # Connect the task for splitting a single source file to the common task
       # of splitting all source files.
       def self.connect_common_tasks(output)

@@ -79,7 +79,7 @@ protected
       <td class='html'>
       <div class='rdoc rdoc markup'>
       <p>
-      This is <b>rdoc</b>.
+      This is <strong>rdoc</strong>.
       </p>
       </div>
       </td>

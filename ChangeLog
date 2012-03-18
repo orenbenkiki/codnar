@@ -1,5 +1,6 @@
 2012-03-18	Oren Ben-Kiki <github-oren@ben-kiki.org>
 
+	* Upgrade for latest gems.
 	* Fix JS comment.
 	* Fix JS issue; remove unneeded files.
 

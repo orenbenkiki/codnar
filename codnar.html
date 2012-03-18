@@ -678,14 +678,14 @@ This module contains all the code narrator code.
 <div class='rdoc comment markup'>
 <p>
 This version number. The third number is automatically updated to track the
-number of Git commits by running <tt>rake version</tt>.
+number of Git commits by running <code>rake version</code>.
 </p>
 </div>
 </td>
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.72</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.73</span><span class="Special">&quot;</span>
 
 end
 </pre>
@@ -3009,7 +3009,7 @@ Test expanding RDoc text.
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_strong_text</span>
-    <span class="Type">Codnar</span>::<span class="Type">RDoc</span>.to_html(<span class="Special">&quot;</span><span class="Constant">*text*</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;b&gt;text&lt;/b&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+    <span class="Type">Codnar</span>::<span class="Type">RDoc</span>.to_html(<span class="Special">&quot;</span><span class="Constant">*text*</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;strong&gt;text&lt;/strong&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_indented_pre</span>
@@ -4968,7 +4968,7 @@ Test splitting code files.
       <span class="Identifier">&lt;</span><span class="Statement">td</span><span class="Identifier"> </span><span class="Type">class</span><span class="Identifier">=</span><span class="Constant">'html'</span><span class="Identifier">&gt;</span>
       <span class="Identifier">&lt;</span><span class="Statement">div</span><span class="Identifier"> </span><span class="Type">class</span><span class="Identifier">=</span><span class="Constant">'rdoc rdoc markup'</span><span class="Identifier">&gt;</span>
       <span class="Identifier">&lt;</span><span class="Statement">p</span><span class="Identifier">&gt;</span>
-      This is <span class="Identifier">&lt;</span><span class="Statement">b</span><span class="Identifier">&gt;</span><span class="htmlBold">rdoc</span><span class="Identifier">&lt;/</span><span class="Statement">b</span><span class="Identifier">&gt;</span>.
+      This is <span class="Identifier">&lt;</span><span class="Statement">strong</span><span class="Identifier">&gt;</span><span class="htmlBold">rdoc</span><span class="Identifier">&lt;/</span><span class="Statement">strong</span><span class="Identifier">&gt;</span>.
       <span class="Identifier">&lt;/</span><span class="Statement">p</span><span class="Identifier">&gt;</span>
       <span class="Identifier">&lt;/</span><span class="Statement">div</span><span class="Identifier">&gt;</span>
       <span class="Identifier">&lt;/</span><span class="Statement">td</span><span class="Identifier">&gt;</span>
@@ -5183,7 +5183,7 @@ Test “splitting” documentation files.
       <span class="Special">&quot;</span><span class="Constant">containers</span><span class="Special">&quot;</span> =&gt; [],
       <span class="Special">&quot;</span><span class="Constant">contained</span><span class="Special">&quot;</span> =&gt; [],
       <span class="Special">&quot;</span><span class="Constant">locations</span><span class="Special">&quot;</span> =&gt; [ { <span class="Special">&quot;</span><span class="Constant">file</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">rdoc.rdoc</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">line</span><span class="Special">&quot;</span> =&gt; <span class="Constant">1</span> } ],
-      <span class="Special">&quot;</span><span class="Constant">html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">&lt;div class='rdoc rdoc markup'&gt;</span><span class="Special">\n</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;b&gt;foo&lt;/b&gt; bar</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/div&gt;</span><span class="Special">&quot;</span>
+      <span class="Special">&quot;</span><span class="Constant">html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">&lt;div class='rdoc rdoc markup'&gt;</span><span class="Special">\n</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;strong&gt;foo&lt;/strong&gt; bar</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/div&gt;</span><span class="Special">&quot;</span>
     } ]
   <span class="PreProc">end</span>
 
@@ -5617,7 +5617,7 @@ Test the built-in split documentation configurations.
 <pre class='html code syntax'>
     <span class="Identifier">&lt;</span><span class="Statement">div</span><span class="Identifier"> </span><span class="Type">class</span><span class="Identifier">=</span><span class="Constant">'rdoc doc markup'</span><span class="Identifier">&gt;</span>
     <span class="Identifier">&lt;</span><span class="Statement">p</span><span class="Identifier">&gt;</span>
-    This is a <span class="Identifier">&lt;</span><span class="Statement">b</span><span class="Identifier">&gt;</span><span class="htmlBold">marked-up</span><span class="Identifier">&lt;/</span><span class="Statement">b</span><span class="Identifier">&gt;</span> file.
+    This is a <span class="Identifier">&lt;</span><span class="Statement">strong</span><span class="Identifier">&gt;</span><span class="htmlBold">marked-up</span><span class="Identifier">&lt;/</span><span class="Statement">strong</span><span class="Identifier">&gt;</span> file.
     <span class="Identifier">&lt;/</span><span class="Statement">p</span><span class="Identifier">&gt;</span>
     <span class="Identifier">&lt;/</span><span class="Statement">div</span><span class="Identifier">&gt;</span>
   EOF
@@ -7227,7 +7227,7 @@ Test built-in split comment formatting configurations.
 <span class="Constant">    &lt;td class='html'&gt;</span>
 <span class="Constant">    &lt;div class='rdoc comment markup'&gt;</span>
 <span class="Constant">    &lt;p&gt;</span>
-<span class="Constant">    Comment &lt;b&gt;text&lt;/b&gt;.</span>
+<span class="Constant">    Comment &lt;strong&gt;text&lt;/strong&gt;.</span>
 <span class="Constant">    &lt;/p&gt;</span>
 <span class="Constant">    &lt;/div&gt;</span>
 <span class="Constant">    &lt;/td&gt;</span>
@@ -8162,7 +8162,7 @@ Test combination of many built-in configurations.
 <span class="Constant">    &lt;td class='html'&gt;</span>
 <span class="Constant">    &lt;div class='rdoc comment markup'&gt;</span>
 <span class="Constant">    &lt;p&gt;</span>
-<span class="Constant">    Hello, &lt;b&gt;world&lt;/b&gt;!</span>
+<span class="Constant">    Hello, &lt;strong&gt;world&lt;/strong&gt;!</span>
 <span class="Constant">    &lt;/p&gt;</span>
 <span class="Constant">    &lt;/div&gt;</span>
 <span class="Constant">    &lt;/td&gt;</span>
@@ -9898,6 +9898,7 @@ convenient list of all of Codnar's parts and dependencies:
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">irb</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">open3</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">rdiscount</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">rdoc</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">rdoc/markup/to_html</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">tempfile</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">yaml</span><span class="Special">&quot;</span>
@@ -10651,10 +10652,9 @@ Test running the Weave Codnar Application.
   <span class="PreProc">def</span> <span class="Identifier">test_run_weave_missing_file</span>
     write_fake_file(<span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Type">FILE_CHUNKS</span>.to_yaml)
     <span class="Type">Codnar</span>::<span class="Type">Application</span>.with_argv(<span class="Special">%w(</span><span class="Constant">-e stderr -o stdout root</span><span class="Special">)</span>) { <span class="Type">Codnar</span>::<span class="Type">Weave</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">1</span>
-    double_message = <span class="Special">&quot;</span><span class="Constant">No such file or directory - </span><span class="Special">&quot;</span> * <span class="Constant">2</span> <span class="Comment"># Something weird in Ruby Exception.to_s</span>
-    <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stdout</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">Root</span><span class="Special">\n</span><span class="Constant">FILE: included.file EXCEPTION: </span><span class="Special">#{</span>double_message<span class="Special">}</span><span class="Special">\n</span><span class="Special">&quot;</span>
+    <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stdout</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">Root</span><span class="Special">\n</span><span class="Constant">FILE: included.file EXCEPTION: No such file or directory - included.file</span><span class="Special">\n</span><span class="Special">&quot;</span>
     <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stderr</span><span class="Special">&quot;</span>).should \
-      == <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: Reading file: included.file exception: </span><span class="Special">#{</span>double_message<span class="Special">}</span><span class="Constant"> in file: root at line: 1</span><span class="Special">\n</span><span class="Special">&quot;</span>
+      == <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: Reading file: included.file exception: No such file or directory - included.file in file: root at line: 1</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_run_weave_existing_file</span>
@@ -11248,6 +11248,27 @@ Actually create common Rake split tasks.
         desc <span class="Special">&quot;</span><span class="Constant">Clean all split chunks</span><span class="Special">&quot;</span>
         ::<span class="Type">Rake</span>::<span class="Type">Task</span>.define_task(<span class="Special">&quot;</span><span class="Constant">clean_codnar</span><span class="Special">&quot;</span>) { rm_rf(<span class="Type">Rake</span>.chunks_dir) }
         ::<span class="Type">Rake</span>::<span class="Type">Task</span>.define_task(<span class="Constant">:clean</span> =&gt; <span class="Special">&quot;</span><span class="Constant">clean_codnar</span><span class="Special">&quot;</span>)
+      <span class="PreProc">end</span>
+
+</pre>
+      <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>      </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+For some reason, <code>include ::Rake::DSL</code> doesn’t give us this
+and life is too short…
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+      <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">desc</span>(description)
+        ::<span class="Type">Rake</span>.application.last_description = description
       <span class="PreProc">end</span>
 
 </pre>

@@ -33,7 +33,7 @@ class TestFormatCommentsConfigurations < Test::Unit::TestCase
     <td class='html'>
     <div class='rdoc comment markup'>
     <p>
-    Comment <b>text</b>.
+    Comment <strong>text</strong>.
     </p>
     </div>
     </td>

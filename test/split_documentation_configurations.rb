@@ -54,7 +54,7 @@ class TestSplitDocumentationConfigurations < Test::Unit::TestCase
   RDOC_HTML = <<-EOF.unindent.chomp #! ((( html
     <div class='rdoc doc markup'>
     <p>
-    This is a <b>marked-up</b> file.
+    This is a <strong>marked-up</strong> file.
     </p>
     </div>
   EOF

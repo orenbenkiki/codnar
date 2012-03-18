@@ -77,7 +77,7 @@ class TestSplitCombinedConfigurations < Test::Unit::TestCase
     <td class='html'>
     <div class='rdoc comment markup'>
     <p>
-    Hello, <b>world</b>!
+    Hello, <strong>world</strong>!
     </p>
     </div>
     </td>

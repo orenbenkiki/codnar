@@ -54,10 +54,9 @@ class TestRunWeave < Test::Unit::TestCase
   def test_run_weave_missing_file
     write_fake_file("root", FILE_CHUNKS.to_yaml)
     Codnar::Application.with_argv(%w(-e stderr -o stdout root)) { Codnar::Weave.new(true).run }.should == 1
-    double_message = "No such file or directory - " * 2 # Something weird in Ruby Exception.to_s
-    File.read("stdout").should == "Root\nFILE: included.file EXCEPTION: #{double_message}\n"
+    File.read("stdout").should == "Root\nFILE: included.file EXCEPTION: No such file or directory - included.file\n"
     File.read("stderr").should \
-      == "#{$0}: Reading file: included.file exception: #{double_message} in file: root at line: 1\n"
+      == "#{$0}: Reading file: included.file exception: No such file or directory - included.file in file: root at line: 1\n"
   end
 
   def test_run_weave_existing_file

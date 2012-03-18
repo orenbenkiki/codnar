@@ -9,7 +9,7 @@ class TestExpandRDoc < Test::Unit::TestCase
   end
 
   def test_strong_text
-    Codnar::RDoc.to_html("*text*").should == "<p>\n<b>text</b>\n</p>\n"
+    Codnar::RDoc.to_html("*text*").should == "<p>\n<strong>text</strong>\n</p>\n"
   end
 
   def test_indented_pre

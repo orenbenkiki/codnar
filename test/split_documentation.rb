@@ -46,7 +46,7 @@ class TestSplitDocumentation < Test::Unit::TestCase
       "containers" => [],
       "contained" => [],
       "locations" => [ { "file" => "rdoc.rdoc", "line" => 1 } ],
-      "html" => "<div class='rdoc rdoc markup'>\n<p>\n<b>foo</b> bar\n</p>\n</div>"
+      "html" => "<div class='rdoc rdoc markup'>\n<p>\n<strong>foo</strong> bar\n</p>\n</div>"
     } ]
   end
 
