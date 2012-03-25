@@ -53,7 +53,7 @@ module Codnar
         desc "Split all files into chunks"
         ::Rake::Task.define_task("codnar_split")
         desc "Clean all split chunks"
-        ::Rake::Task.define_task("clean_codnar") { rm_rf(Rake.chunks_dir) }
+        ::Rake::Task.define_task("clean_codnar") { FileUtils.rm_rf(Rake.chunks_dir) }
         ::Rake::Task.define_task(:clean => "clean_codnar")
       end
 
