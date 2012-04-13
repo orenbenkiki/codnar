@@ -683,7 +683,7 @@ number of Git commits by running <code>rake version</code>.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.75</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.76</span><span class="Special">&quot;</span>
 
 end
 </pre>
@@ -3517,6 +3517,7 @@ rather flaky.
 </table>
 <pre class='ruby code syntax'>
     <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">patch_module_comments</span>(haddock)
+      haddock.sub!(<span class="Special">/</span><span class="Special">^</span><span class="Special">\s</span><span class="Special">*</span><span class="Constant">Module</span><span class="Special">\s</span><span class="Special">*</span><span class="Constant">:</span><span class="Special">\s</span><span class="Special">*</span><span class="Special">\$</span><span class="Special">\s</span><span class="Special">*</span><span class="Constant">header</span><span class="Special">\s</span><span class="Special">*</span><span class="Special">\$</span><span class="Special">\s</span><span class="Special">*</span><span class="Special">$</span><span class="Special">/i</span>, <span class="Special">&quot;</span><span class="Constant">Module</span><span class="Special">&quot;</span>)
       <span class="Statement">return</span> haddock.gsub(<span class="Special">/</span><span class="Special">^</span><span class="Special">(</span><span class="Special">\s</span><span class="Special">*</span><span class="Special">)(</span><span class="Constant">Module</span><span class="Special">|</span><span class="Constant">Description</span><span class="Special">|</span><span class="Constant">Copyright</span><span class="Special">|</span><span class="Constant">License</span><span class="Special">|</span><span class="Constant">Maintainer</span><span class="Special">|</span><span class="Constant">Stability</span><span class="Special">|</span><span class="Constant">Portability</span><span class="Special">)(</span><span class="Special">\s</span><span class="Special">*</span><span class="Special">)</span><span class="Constant">:</span><span class="Special">/</span>, <span class="Special">&quot;</span><span class="Special">\n\\</span><span class="Constant">1[@</span><span class="Special">\\</span><span class="Constant">2@]</span><span class="Special">\\</span><span class="Constant">3</span><span class="Special">&quot;</span>)
     <span class="PreProc">end</span>
 
