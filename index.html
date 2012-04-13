@@ -376,42 +376,40 @@ span.Comment    { color: Purple; }
 <body>
 <div id="contents"></div>
 <div class='rdoc doc markup'>
-<h1>Codnar</h1>
+<h1 id="label-Codnar">Codnar</h1>
 <p>
 Code Narrator - an inverse literate programming tool.
 </p>
-<h2>TL;DR</h2>
+<h2 id="label-TL%3BDR">TL;DR</h2>
 
-<h3>Description</h3>
+<h3 id="label-Description">Description</h3>
 <p>
 Code Narrator (Codnar) is an inverse literate programming tool. It splits
 the source files into “chunks” (including structured comments) and
 weaves them back into a narrative that describes the overall system.
 </p>
-<h3>Installation</h3>
+<h3 id="label-Installation">Installation</h3>
 <p>
-A simple <tt>gem install codnar</tt> should do the trick, assuming you have
-Ruby gems set up. If you want to use the VIM-based syntax highlighting, you
-also need to install <tt>gvim</tt>. Similarly, you need to install
-<tt>GraphViz</tt> to be able to embed SVG diagrams in your HTML.
+A simple <code>gem install codnar</code> should do the trick, assuming you
+have Ruby gems set up. If you want to use the VIM-based syntax
+highlighting, you also need to install <code>gvim</code>. Similarly, you
+need to install <code>GraphViz</code> to be able to embed SVG diagrams in
+your HTML.
 </p>
-<h3>Usage</h3>
+<h3 id="label-Usage">Usage</h3>
 <p>
 The basic usage is:
 </p>
-<pre>
-codnar-split [options] source-file &gt; chunks-file
-codnar-weave [options] chunks-files... &gt; codnar.html
-</pre>
+<pre>codnar-split [options] source-file &gt; chunks-file
+codnar-weave [options] chunks-files... &gt; codnar.html</pre>
 <p>
-Both programs accept a <tt>-h</tt> or <tt>--help</tt> flag to print more
-detailed usage messages. You can also invoke Codnar from a Rakefile:
+Both programs accept a <code>-h</code> or <code>--help</code> flag to print
+more detailed usage messages. You can also invoke Codnar from a Rakefile:
 </p>
-<pre>
-require &quot;codnar/rake&quot;
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&quot;codnar/rake&quot;</span>
 
-Codnar::Rake::SplitTask([ source-files... ], [ configurations... ])
-Codnar::Rake::WeaveTask(root-file, [ configurations... ], output)
+<span class="ruby-constant">Codnar</span><span class="ruby-operator">::</span><span class="ruby-constant">Rake</span><span class="ruby-operator">::</span><span class="ruby-constant">SplitTask</span>([ <span class="ruby-identifier">source</span><span class="ruby-operator">-</span><span class="ruby-identifier">files</span><span class="ruby-operator">...</span> ], [ <span class="ruby-identifier">configurations</span><span class="ruby-operator">...</span> ])
+<span class="ruby-constant">Codnar</span><span class="ruby-operator">::</span><span class="ruby-constant">Rake</span><span class="ruby-operator">::</span><span class="ruby-constant">WeaveTask</span>(<span class="ruby-identifier">root</span><span class="ruby-operator">-</span><span class="ruby-identifier">file</span>, [ <span class="ruby-identifier">configurations</span><span class="ruby-operator">...</span> ], <span class="ruby-identifier">output</span>)
 </pre>
 </div>
 <div class='markdown doc markup'>
@@ -678,14 +676,14 @@ This module contains all the code narrator code.
 <div class='rdoc comment markup'>
 <p>
 This version number. The third number is automatically updated to track the
-number of Git commits by running <tt>rake version</tt>.
+number of Git commits by running <code>rake version</code>.
 </p>
 </div>
 </td>
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.72</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.75</span><span class="Special">&quot;</span>
 
 end
 </pre>
@@ -970,8 +968,7 @@ Scan a file into classified lines.
 <p>
 Construct a scanner based on a syntax in the following structure:
 </p>
-<pre>
-patterns:
+<pre>patterns:
   &lt;name&gt;:
     name: &lt;name&gt;
     kind: &lt;kind&gt;
@@ -985,8 +982,7 @@ states:
     - pattern: &lt;pattern&gt;
       kind: &lt;kind&gt;
       next_state: &lt;state&gt;
-start_state: &lt;state&gt;
-</pre>
+start_state: &lt;state&gt;</pre>
 <p>
 To allow for cleaner YAML files to specify the syntax, the following
 shorthands are supported:
@@ -1012,13 +1008,13 @@ A pattern regexp can be presented by a plain string.
 </p>
 </li><li>
 <p>
-The pattern groups field can be ommitted or contain <tt>nil</tt> if it is
-equal to [ “indentation”, “payload” ].
+The pattern groups field can be ommitted or contain <code>nil</code> if it
+is equal to [ “indentation”, “payload” ].
 </p>
 </li><li>
 <p>
 The kind field of a transition can be ommitted; by default it is assumed to
-be identical to the pattern kind. If it ends up <tt>nil</tt>, this
+be identical to the pattern kind. If it ends up <code>nil</code>, this
 indicates that there’s no kind assigned by the pattern, and the current
 line should be classified again by the next state.
 </p>
@@ -1030,7 +1026,7 @@ be identical to the containing state.
 </li><li>
 <p>
 The start state can be ommitted; by default it is assumed to be named
-<tt>start</tt>.
+<code>start</code>.
 </p>
 </li></ul>
 <p>
@@ -1063,11 +1059,9 @@ detected during this process are pushed into the errors.
 Scan a disk file into classified lines in the following format (where the
 groups contain the text extracted by the matching pattern):
 </p>
-<pre>
-- kind: &lt;kind&gt;
+<pre>- kind: &lt;kind&gt;
   line: &lt;text&gt;
-  &lt;group&gt;: &lt;text&gt;
-</pre>
+  &lt;group&gt;: &lt;text&gt;</pre>
 <p>
 By convention, each classified line has a “payload” group that contains
 the “main” content of the line (chunk name for begin/end/nested chunk
@@ -1080,13 +1074,11 @@ If at some state, a file line does not match any pattern, the scanner will
 push a message into the errors. In addition it will classify the line as
 follows:
 </p>
-<pre>
-- kind: error
+<pre>- kind: error
   state: &lt;name&gt;
   line: &lt;text&gt;
   indentation: &lt;leading white space&gt;
-  payload: &lt;line text following the indentation&gt;
-</pre>
+  payload: &lt;line text following the indentation&gt;</pre>
 </div>
 </td>
 </tr>
@@ -1264,7 +1256,7 @@ Fill in the name field for state or pattern object.
 A pattern that matches any line and extracts no data; is meant to be used
 for catch-all transitions that transfer the scanning to a different state.
 It is used if no explicit pattern is specified in a transition (that is,
-you can think of this as the <tt>nil</tt> pattern).
+you can think of this as the <code>nil</code> pattern).
 </p>
 </div>
 </td>
@@ -2537,23 +2529,23 @@ Format chunks into HTML.
 Construct a Formatter based on a mapping from a classified line kind, to a
 Ruby expression, that converts an array of classified lines of that kind,
 into an array of lines of another kind. This expression is simply
-<tt>eval</tt>-ed, and is expected to make use of a variable called
-<tt>lines</tt> that contains an array of classified lines, as produced by a
-Scanner. The result of evaluating the expressions is expected to be an
+<code>eval</code>-ed, and is expected to make use of a variable called
+<code>lines</code> that contains an array of classified lines, as produced
+by a Scanner. The result of evaluating the expressions is expected to be an
 array of any number of classified lines of any kind.
 </p>
 <p>
 Formatting repeatedly applies these formatting expressions, until the
 result is an array containing a single classified line, which has the kind
-<tt>html</tt> and whose payload field contains the unified final HTML
+<code>html</code> and whose payload field contains the unified final HTML
 presentation of the original classified lines. In each processing round,
 all consecutive lines of the same kind are formated together. This allows
 for properly formating line kinds that use a multi-line notation such as
 Markdown.
 </p>
 <p>
-The default formatting expression for the kind <tt>html</tt> simply joins
-all the payloads of all the classified lines into a single html, and
+The default formatting expression for the kind <code>html</code> simply
+joins all the payloads of all the classified lines into a single html, and
 returns a single “line” containing this joined HTML. All other line
 kinds need to have a formatting expression explicitly specified in the
 formatters mapping.
@@ -2561,10 +2553,10 @@ formatters mapping.
 <p>
 If no formatting expression is specified for some classified line kind, an
 error is reported and the classified lines are wrapped in a pre HTML
-element with a <tt>missing_formatter</tt> CSS class. Similarly, if a
+element with a <code>missing_formatter</code> CSS class. Similarly, if a
 formatting expression fails (raises an exception), an error is reported and
 the lines are wrapped in a pre HTML element with a
-<tt>failed_formatter</tt> CSS class.
+<code>failed_formatter</code> CSS class.
 </p>
 </div>
 </td>
@@ -3009,7 +3001,7 @@ Test expanding RDoc text.
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_strong_text</span>
-    <span class="Type">Codnar</span>::<span class="Type">RDoc</span>.to_html(<span class="Special">&quot;</span><span class="Constant">*text*</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;b&gt;text&lt;/b&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
+    <span class="Type">Codnar</span>::<span class="Type">RDoc</span>.to_html(<span class="Special">&quot;</span><span class="Constant">*text*</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;strong&gt;text&lt;/strong&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_indented_pre</span>
@@ -3230,7 +3222,7 @@ above.
 <div class='rdoc comment markup'>
 <p>
 Expand “[[chunk|template]]” to HTML embed tags. Use identifiers instead
-of names in the <tt>src</tt> field for safety, unless the template is a
+of names in the <code>src</code> field for safety, unless the template is a
 magical file template, in which case we must preserve the file path.
 </p>
 </div>
@@ -3502,8 +3494,30 @@ run Haddock to generate HTML from it.
     <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">write_temporary_file</span>(path, haddock)
       <span class="Type">File</span>.open(path + <span class="Special">&quot;</span><span class="Constant">/wrapper.hs</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">w</span><span class="Special">&quot;</span>) <span class="Statement">do</span> |<span class="Identifier">file</span>|
         file.write(<span class="Type">HADDOCK_HEADER</span>)
+        haddock = <span class="Constant">self</span>.patch_module_comments(haddock)
         file.write(<span class="Special">&quot;</span><span class="Constant">-- </span><span class="Special">&quot;</span> + haddock.gsub(<span class="Special">&quot;</span><span class="Special">\n</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Special">\n</span><span class="Constant">-- </span><span class="Special">&quot;</span>))
       <span class="Statement">end</span>
+    <span class="PreProc">end</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Convert structured module comments to a definition list. TODO: This is
+rather flaky.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">patch_module_comments</span>(haddock)
+      <span class="Statement">return</span> haddock.gsub(<span class="Special">/</span><span class="Special">^</span><span class="Special">(</span><span class="Special">\s</span><span class="Special">*</span><span class="Special">)(</span><span class="Constant">Module</span><span class="Special">|</span><span class="Constant">Description</span><span class="Special">|</span><span class="Constant">Copyright</span><span class="Special">|</span><span class="Constant">License</span><span class="Special">|</span><span class="Constant">Maintainer</span><span class="Special">|</span><span class="Constant">Stability</span><span class="Special">|</span><span class="Constant">Portability</span><span class="Special">)(</span><span class="Special">\s</span><span class="Special">*</span><span class="Special">)</span><span class="Constant">:</span><span class="Special">/</span>, <span class="Special">&quot;</span><span class="Special">\n\\</span><span class="Constant">1[@</span><span class="Special">\\</span><span class="Constant">2@]</span><span class="Special">\\</span><span class="Constant">3</span><span class="Special">&quot;</span>)
     <span class="PreProc">end</span>
 
 </pre>
@@ -4009,7 +4023,7 @@ Syntax highlight using GVim.
 <p>
 Convert a sequence of classified code lines to HTML using GVim syntax
 highlighting. The commands array allows configuring the way that GVim will
-format the output (see the <tt>cached_syntax_to_html</tt> method for
+format the output (see the <code>cached_syntax_to_html</code> method for
 details).
 </p>
 </div>
@@ -4081,16 +4095,16 @@ that GVim will format the output. For example:
 </p>
 <ul><li>
 <p>
-The command <tt>&quot;+:colorscheme &lt;name&gt;&quot;</tt> will override
-the default color scheme used.
+The command <code>&quot;+:colorscheme &lt;name&gt;&quot;</code> will
+override the default color scheme used.
 </p>
 </li><li>
 <p>
-The command <tt>&quot;+:let html_use_css=1&quot;</tt> will just annotate
-each HTML tag with a CSS class, instead of embedding some specific style
-directly into the tag. In this case the colorscheme and background are
-ignored; you will need to provide your own CSS stylesheet as part of the
-final woven document to style the marked-up words.
+The command <code>&quot;+:let html_use_css=1&quot;</code> will just
+annotate each HTML tag with a CSS class, instead of embedding some specific
+style directly into the tag. In this case the colorscheme and background
+are ignored; you will need to provide your own CSS stylesheet as part of
+the final woven document to style the marked-up words.
 </p>
 </li></ul>
 <p>
@@ -4100,8 +4114,8 @@ environment so there is no theoretical limit to what can be done here.
 <p>
 Since GVim is as slow as molasses to start up, we cache the results of
 highlighting the syntax of each code fragment in a directory called
-<tt>.gvim-cache</tt>, which can appear at the current working directory or
-in any of its parents.
+<code>.gvim-cache</code>, which can appear at the current working directory
+or in any of its parents.
 </p>
 </div>
 </td>
@@ -4122,9 +4136,9 @@ in any of its parents.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Highlight syntax of text using GVim, without caching. This is <b>slow</b>
-(measured in seconds), due to GVim’s start-up tim. See the
-<tt>cached_syntax_to_html</tt> method for a faster variant and
+Highlight syntax of text using GVim, without caching. This is
+<strong>slow</strong> (measured in seconds), due to GVim’s start-up tim.
+See the <code>cached_syntax_to_html</code> method for a faster variant and
 functionality details.
 </p>
 </div>
@@ -4700,7 +4714,7 @@ Convert a sequence of classified code lines to HTML using CodeRay syntax
 highlighting. The options control the way CodeRay behaves (e.g.,
 &lt;tt&gt;:css
 </p>
-<h1>&gt; :class&lt;/tt&gt;).</h1>
+<h1 id="label-%3E+%3Aclass%3C%2Ftt%3E%29.">&gt; :class&lt;/tt&gt;).</h1>
 </div>
 </td>
 </tr>
@@ -4829,11 +4843,11 @@ Syntax highlight using Sunlight.
 <div class='rdoc comment markup'>
 <p>
 Convert a sequence of classified code lines to HTML using Sunlight syntax
-highlighting. All we need to do is wrap the lines in an HTML <tt>pre</tt>
-element with the correct class
-(<tt>sunlight-highlight-<em>syntax</em></tt>). The actual highlighting is
-done in the HTML DOM using Javascript. Embedding this Javascript into the
-final HTML should be done separately.
+highlighting. All we need to do is wrap the lines in an HTML
+<code>pre</code> element with the correct class
+(<code>sunlight-highlight-<em>syntax</em></code>). The actual highlighting
+is done in the HTML DOM using Javascript. Embedding this Javascript into
+the final HTML should be done separately.
 </p>
 </div>
 </td>
@@ -4968,7 +4982,7 @@ Test splitting code files.
       <span class="Identifier">&lt;</span><span class="Statement">td</span><span class="Identifier"> </span><span class="Type">class</span><span class="Identifier">=</span><span class="Constant">'html'</span><span class="Identifier">&gt;</span>
       <span class="Identifier">&lt;</span><span class="Statement">div</span><span class="Identifier"> </span><span class="Type">class</span><span class="Identifier">=</span><span class="Constant">'rdoc rdoc markup'</span><span class="Identifier">&gt;</span>
       <span class="Identifier">&lt;</span><span class="Statement">p</span><span class="Identifier">&gt;</span>
-      This is <span class="Identifier">&lt;</span><span class="Statement">b</span><span class="Identifier">&gt;</span><span class="htmlBold">rdoc</span><span class="Identifier">&lt;/</span><span class="Statement">b</span><span class="Identifier">&gt;</span>.
+      This is <span class="Identifier">&lt;</span><span class="Statement">strong</span><span class="Identifier">&gt;</span><span class="htmlBold">rdoc</span><span class="Identifier">&lt;/</span><span class="Statement">strong</span><span class="Identifier">&gt;</span>.
       <span class="Identifier">&lt;/</span><span class="Statement">p</span><span class="Identifier">&gt;</span>
       <span class="Identifier">&lt;/</span><span class="Statement">div</span><span class="Identifier">&gt;</span>
       <span class="Identifier">&lt;/</span><span class="Statement">td</span><span class="Identifier">&gt;</span>
@@ -5049,11 +5063,9 @@ Split disk files into chunks.
 <p>
 Construct a splitter based on a configuration in the following structure:
 </p>
-<pre>
-syntax: &lt;syntax&gt;
+<pre>syntax: &lt;syntax&gt;
 formatters:
-  &lt;kind&gt;: &lt;expression&gt;
-</pre>
+  &lt;kind&gt;: &lt;expression&gt;</pre>
 <p>
 Where the syntax is passed as-is to (and expanded in-place by) a Scanner,
 and the formatters are passed as-is to a Formatter to convert the chunk’s
@@ -5183,7 +5195,7 @@ Test “splitting” documentation files.
       <span class="Special">&quot;</span><span class="Constant">containers</span><span class="Special">&quot;</span> =&gt; [],
       <span class="Special">&quot;</span><span class="Constant">contained</span><span class="Special">&quot;</span> =&gt; [],
       <span class="Special">&quot;</span><span class="Constant">locations</span><span class="Special">&quot;</span> =&gt; [ { <span class="Special">&quot;</span><span class="Constant">file</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">rdoc.rdoc</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">line</span><span class="Special">&quot;</span> =&gt; <span class="Constant">1</span> } ],
-      <span class="Special">&quot;</span><span class="Constant">html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">&lt;div class='rdoc rdoc markup'&gt;</span><span class="Special">\n</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;b&gt;foo&lt;/b&gt; bar</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/div&gt;</span><span class="Special">&quot;</span>
+      <span class="Special">&quot;</span><span class="Constant">html</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">&lt;div class='rdoc rdoc markup'&gt;</span><span class="Special">\n</span><span class="Constant">&lt;p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;strong&gt;foo&lt;/strong&gt; bar</span><span class="Special">\n</span><span class="Constant">&lt;/p&gt;</span><span class="Special">\n</span><span class="Constant">&lt;/div&gt;</span><span class="Special">&quot;</span>
     } ]
   <span class="PreProc">end</span>
 
@@ -5617,7 +5629,7 @@ Test the built-in split documentation configurations.
 <pre class='html code syntax'>
     <span class="Identifier">&lt;</span><span class="Statement">div</span><span class="Identifier"> </span><span class="Type">class</span><span class="Identifier">=</span><span class="Constant">'rdoc doc markup'</span><span class="Identifier">&gt;</span>
     <span class="Identifier">&lt;</span><span class="Statement">p</span><span class="Identifier">&gt;</span>
-    This is a <span class="Identifier">&lt;</span><span class="Statement">b</span><span class="Identifier">&gt;</span><span class="htmlBold">marked-up</span><span class="Identifier">&lt;/</span><span class="Statement">b</span><span class="Identifier">&gt;</span> file.
+    This is a <span class="Identifier">&lt;</span><span class="Statement">strong</span><span class="Identifier">&gt;</span><span class="htmlBold">marked-up</span><span class="Identifier">&lt;/</span><span class="Statement">strong</span><span class="Identifier">&gt;</span> file.
     <span class="Identifier">&lt;/</span><span class="Statement">p</span><span class="Identifier">&gt;</span>
     <span class="Identifier">&lt;/</span><span class="Statement">div</span><span class="Identifier">&gt;</span>
   EOF
@@ -5712,7 +5724,7 @@ Configurations for “splitting” documentation files.
 <div class='rdoc comment markup'>
 <p>
 “Split” a documentation file. All lines are assumed to have the same
-kind <tt>doc</tt> and no indentation is collected. Unless overriden by
+kind <code>doc</code> and no indentation is collected. Unless overriden by
 additional configuration(s), the lines are assumed to contain formatted
 HTML, and are passed as-is to the output.
 </p>
@@ -5923,9 +5935,9 @@ single chunk:
 Classify all lines as source code of some syntax (kind). This doesn’t
 distinguish between comment and code lines; to do that, you need to combine
 this with comment classification configuration(s). Also, it just formats
-the lines in an HTML <tt>pre</tt> element, without any syntax highlighting;
-to do that, you need to combine this with syntax highlighting formatting
-configuration(s).
+the lines in an HTML <code>pre</code> element, without any syntax
+highlighting; to do that, you need to combine this with syntax highlighting
+formatting configuration(s).
 </p>
 </div>
 </td>
@@ -6265,7 +6277,7 @@ treated as a comment.
 <p>
 This configuration is typically complemented by an additional one
 specifying how to format the (stripped!) comments; by default they are just
-displayed as-is using an HTML <tt>pre</tt> element, which isn’t very
+displayed as-is using an HTML <code>pre</code> element, which isn’t very
 useful.
 </p>
 </div>
@@ -6495,7 +6507,7 @@ continues in additional simple comment lines.
 <p>
 This configuration is typically complemented by an additional one
 specifying how to format the (stripped!) comments; by default they are just
-displayed as-is using an HTML <tt>pre</tt> element, which isn’t very
+displayed as-is using an HTML <code>pre</code> element, which isn’t very
 useful.
 </p>
 </div>
@@ -6771,7 +6783,7 @@ classified as a comment.
 <p>
 This configuration is typically complemented by an additional one
 specifying how to format the (stripped!) comments; by default they are just
-displayed as-is using an HTML <tt>pre</tt> element, which isn’t very
+displayed as-is using an HTML <code>pre</code> element, which isn’t very
 useful.
 </p>
 </div>
@@ -7068,7 +7080,7 @@ supported, as well as simply wrapping the comment in an HTML pre element:
 <div class='rdoc comment markup'>
 <p>
 Format comments as HTML pre elements. Is used to complement a configuration
-that classifies some lines as <tt>comment</tt>.
+that classifies some lines as <code>comment</code>.
 </p>
 </div>
 </td>
@@ -7091,7 +7103,7 @@ that classifies some lines as <tt>comment</tt>.
 <div class='rdoc comment markup'>
 <p>
 Format comments that use the RDoc notation. Is used to complement a
-configuration that classifies some lines as <tt>comment</tt>.
+configuration that classifies some lines as <code>comment</code>.
 </p>
 </div>
 </td>
@@ -7115,7 +7127,7 @@ configuration that classifies some lines as <tt>comment</tt>.
 <div class='rdoc comment markup'>
 <p>
 Format comments that use the Markdown notation. Is used to complement a
-configuration that classifies some lines as <tt>comment</tt>.
+configuration that classifies some lines as <code>comment</code>.
 </p>
 </div>
 </td>
@@ -7139,7 +7151,7 @@ configuration that classifies some lines as <tt>comment</tt>.
 <div class='rdoc comment markup'>
 <p>
 Format comments that use the Haddock notation. Is used to complement a
-configuration that classifies some lines as <tt>comment</tt>.
+configuration that classifies some lines as <code>comment</code>.
 </p>
 </div>
 </td>
@@ -7227,7 +7239,7 @@ Test built-in split comment formatting configurations.
 <span class="Constant">    &lt;td class='html'&gt;</span>
 <span class="Constant">    &lt;div class='rdoc comment markup'&gt;</span>
 <span class="Constant">    &lt;p&gt;</span>
-<span class="Constant">    Comment &lt;b&gt;text&lt;/b&gt;.</span>
+<span class="Constant">    Comment &lt;strong&gt;text&lt;/strong&gt;.</span>
 <span class="Constant">    &lt;/p&gt;</span>
 <span class="Constant">    &lt;/div&gt;</span>
 <span class="Constant">    &lt;/td&gt;</span>
@@ -8162,7 +8174,7 @@ Test combination of many built-in configurations.
 <span class="Constant">    &lt;td class='html'&gt;</span>
 <span class="Constant">    &lt;div class='rdoc comment markup'&gt;</span>
 <span class="Constant">    &lt;p&gt;</span>
-<span class="Constant">    Hello, &lt;b&gt;world&lt;/b&gt;!</span>
+<span class="Constant">    Hello, &lt;strong&gt;world&lt;/strong&gt;!</span>
 <span class="Constant">    &lt;/p&gt;</span>
 <span class="Constant">    &lt;/div&gt;</span>
 <span class="Constant">    &lt;/td&gt;</span>
@@ -9391,7 +9403,7 @@ the following regular expressions must be on a single line.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Detect embedded chunks (<tt>type</tt> before <tt>src</tt>).
+Detect embedded chunks (<code>type</code> before <code>src</code>).
 </p>
 </div>
 </td>
@@ -9409,7 +9421,7 @@ Detect embedded chunks (<tt>type</tt> before <tt>src</tt>).
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Detect embedded chunks (<tt>src</tt> before <tt>type</tt>).
+Detect embedded chunks (<code>src</code> before <code>type</code>).
 </p>
 </div>
 </td>
@@ -9540,7 +9552,8 @@ And here are the pre-defined weaving template configurations:
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Weave configuration providing a single simple <tt>include</tt> template.
+Weave configuration providing a single simple <code>include</code>
+template.
 </p>
 </div>
 </td>
@@ -9777,8 +9790,9 @@ Here is the implementation:
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Create an <tt>img</tt> tag with an embedded data URL. Different browsers
-have different constraints about the size of the resulting URL, so YMMV.
+Create an <code>img</code> tag with an embedded data URL. Different
+browsers have different constraints about the size of the resulting URL, so
+YMMV.
 </p>
 </div>
 </td>
@@ -9898,6 +9912,7 @@ convenient list of all of Codnar's parts and dependencies:
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">irb</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">open3</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">rdiscount</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">rdoc</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">rdoc/markup/to_html</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">tempfile</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">yaml</span><span class="Special">&quot;</span>
@@ -10651,10 +10666,9 @@ Test running the Weave Codnar Application.
   <span class="PreProc">def</span> <span class="Identifier">test_run_weave_missing_file</span>
     write_fake_file(<span class="Special">&quot;</span><span class="Constant">root</span><span class="Special">&quot;</span>, <span class="Type">FILE_CHUNKS</span>.to_yaml)
     <span class="Type">Codnar</span>::<span class="Type">Application</span>.with_argv(<span class="Special">%w(</span><span class="Constant">-e stderr -o stdout root</span><span class="Special">)</span>) { <span class="Type">Codnar</span>::<span class="Type">Weave</span>.new(<span class="Constant">true</span>).run }.should == <span class="Constant">1</span>
-    double_message = <span class="Special">&quot;</span><span class="Constant">No such file or directory - </span><span class="Special">&quot;</span> * <span class="Constant">2</span> <span class="Comment"># Something weird in Ruby Exception.to_s</span>
-    <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stdout</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">Root</span><span class="Special">\n</span><span class="Constant">FILE: included.file EXCEPTION: </span><span class="Special">#{</span>double_message<span class="Special">}</span><span class="Special">\n</span><span class="Special">&quot;</span>
+    <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stdout</span><span class="Special">&quot;</span>).should == <span class="Special">&quot;</span><span class="Constant">Root</span><span class="Special">\n</span><span class="Constant">FILE: included.file EXCEPTION: No such file or directory - included.file</span><span class="Special">\n</span><span class="Special">&quot;</span>
     <span class="Type">File</span>.read(<span class="Special">&quot;</span><span class="Constant">stderr</span><span class="Special">&quot;</span>).should \
-      == <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: Reading file: included.file exception: </span><span class="Special">#{</span>double_message<span class="Special">}</span><span class="Constant"> in file: root at line: 1</span><span class="Special">\n</span><span class="Special">&quot;</span>
+      == <span class="Special">&quot;</span><span class="Special">#{</span><span class="Identifier">$0</span><span class="Special">}</span><span class="Constant">: Reading file: included.file exception: No such file or directory - included.file in file: root at line: 1</span><span class="Special">\n</span><span class="Special">&quot;</span>
   <span class="PreProc">end</span>
 
   <span class="PreProc">def</span> <span class="Identifier">test_run_weave_existing_file</span>
@@ -11246,8 +11260,29 @@ Actually create common Rake split tasks.
         desc <span class="Special">&quot;</span><span class="Constant">Split all files into chunks</span><span class="Special">&quot;</span>
         ::<span class="Type">Rake</span>::<span class="Type">Task</span>.define_task(<span class="Special">&quot;</span><span class="Constant">codnar_split</span><span class="Special">&quot;</span>)
         desc <span class="Special">&quot;</span><span class="Constant">Clean all split chunks</span><span class="Special">&quot;</span>
-        ::<span class="Type">Rake</span>::<span class="Type">Task</span>.define_task(<span class="Special">&quot;</span><span class="Constant">clean_codnar</span><span class="Special">&quot;</span>) { rm_rf(<span class="Type">Rake</span>.chunks_dir) }
+        ::<span class="Type">Rake</span>::<span class="Type">Task</span>.define_task(<span class="Special">&quot;</span><span class="Constant">clean_codnar</span><span class="Special">&quot;</span>) { <span class="Type">FileUtils</span>.rm_rf(<span class="Type">Rake</span>.chunks_dir) }
         ::<span class="Type">Rake</span>::<span class="Type">Task</span>.define_task(<span class="Constant">:clean</span> =&gt; <span class="Special">&quot;</span><span class="Constant">clean_codnar</span><span class="Special">&quot;</span>)
+      <span class="PreProc">end</span>
+
+</pre>
+      <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>      </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+For some reason, <code>include ::Rake::DSL</code> doesn’t give us this
+and life is too short…
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+      <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">desc</span>(description)
+        ::<span class="Type">Rake</span>.application.last_description = description
       <span class="PreProc">end</span>
 
 </pre>
@@ -11421,8 +11456,9 @@ Run the Weave application for a single source file.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
-Connect the task for cleaning up after weaving (<tt>clobber_codnar</tt>) to
-the common task of cleaning up everything (<tt>clobber</tt>).
+Connect the task for cleaning up after weaving
+(<code>clobber_codnar</code>) to the common task of cleaning up everything
+(<code>clobber</code>).
 </p>
 </div>
 </td>
