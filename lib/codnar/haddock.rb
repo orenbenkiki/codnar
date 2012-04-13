@@ -45,8 +45,15 @@ module Codnar
     def self.write_temporary_file(path, haddock)
       File.open(path + "/wrapper.hs", "w") do |file|
         file.write(HADDOCK_HEADER)
+        haddock = self.patch_module_comments(haddock)
         file.write("-- " + haddock.gsub("\n", "\n-- "))
       end
+    end
+
+    # Convert structured module comments to a definition list. TODO: This is
+    # rather flaky.
+    def self.patch_module_comments(haddock)
+      return haddock.gsub(/^(\s*)(Module|Description|Copyright|License|Maintainer|Stability|Portability)(\s*):/, "\n\\1[@\\2@]\\3")
     end
 
     # Run Haddock to convert the wrapper Haskell file into HTML documentation.

@@ -1,3 +1,7 @@
+2012-04-13	Oren Ben-Kiki <github-oren@ben-kiki.org>
+
+	* Handle Haddock structured module comments.
+
 2012-03-25	Oren Ben-Kiki <github-oren@ben-kiki.org>
 
 	* Get rid of more Rake
