@@ -53,6 +53,7 @@ module Codnar
     # Convert structured module comments to a definition list. TODO: This is
     # rather flaky.
     def self.patch_module_comments(haddock)
+      haddock.sub!(/^\s*Module\s*:\s*\$\s*header\s*\$\s*$/i, "Module")
       return haddock.gsub(/^(\s*)(Module|Description|Copyright|License|Maintainer|Stability|Portability)(\s*):/, "\n\\1[@\\2@]\\3")
     end
 
