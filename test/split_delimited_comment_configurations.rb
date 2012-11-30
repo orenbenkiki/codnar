@@ -24,6 +24,10 @@ class TestSplitDelimitedCommentsConfigurations < Test::Unit::TestCase
     check_any_comment([ "<!--", " -", "-->" ], Codnar::Configuration::CLASSIFY_HTML_COMMENTS.call)
   end
 
+  def test_delimited_comments
+    check_any_comment([ '@doc """', nil, '"""' ], Codnar::Configuration::CLASSIFY_ELIXIR_COMMENTS.call)
+  end
+
 protected
 
   # The "<<<" will be replaced by the start comment prefix,
@@ -56,7 +60,7 @@ protected
 
   def check_any_comment(patterns, configuration)
     prefix, inner, suffix = patterns
-    check_split_file(ANY_COMMENT_CODE.gsub("<<<", prefix).gsub(">>>", suffix).gsub("<>", inner),
+    check_split_file(ANY_COMMENT_CODE.gsub("<<<", prefix).gsub(">>>", suffix).gsub(inner ? "<>" : "<> ", inner || ""),
                      Codnar::Configuration::CLASSIFY_SOURCE_CODE.call("any"),
                      Codnar::Configuration::FORMAT_PRE_COMMENTS,
                      configuration) do |path|
@@ -65,7 +69,7 @@ protected
         "locations" => [ { "file" => path, "line" => 1 } ],
         "containers" => [],
         "contained" => [],
-        "html" => ANY_COMMENT_HTML.gsub("/--", prefix).gsub("--/", suffix).gsub(" -", inner),
+        "html" => ANY_COMMENT_HTML,
       } ]
     end
   end

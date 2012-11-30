@@ -683,7 +683,7 @@ number of Git commits by running <code>rake version</code>.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.76</span><span class="Special">&quot;</span>
+  <span class="Type">VERSION</span> = <span class="Special">&quot;</span><span class="Constant">0.1.77</span><span class="Special">&quot;</span>
 
 end
 </pre>
@@ -3386,6 +3386,27 @@ Convert Haddoc to HTML.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
+The cache used for speeding up recomputing the same syntax highlighting
+HTML.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="Identifier">@cache</span> = <span class="Type">Cache</span>.new(<span class="Special">&quot;</span><span class="Constant">.codnar-cache</span><span class="Special">&quot;</span>) <span class="Statement">do</span> |<span class="Identifier">data</span>|
+      <span class="Type">Haddock</span>.uncached_to_html(data.haddock)
+    <span class="Statement">end</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
 Process a Haddock String and return the resulting HTML.
 </p>
 </div>
@@ -3393,13 +3414,37 @@ Process a Haddock String and return the resulting HTML.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">to_html</span>(haddock)
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">uncached_to_html</span>(haddock)
       with_temporary_directory <span class="Statement">do</span> |<span class="Identifier">path</span>|
         write_temporary_file(path, haddock)
         run_haddock(path)
         html = read_html_file(path)
         clean_html(html)
       <span class="Statement">end</span>
+    <span class="PreProc">end</span>
+
+</pre>
+    <table class='layout'>
+<tr>
+<td class='indentation'>
+<pre>    </pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
+Since Haddock is as slow as molasses to start up, we cache the results of
+highlighting the syntax of each code fragment in a directory called
+<code>.codnar-cache</code>, which can appear at the current working
+directory or in any of its parents.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+    <span class="PreProc">def</span> <span class="Constant">self</span>.<span class="Identifier">to_html</span>(haddock)
+      data = { <span class="Special">&quot;</span><span class="Constant">haddock</span><span class="Special">&quot;</span> =&gt; haddock }
+      <span class="Statement">return</span> <span class="Identifier">@cache</span>[data]
     <span class="PreProc">end</span>
 
   <span class="Statement">protected</span>
@@ -4055,7 +4100,7 @@ HTML.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-    <span class="Identifier">@cache</span> = <span class="Type">Cache</span>.new(<span class="Special">&quot;</span><span class="Constant">.gvim-cache</span><span class="Special">&quot;</span>) <span class="Statement">do</span> |<span class="Identifier">data</span>|
+    <span class="Identifier">@cache</span> = <span class="Type">Cache</span>.new(<span class="Special">&quot;</span><span class="Constant">.codnar-cache</span><span class="Special">&quot;</span>) <span class="Statement">do</span> |<span class="Identifier">data</span>|
       <span class="Type">GVim</span>.uncached_syntax_to_html(data.text, data.syntax, data.commands)
     <span class="Statement">end</span>
 
@@ -4115,8 +4160,8 @@ environment so there is no theoretical limit to what can be done here.
 <p>
 Since GVim is as slow as molasses to start up, we cache the results of
 highlighting the syntax of each code fragment in a directory called
-<code>.gvim-cache</code>, which can appear at the current working directory
-or in any of its parents.
+<code>.codnar-cache</code>, which can appear at the current working
+directory or in any of its parents.
 </p>
 </div>
 </td>
@@ -4203,6 +4248,7 @@ only command-line arguments.
       <span class="Identifier">ENV</span>[<span class="Special">&quot;</span><span class="Constant">DISPLAY</span><span class="Special">&quot;</span>] = <span class="Special">&quot;</span><span class="Constant">none</span><span class="Special">&quot;</span> <span class="Comment"># Otherwise the X11 server *does* affect the result.</span>
       command = [
         <span class="Special">&quot;</span><span class="Constant">gvim</span><span class="Special">&quot;</span>,
+        <span class="Special">&quot;</span><span class="Constant">-s</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">/dev/null</span><span class="Special">&quot;</span>, <span class="Comment"># Magic: avoids a sleep of 2 seconds in VIM startup!</span>
         <span class="Special">&quot;</span><span class="Constant">-f</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">-X</span><span class="Special">&quot;</span>,
         <span class="Special">&quot;</span><span class="Constant">-u</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">none</span><span class="Special">&quot;</span>,
         <span class="Special">&quot;</span><span class="Constant">-U</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">none</span><span class="Special">&quot;</span>,
@@ -6352,7 +6398,7 @@ comments).
   <span class="Statement">return</span> {
     <span class="Special">&quot;</span><span class="Constant">syntax</span><span class="Special">&quot;</span> =&gt; {
       <span class="Special">&quot;</span><span class="Constant">patterns</span><span class="Special">&quot;</span> =&gt; {
-        <span class="Special">&quot;</span><span class="Constant">comment_</span><span class="Special">#{</span>prefix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">^(</span><span class="Special">\\</span><span class="Constant">s*)</span><span class="Special">#{</span>prefix<span class="Special">}</span><span class="Constant">(?!!)</span><span class="Special">\\</span><span class="Constant">s?(.*)$</span><span class="Special">&quot;</span> },
+        <span class="Special">&quot;</span><span class="Constant">comment_</span><span class="Special">#{</span>prefix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">'</span><span class="Constant">^(\s*)</span><span class="Special">'</span> + prefix + <span class="Special">'</span><span class="Constant">(?!!)</span><span class="Special">\\</span><span class="Constant">s?(.*)$</span><span class="Special">'</span> },
       },
       <span class="Special">&quot;</span><span class="Constant">states</span><span class="Special">&quot;</span> =&gt; {
         <span class="Special">&quot;</span><span class="Constant">start</span><span class="Special">&quot;</span> =&gt; {
@@ -6585,8 +6631,8 @@ Ruby coverage somehow barfs if we inline this. Go figure.
   <span class="Statement">return</span> {
     <span class="Special">&quot;</span><span class="Constant">syntax</span><span class="Special">&quot;</span> =&gt; {
       <span class="Special">&quot;</span><span class="Constant">patterns</span><span class="Special">&quot;</span> =&gt; {
-        <span class="Special">&quot;</span><span class="Constant">comment_start_</span><span class="Special">#{</span>start_prefix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">^(</span><span class="Special">\\</span><span class="Constant">s*)</span><span class="Special">#{</span>start_prefix<span class="Special">}</span><span class="Special">\\</span><span class="Constant">s?(.*)$</span><span class="Special">&quot;</span> },
-        <span class="Special">&quot;</span><span class="Constant">comment_continue_</span><span class="Special">#{</span>continue_prefix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">^(</span><span class="Special">\\</span><span class="Constant">s*)</span><span class="Special">#{</span>continue_prefix<span class="Special">}</span><span class="Special">\\</span><span class="Constant">s?(.*)$</span><span class="Special">&quot;</span> },
+        <span class="Special">&quot;</span><span class="Constant">comment_start_</span><span class="Special">#{</span>start_prefix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">'</span><span class="Constant">^(\s*)</span><span class="Special">'</span> + start_prefix+ <span class="Special">'</span><span class="Constant">\s?(.*)$</span><span class="Special">'</span> },
+        <span class="Special">&quot;</span><span class="Constant">comment_continue_</span><span class="Special">#{</span>continue_prefix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">'</span><span class="Constant">^(\s*)</span><span class="Special">'</span> + continue_prefix + <span class="Special">'</span><span class="Constant">\s?(.*)$</span><span class="Special">'</span> },
       },
       <span class="Special">&quot;</span><span class="Constant">states</span><span class="Special">&quot;</span> =&gt; {
         <span class="Special">&quot;</span><span class="Constant">start</span><span class="Special">&quot;</span> =&gt; {
@@ -6830,7 +6876,7 @@ need to escape special characters such as “*”.
 </tr>
 </table>
 <pre class='ruby code syntax'>
-  <span class="Statement">return</span> <span class="Type">Comments</span>.delimited_comments(<span class="Special">&quot;</span><span class="Constant">/</span><span class="Special">\\</span><span class="Constant">*</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> </span><span class="Special">\\</span><span class="Constant">*</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> </span><span class="Special">\\</span><span class="Constant">*/</span><span class="Special">&quot;</span>)
+  <span class="Statement">return</span> <span class="Type">Comments</span>.delimited_comments(<span class="Special">'</span><span class="Constant">/\*</span><span class="Special">'</span>, <span class="Special">'</span><span class="Constant"> \*</span><span class="Special">'</span>, <span class="Special">'</span><span class="Constant"> \*/</span><span class="Special">'</span>)
 end
 
 </pre>
@@ -6863,6 +6909,27 @@ comments.
 <td class='html'>
 <div class='rdoc comment markup'>
 <p>
+Classify delimited Elixir style comments. These start with `@doc
+“”“`, end with `”“”`, and have no prefix for the inner lines.
+</p>
+</div>
+</td>
+</tr>
+</table>
+<pre class='ruby code syntax'>
+<span class="Type">CLASSIFY_ELIXIR_COMMENTS</span> = <span class="Statement">lambda</span> <span class="Statement">do</span>
+  <span class="Statement">return</span> <span class="Type">Comments</span>.delimited_comments(<span class="Special">'</span><span class="Constant">@[a-z]*doc\s+&quot;&quot;&quot;</span><span class="Special">'</span>, <span class="Constant">nil</span>, <span class="Special">'</span><span class="Constant">&quot;&quot;&quot;</span><span class="Special">'</span>)
+<span class="Statement">end</span>
+
+</pre>
+<table class='layout'>
+<tr>
+<td class='indentation'>
+<pre></pre>
+</td>
+<td class='html'>
+<div class='rdoc comment markup'>
+<p>
 Configuration for classifying lines to comments and code based on a
 delimited start prefix, inner line prefix and final suffix (e.g., “/*”,
 “ *”, “ */” for C-style comments or “&lt;!–”, “ -”,
@@ -6877,10 +6944,10 @@ delimited start prefix, inner line prefix and final suffix (e.g., “/*”,
   <span class="Statement">return</span> {
     <span class="Special">&quot;</span><span class="Constant">syntax</span><span class="Special">&quot;</span> =&gt; {
       <span class="Special">&quot;</span><span class="Constant">patterns</span><span class="Special">&quot;</span> =&gt; {
-        <span class="Special">&quot;</span><span class="Constant">comment_prefix_</span><span class="Special">#{</span>prefix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">^(</span><span class="Special">\\</span><span class="Constant">s*)</span><span class="Special">#{</span>prefix<span class="Special">}</span><span class="Constant">(?!!)</span><span class="Special">\\</span><span class="Constant">s?(.*)$</span><span class="Special">&quot;</span> },
-        <span class="Special">&quot;</span><span class="Constant">comment_inner_</span><span class="Special">#{</span>inner<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">^(</span><span class="Special">\\</span><span class="Constant">s*)</span><span class="Special">#{</span>inner<span class="Special">}</span><span class="Special">\\</span><span class="Constant">s?(.*)$</span><span class="Special">&quot;</span> },
-        <span class="Special">&quot;</span><span class="Constant">comment_suffix_</span><span class="Special">#{</span>suffix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">^(</span><span class="Special">\\</span><span class="Constant">s*)</span><span class="Special">#{</span>suffix<span class="Special">}</span><span class="Special">\\</span><span class="Constant">s*$</span><span class="Special">&quot;</span> },
-        <span class="Special">&quot;</span><span class="Constant">comment_line_</span><span class="Special">#{</span>prefix<span class="Special">}</span><span class="Constant">_</span><span class="Special">#{</span>suffix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">&quot;</span><span class="Constant">^(</span><span class="Special">\\</span><span class="Constant">s*)</span><span class="Special">#{</span>prefix<span class="Special">}</span><span class="Constant">(?!!)</span><span class="Special">\s</span><span class="Constant">?(.*?)</span><span class="Special">\s</span><span class="Constant">*</span><span class="Special">#{</span>suffix<span class="Special">}</span><span class="Special">\\</span><span class="Constant">s*$</span><span class="Special">&quot;</span> },
+        <span class="Special">&quot;</span><span class="Constant">comment_prefix_</span><span class="Special">#{</span>prefix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">'</span><span class="Constant">^(\s*)</span><span class="Special">'</span> + prefix + <span class="Special">'</span><span class="Constant">(?!!)\s?(.*)$</span><span class="Special">'</span> },
+        <span class="Special">&quot;</span><span class="Constant">comment_inner_</span><span class="Special">#{</span>inner<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; inner.nil? ? <span class="Special">&quot;</span><span class="Constant">^()(.*)$</span><span class="Special">&quot;</span> : <span class="Special">'</span><span class="Constant">^(\s*)</span><span class="Special">'</span> + inner + <span class="Special">'</span><span class="Constant">\s?(.*)$</span><span class="Special">'</span> },
+        <span class="Special">&quot;</span><span class="Constant">comment_suffix_</span><span class="Special">#{</span>suffix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">'</span><span class="Constant">^(\s*)</span><span class="Special">'</span> + suffix + <span class="Special">'</span><span class="Constant">\s*$</span><span class="Special">'</span> },
+        <span class="Special">&quot;</span><span class="Constant">comment_line_</span><span class="Special">#{</span>prefix<span class="Special">}</span><span class="Constant">_</span><span class="Special">#{</span>suffix<span class="Special">}</span><span class="Special">&quot;</span> =&gt; { <span class="Special">&quot;</span><span class="Constant">regexp</span><span class="Special">&quot;</span> =&gt; <span class="Special">'</span><span class="Constant">^(\s*)</span><span class="Special">'</span> + prefix + <span class="Special">'</span><span class="Constant">(?!!)\s?(.*?)\s*</span><span class="Special">'</span> + suffix + <span class="Special">'</span><span class="Constant">\s*$</span><span class="Special">'</span> },
       },
       <span class="Special">&quot;</span><span class="Constant">states</span><span class="Special">&quot;</span> =&gt; {
         <span class="Special">&quot;</span><span class="Constant">start</span><span class="Special">&quot;</span> =&gt; {
@@ -6987,6 +7054,10 @@ need to escape special characters such as “{” and “|”.
     check_any_comment([ <span class="Special">&quot;</span><span class="Constant">&lt;!--</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant"> -</span><span class="Special">&quot;</span>, <span class="Special">&quot;</span><span class="Constant">--&gt;</span><span class="Special">&quot;</span> ], <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">CLASSIFY_HTML_COMMENTS</span>.call)
   <span class="PreProc">end</span>
 
+  <span class="PreProc">def</span> <span class="Identifier">test_delimited_comments</span>
+    check_any_comment([ <span class="Special">'</span><span class="Constant">@doc &quot;&quot;&quot;</span><span class="Special">'</span>, <span class="Constant">nil</span>, <span class="Special">'</span><span class="Constant">&quot;&quot;&quot;</span><span class="Special">'</span> ], <span class="Type">Codnar</span>::<span class="Type">Configuration</span>::<span class="Type">CLASSIFY_ELIXIR_COMMENTS</span>.call)
+  <span class="PreProc">end</span>
+
 <span class="Statement">protected</span>
 
 </pre>
@@ -7036,21 +7107,21 @@ The “&lt;&lt;&lt;” will be replaced by the start comment prefix, the
 
   def check_any_comment(patterns, configuration)
     prefix, inner, suffix = patterns
-    check_split_file(ANY_COMMENT_CODE.gsub(&quot;<span class="Identifier">&lt;</span><span class="Error">&lt;</span><span class="Identifier">&lt;</span><span class="Constant">&quot;, prefix).gsub(&quot;</span><span class="Identifier">&gt;</span><span class="Error">&gt;&gt;</span>&quot;, suffix).gsub(&quot;<span class="Identifier">&lt;&gt;</span><span class="Constant">&quot;, inner),</span>
-<span class="Constant">                     Codnar::Configuration::CLASSIFY_SOURCE_CODE.call(&quot;</span><span class="Identifier">any</span><span class="Constant">&quot;),</span>
-<span class="Constant">                     Codnar::Configuration::FORMAT_PRE_COMMENTS,</span>
-<span class="Constant">                     configuration) do |path|</span>
-<span class="Constant">      [ {</span>
-<span class="Constant">        &quot;</span><span class="Type">name</span><span class="Constant">&quot; =&gt; path,</span>
-<span class="Constant">        &quot;</span><span class="Identifier">locations</span><span class="Constant">&quot; =&gt; [ { &quot;</span><span class="Identifier">file</span><span class="Constant">&quot; =&gt; path, &quot;</span><span class="Identifier">line</span><span class="Constant">&quot; =&gt; 1 } ],</span>
-<span class="Constant">        &quot;</span><span class="Identifier">containers</span><span class="Constant">&quot; =&gt; [],</span>
-<span class="Constant">        &quot;</span><span class="Identifier">contained</span><span class="Constant">&quot; =&gt; [],</span>
-<span class="Constant">        &quot;</span><span class="Identifier">html</span><span class="Constant">&quot; =&gt; ANY_COMMENT_HTML.gsub(&quot;</span><span class="Identifier">/--</span><span class="Constant">&quot;, prefix).gsub(&quot;</span><span class="Identifier">--/</span><span class="Constant">&quot;, suffix).gsub(&quot;</span><span class="Identifier"> -</span><span class="Constant">&quot;, inner),</span>
-<span class="Constant">      } ]</span>
-<span class="Constant">    end</span>
-<span class="Constant">  end</span>
+    check_split_file(ANY_COMMENT_CODE.gsub(&quot;<span class="Identifier">&lt;</span><span class="Error">&lt;</span><span class="Identifier">&lt;</span><span class="Constant">&quot;, prefix).gsub(&quot;</span><span class="Identifier">&gt;</span><span class="Error">&gt;&gt;</span>&quot;, suffix).gsub(inner ? &quot;<span class="Identifier">&lt;&gt;</span><span class="Constant">&quot; : &quot;</span><span class="Identifier">&lt;&gt;</span> &quot;, inner || &quot;&quot;),
+                     Codnar::Configuration::CLASSIFY_SOURCE_CODE.call(&quot;any&quot;),
+                     Codnar::Configuration::FORMAT_PRE_COMMENTS,
+                     configuration) do |path|
+      [ {
+        &quot;name&quot; =<span class="Error">&gt;</span> path,
+        &quot;locations&quot; =<span class="Error">&gt;</span> [ { &quot;file&quot; =<span class="Error">&gt;</span> path, &quot;line&quot; =<span class="Error">&gt;</span> 1 } ],
+        &quot;containers&quot; =<span class="Error">&gt;</span> [],
+        &quot;contained&quot; =<span class="Error">&gt;</span> [],
+        &quot;html&quot; =<span class="Error">&gt;</span> ANY_COMMENT_HTML,
+      } ]
+    end
+  end
 
-<span class="Constant">end</span>
+end
 </pre>
 </div>
 </div>
@@ -9927,7 +9998,6 @@ convenient list of all of Codnar's parts and dependencies:
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/version</span><span class="Special">&quot;</span>
 
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/coderay</span><span class="Special">&quot;</span>
-<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/haddock</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/hash_extensions</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/markdown</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/rdoc</span><span class="Special">&quot;</span>
@@ -9939,6 +10009,7 @@ convenient list of all of Codnar's parts and dependencies:
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/graphviz</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/grouper</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/gvim</span><span class="Special">&quot;</span>
+<span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/haddock</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/merger</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/split</span><span class="Special">&quot;</span>
 <span class="PreProc">require</span> <span class="Special">&quot;</span><span class="Constant">codnar/reader</span><span class="Special">&quot;</span>

@@ -40,7 +40,7 @@ module Codnar
         return {
           "syntax" => {
             "patterns" => {
-              "comment_#{prefix}" => { "regexp" => "^(\\s*)#{prefix}(?!!)\\s?(.*)$" },
+              "comment_#{prefix}" => { "regexp" => '^(\s*)' + prefix + '(?!!)\\s?(.*)$' },
             },
             "states" => {
               "start" => {
@@ -92,8 +92,8 @@ module Codnar
         return {
           "syntax" => {
             "patterns" => {
-              "comment_start_#{start_prefix}" => { "regexp" => "^(\\s*)#{start_prefix}\\s?(.*)$" },
-              "comment_continue_#{continue_prefix}" => { "regexp" => "^(\\s*)#{continue_prefix}\\s?(.*)$" },
+              "comment_start_#{start_prefix}" => { "regexp" => '^(\s*)' + start_prefix+ '\s?(.*)$' },
+              "comment_continue_#{continue_prefix}" => { "regexp" => '^(\s*)' + continue_prefix + '\s?(.*)$' },
             },
             "states" => {
               "start" => {
@@ -140,12 +140,18 @@ module Codnar
       CLASSIFY_C_COMMENTS = lambda do
         # Since the prefix/inner/suffix passed to the configuration are regexps,
         # we need to escape special characters such as "*".
-        return Comments.delimited_comments("/\\*", " \\*", " \\*/")
+        return Comments.delimited_comments('/\*', ' \*', ' \*/')
       end
 
       # Classify delimited HTML ("<!--", " -", "-->") style comments.
       CLASSIFY_HTML_COMMENTS = lambda do
         return Comments.delimited_comments("<!--", " -", "-->")
+      end
+
+      # Classify delimited Elixir style comments. These start with `@doc """`,
+      # end with `"""`, and have no prefix for the inner lines.
+      CLASSIFY_ELIXIR_COMMENTS = lambda do
+        return Comments.delimited_comments('@[a-z]*doc\s+"""', nil, '"""')
       end
 
       # Configuration for classifying lines to comments and code based on a
@@ -156,10 +162,10 @@ module Codnar
         return {
           "syntax" => {
             "patterns" => {
-              "comment_prefix_#{prefix}" => { "regexp" => "^(\\s*)#{prefix}(?!!)\\s?(.*)$" },
-              "comment_inner_#{inner}" => { "regexp" => "^(\\s*)#{inner}\\s?(.*)$" },
-              "comment_suffix_#{suffix}" => { "regexp" => "^(\\s*)#{suffix}\\s*$" },
-              "comment_line_#{prefix}_#{suffix}" => { "regexp" => "^(\\s*)#{prefix}(?!!)\s?(.*?)\s*#{suffix}\\s*$" },
+              "comment_prefix_#{prefix}" => { "regexp" => '^(\s*)' + prefix + '(?!!)\s?(.*)$' },
+              "comment_inner_#{inner}" => { "regexp" => inner.nil? ? "^()(.*)$" : '^(\s*)' + inner + '\s?(.*)$' },
+              "comment_suffix_#{suffix}" => { "regexp" => '^(\s*)' + suffix + '\s*$' },
+              "comment_line_#{prefix}_#{suffix}" => { "regexp" => '^(\s*)' + prefix + '(?!!)\s?(.*?)\s*' + suffix + '\s*$' },
             },
             "states" => {
               "start" => {

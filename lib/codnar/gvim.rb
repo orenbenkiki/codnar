@@ -15,7 +15,7 @@ module Codnar
 
     # The cache used for speeding up recomputing the same syntax highlighting
     # HTML.
-    @cache = Cache.new(".gvim-cache") do |data|
+    @cache = Cache.new(".codnar-cache") do |data|
       GVim.uncached_syntax_to_html(data.text, data.syntax, data.commands)
     end
 
@@ -43,7 +43,7 @@ module Codnar
     #
     # Since GVim is as slow as molasses to start up, we cache the results of
     # highlighting the syntax of each code fragment in a directory called
-    # <tt>.gvim-cache</tt>, which can appear at the current working directory
+    # <tt>.codnar-cache</tt>, which can appear at the current working directory
     # or in any of its parents.
     def self.cached_syntax_to_html(text, syntax, commands = [])
       data = { "text" => text, "syntax" => syntax, "commands" => commands }
@@ -80,6 +80,7 @@ module Codnar
       ENV["DISPLAY"] = "none" # Otherwise the X11 server *does* affect the result.
       command = [
         "gvim",
+        "-s", "/dev/null", # Magic: avoids a sleep of 2 seconds in VIM startup!
         "-f", "-X",
         "-u", "none",
         "-U", "none",

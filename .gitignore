@@ -1,5 +1,5 @@
 *.swp
-.gvim-cache/*.yaml
+.codnar-cache/*.yaml
 chunks/
 coverage/
 pkg/

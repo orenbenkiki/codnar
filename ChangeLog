@@ -1,3 +1,7 @@
+2012-11-30	Oren Ben-Kiki <github-oren@ben-kiki.org>
+
+	* Switch to .codnar-cache instead of .gvim-cache, add Elixir comments support.
+
 2012-04-13	Oren Ben-Kiki <github-oren@ben-kiki.org>
 
 	* Further mangle the "Module" structure comment.

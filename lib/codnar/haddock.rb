@@ -3,14 +3,29 @@ module Codnar
   # Convert Haddoc to HTML.
   class Haddock
 
+    # The cache used for speeding up recomputing the same syntax highlighting
+    # HTML.
+    @cache = Cache.new(".codnar-cache") do |data|
+      Haddock.uncached_to_html(data.haddock)
+    end
+
     # Process a Haddock String and return the resulting HTML.
-    def self.to_html(haddock)
+    def self.uncached_to_html(haddock)
       with_temporary_directory do |path|
         write_temporary_file(path, haddock)
         run_haddock(path)
         html = read_html_file(path)
         clean_html(html)
       end
+    end
+
+    # Since Haddock is as slow as molasses to start up, we cache the results of
+    # highlighting the syntax of each code fragment in a directory called
+    # <tt>.codnar-cache</tt>, which can appear at the current working
+    # directory or in any of its parents.
+    def self.to_html(haddock)
+      data = { "haddock" => haddock }
+      return @cache[data]
     end
 
   protected
